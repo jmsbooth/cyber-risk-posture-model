@@ -1,0 +1,1885 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage[hidelinks,hypertexnames=false]{hyperref}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{pgfplots}
+
+\pgfplotsset{compat=1.18}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\hbadness=10000
+\vbadness=10000
+\hfuzz=1000pt
+\vfuzz=30pt
+
+\geometry{margin=1in}
+
+\newcommand{\clip}{\operatorname{clip}}
+
+\title{A Dynamic, Decomposable Operational Cyber Risk Posture Index}
+\author{James Booth}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+  Cybersecurity risk is inherently dynamic, multi-dimensional, and shaped by the
+  continuous interaction between technology, adversary capability, organizational
+  behavior, and dependency structure. While architectures, tooling, and governance
+  frameworks evolve rapidly, the executive questions remain stable: \emph{What is our
+  current risk posture? What is driving it? How exposed are we, how severe would impact
+  be, and how quickly can we detect, respond, and recover?}
+
+  This paper introduces the Cyber Risk Posture Index (CRPI), a telemetry-compatible,
+  framework-agnostic, decomposable operational posture index for representing
+  organizational cyber risk as a function of time. The governing model is
+  mathematically specified rather than based on discretionary top-level scoring: threat
+  exposure is combined with resilience-adjusted consequence, operational execution is
+  modulated by observability, and unresolved residual exposure evolves through a
+  bounded stock-flow persistence model. Regularized geometric aggregation prevents a
+  single zero-valued sub-metric from unintentionally collapsing an otherwise non-zero
+  construct. The model produces a bounded board-facing posture index together with
+  traceable diagnostics for hazard pressure, mitigation effectiveness, instantaneous
+  residual posture, and persistent unresolved exposure. Subjectivity is not claimed to
+  be eliminated; it is constrained to explicit, versioned composition and calibration
+  parameters. The paper further specifies measurement interfaces, evidence-coverage
+  gates, uncertainty propagation, calibration governance, and implementation-oriented
+  sub-metrics as a reproducible foundation for subsequent empirical validation.
+\end{abstract}
+
+\section{Introduction}
+At the executive and board level, cybersecurity is ultimately a risk management
+problem. Senior leaders repeatedly ask a small number of fundamental questions:
+\emph{How risky are we today? What is our current exposure? What is the likelihood of
+meaningful impact? If something happens, how effectively can we detect it, contain it,
+and recover?} Despite substantial investment in security programs and tooling, these
+questions are rarely answered with quantitative clarity that is both trustworthy and
+traceable.
+
+Most existing approaches to cyber risk assessment rely on static, point-in-time
+evaluations, qualitative scoring, control-centric dashboards, or framework-specific
+maturity models. While such approaches are valuable for compliance, assurance, and
+control management, they struggle to represent risk as a continuously evolving
+property of a living socio-technical system. As new technologies emerge and
+adversaries adapt, models that encode technology-specific assumptions can lose
+explanatory power or become difficult to compare across time, business units, and
+organizations \cite{nist-csf,nist80030,iso27001,iso27005,cis-controls,fair-book,cvss31,cvss40}.
+
+This work proposes a different approach: a small set of stable, mathematically
+specified equations operating over cyber-risk constructs whose semantics remain useful
+across different technologies and governance frameworks. The Cyber Risk Posture Index (CRPI)
+is not intended to estimate breach probability or monetary loss. It is an operational
+posture index designed to convert heterogeneous evidence into a bounded, decomposable,
+time-aware representation of current and persistent residual exposure. Mathematical
+grounding reduces reliance on discretionary top-level weights, while explicit
+calibration governance makes the remaining judgment visible, local, versioned, and
+auditable.
+
+The paper makes five specific contributions:
+\begin{enumerate}
+  \item it defines a technology-agnostic set of Tier~2 cyber-risk constructs separating
+    observability, consequence, threat exposure, operational execution, and resilience;
+  \item it specifies a zero-safe regularized aggregation operator that preserves
+    geometric sensitivity to weak components without allowing one zero-valued input to
+    collapse an otherwise non-zero construct;
+  \item it introduces explicit equations for resilience-adjusted consequence,
+    observability-modulated mitigation, instantaneous residual posture, and bounded
+    stock-flow persistence rather than relying on discretionary top-level weights;
+  \item it provides measurement, coverage, uncertainty, and governance interfaces for
+    mapping heterogeneous telemetry into stable normalized constructs; and
+  \item it demonstrates how AI-era changes in public threat signals can be represented
+    without treating temporal correlation as evidence that AI caused the observed
+    change.
+\end{enumerate}
+
+\section{Design Philosophy and Invariance Goals}
+The CRPI is designed to preserve a stable governing structure while the evidence used
+to instantiate that structure evolves. Its invariance claim applies to construct
+semantics and equation form, not to universal calibration coefficients.
+
+\begin{itemize}
+  \item \textbf{Technology-Agnostic Governing Structure}: The equations do not depend on
+    a particular product, platform, control catalog, or architecture. New technologies
+    change evidence and calibration, not the role of the governing constructs.
+  \item \textbf{Framework Agnosticism}: Inputs may be derived from NIST, ISO, CIS,
+    sector-specific standards, or internal control models without altering the governing
+    equations.
+  \item \textbf{Temporal Persistence}: Risk posture is time-dependent. The CRPI models
+    both instantaneous residual exposure and a bounded stock of unresolved exposure
+    that accumulates and dissipates over time.
+  \item \textbf{Executive Interpretability with Decomposability}: The model produces a
+    bounded posture index for executive reporting while retaining traceability to hazard
+    pressure, mitigation effectiveness, persistent exposure, Tier~2 constructs, and
+    underlying evidence.
+  \item \textbf{Separation of Structure and Instantiation}: Metric definitions,
+    telemetry sources, normalization bounds, smoothing parameters, and calibration
+    parameters may evolve under governance while equation form and construct semantics
+    remain stable.
+  \item \textbf{Mathematical Grounding and Governed Subjectivity}: The model does not
+    claim to eliminate expert judgment. It constrains judgment to explicit composition
+    and calibration parameters whose meanings, ranges, versions, and evidence bases are
+    auditable.
+  \item \textbf{Evidence Qualification}: A posture index must be accompanied by evidence
+    coverage and, where supported by the underlying measurements, propagated uncertainty
+    so that sparse or weak evidence cannot be mistaken for high-certainty assessment.
+\end{itemize}
+
+These principles are intended to preserve longitudinal interpretability without
+claiming that cyber risk follows immutable physical laws. The objective is a stable
+mathematical interface whose assumptions and calibration choices remain explicit.
+
+\section{What the CRPI Is and Is Not}
+The CRPI is intended to be a quantitative operational cyber-risk posture model, not a
+replacement for governance, assurance, scenario analysis, or financial cyber-risk
+quantification.
+
+The CRPI \textbf{is}:
+\begin{itemize}
+  \item a bounded, time-aware operational cyber-risk posture index;
+  \item a decomposition of posture into stable underlying constructs and state;
+  \item a diagnostic lens supporting executive, CISO, engineering, and model-governance
+    views;
+  \item a telemetry-compatible interface for mapping heterogeneous evidence into a
+    common representation; and
+  \item a potential upstream signal for downstream scenario-based or financial risk
+    analysis.
+\end{itemize}
+
+The CRPI \textbf{is not}:
+\begin{itemize}
+  \item a control framework or compliance regime;
+  \item a maturity model;
+  \item a direct prediction engine for specific attacks;
+  \item a probability of breach;
+  \item a direct financial loss model; or
+  \item a guarantee of organizational security.
+\end{itemize}
+
+This distinction matters because the CRPI is designed to unify and interpret operational
+evidence, not replace governance, control validation, scenario reasoning, or expert
+judgment.
+
+\section{Notation and Definitions}
+Table~\ref{tab:notation} summarizes the principal variables used throughout the paper.
+
+\begin{longtable}{p{0.20\textwidth} p{0.70\textwidth}}
+  \caption{Core notation and variable definitions}
+  \label{tab:notation}\\
+  \toprule
+  Symbol & Meaning \\
+  \midrule
+  \endfirsthead
+  \toprule
+  Symbol & Meaning \\
+  \midrule
+  \endhead
+  $CM(t)$ & Continuous Monitoring score; bounded in $[0,1]$. \\
+  $CS(t)$ & Reporting aggregate of consequence severity; bounded in $[0,1]$. \\
+  $D_j(t)$ & Consequence score for governed consequence domain $j$; bounded in $[0,1]$. \\
+  $v_j$ & Consequence-domain composition weight, $v_j\geq0$ and $\sum_j v_j=1$. \\
+  $TE(t)$ & Threat Exposure score; bounded in $[0,1]$. \\
+  $USOM(t)$ & Unified Security Operations Metric; bounded in $[0,1]$. \\
+  $RRAS(t)$ & Resilience and Risk Assurance Score; bounded in $[0,1]$. \\
+  $R_j(t)$ & Domain-applicable resilience projection for consequence domain $j$; bounded in $[0,1]$. \\
+  $\rho_j$ & Maximum mitigability of consequence domain $j$ by resilience; bounded in $[0,1]$. \\
+  $\mathbf{a}_j$ & Governed non-negative resilience-primitive weights used to construct $R_j(t)$. \\
+  $D_{\mathrm{eff}}(t)$ & Resilience-adjusted consequence used by the governing hazard equation. \\
+  $H(t)$ & Inherent hazard pressure after consequence-specific resilience adjustment. \\
+  $m_0$ & Baseline fraction of operational effectiveness not dependent on continuous monitoring. \\
+  $M(t)$ & Effective mitigation capacity after observability modulates operational execution. \\
+  $R_{\mathrm{inst}}(t)$ & Instantaneous residual posture score. \\
+  $S(t)$ & Bounded stock of persistent unresolved residual exposure. \\
+  $\beta$ & Accumulation-rate parameter for unresolved exposure; units are inverse time. \\
+  $\kappa$ & Dissipation-rate parameter for persistent exposure; units are inverse time. \\
+  $\Delta t$ & Elapsed time between persistence-model updates. \\
+  $CRPI(t)$ & Top-level operational cyber-risk posture index. \\
+  $\widetilde{x}$ & Normalized raw or derived sub-metric; bounded in $[0,1]$. \\
+  $L,U$ & Lower and upper normalization bounds for a sub-metric. \\
+  $\alpha$ & EWMA smoothing parameter for volatile quantities. \\
+  $\varepsilon_X$ & Zero-safety regularization parameter for geometric construct $X$. \\
+  $C_X(t)$ & Evidence-coverage score for construct $X$. \\
+  $\bar C_{\mathrm{CRPI}}(t)$ & Arithmetic mean of Tier~2 evidence-coverage scores. \\
+  $C_{\min}(t)$ & Minimum Tier~2 evidence-coverage score. \\
+  $C_{D_j}(t)$ & Evidence coverage for consequence domain $D_j$. \\
+  $C_{R_j}(t)$ & Evidence coverage for resilience projection $R_j$. \\
+  $C_{\mathrm{gov}}(t)$ & Governing-path evidence-completeness diagnostic. \\
+  \bottomrule
+\end{longtable}
+
+\section{Governing Model}
+The governing model is intentionally compact. Its equation form is fixed; calibration
+parameters and measurement instantiations are governed configuration. The model does
+not claim that these equations are discovered causal laws. They are structurally
+motivated relationships chosen to enforce explicit semantics, boundedness,
+decomposability, and testable temporal behavior.
+
+\subsection{Zero-Safe Regularized Geometric Aggregation}
+For constructs whose components should interact multiplicatively, CRPI uses a
+regularized weighted geometric operator rather than an ordinary geometric mean. For
+non-negative normalized weights $w_i\geq0$ satisfying $\sum_i w_i=1$,
+\begin{equation}
+  \mathcal{G}_{\varepsilon}(\mathbf{x},\mathbf{w})=
+  \frac{
+    \displaystyle\prod_{i=1}^{n}
+      \left[\varepsilon+(1-\varepsilon)x_i\right]^{w_i}
+    -\varepsilon
+  }{1-\varepsilon},
+  \qquad x_i\in[0,1],\quad \varepsilon\in(0,1).
+  \label{eq:regularized-geomean}
+\end{equation}
+The operator maps to $[0,1]$, returns zero when all positively weighted inputs are zero,
+returns one when all are one, and does not allow a single zero-valued component to
+collapse an otherwise non-zero construct. It is non-decreasing in every component;
+strict directional sensitivity is asserted only for components with $w_i>0$. Small
+$\varepsilon$ preserves the intended geometric penalty for weak components.
+$\varepsilon$ is therefore a versioned construct-calibration parameter rather than a
+universal constant.
+
+\subsection{Consequence and Hazard Pressure}
+The reporting aggregate for consequence is
+\begin{equation}
+  CS(t)=\sum_{j\in\mathcal{D}}v_jD_j(t),
+  \qquad v_j\geq0,\qquad \sum_{j\in\mathcal{D}}v_j=1.
+  \label{eq:cs-aggregate}
+\end{equation}
+The governing hazard calculation retains the consequence domains long enough to avoid
+assuming that resilience mitigates all forms of harm equally:
+\begin{equation}
+  D_{\mathrm{eff}}(t)=
+  \sum_{j\in\mathcal{D}}
+  v_jD_j(t)\left[1-\rho_jR_j(t)\right],
+  \qquad \rho_j\in[0,1].
+  \label{eq:effective-consequence}
+\end{equation}
+A baseline profile may use confidentiality/sensitivity, integrity/mission, and
+availability/continuity domains, while other environments may define a different
+finite governed domain set $\mathcal{D}$. The $\rho_j$ values encode the extent to
+which structural resilience can actually reduce the realized consequence in each
+domain, while $R_j(t)$ projects the heterogeneous resilience primitives onto the
+same consequence domain. For example, recoverability may strongly influence
+availability consequence while dependency assurance may be more relevant to
+confidentiality consequence; neither projection is assumed to be universally
+interchangeable.
+
+Hazard pressure is then
+\begin{equation}
+  H(t)=TE(t)\,D_{\mathrm{eff}}(t).
+  \label{eq:hazard}
+\end{equation}
+This preserves a bounded hazard score while preventing a globally high resilience score
+from automatically erasing consequence classes that resilience cannot materially
+reverse.
+
+\subsection{Observability-Modulated Mitigation}
+Continuous Monitoring measures the organization's capability to know; USOM measures its
+capability to act. Visibility therefore modulates operational execution rather than
+independently subtracting risk:
+\begin{equation}
+  M(t)=USOM(t)\left[m_0+(1-m_0)CM(t)\right],
+  \qquad m_0\in[0,1].
+  \label{eq:mitigation}
+\end{equation}
+The parameter $m_0$ represents the governed fraction of operational effectiveness that
+can exist without continuous telemetry, such as manual reporting, scheduled testing,
+or other non-continuous pathways. With all inputs in $[0,1]$, $M(t)$ remains in
+$[0,1]$.
+
+Instantaneous residual posture is
+\begin{equation}
+  R_{\mathrm{inst}}(t)=H(t)\left[1-M(t)\right].
+  \label{eq:rinst}
+\end{equation}
+
+\subsection{Persistent Unresolved Exposure}
+Persistent exposure is modeled as a bounded stock with unresolved instantaneous posture
+as inflow and effective mitigation as outflow:
+\begin{equation}
+  \frac{dS}{dt}
+  =\beta R_{\mathrm{inst}}(t)\left[1-S(t)\right]
+  -\kappa M(t)S(t),
+  \qquad \beta,\kappa\geq0.
+  \label{eq:stock-ode}
+\end{equation}
+The $(1-S)$ term bounds accumulation as the stock approaches one. Under piecewise
+constant inputs over an interval $\Delta t$, define
+\begin{equation}
+  q(t)=\beta R_{\mathrm{inst}}(t)+\kappa M(t).
+\end{equation}
+For $q(t)>0$, the exact interval update is
+\begin{equation}
+  S(t+\Delta t)=S^*(t)+\left[S(t)-S^*(t)\right]e^{-q(t)\Delta t},
+  \label{eq:stock-discrete}
+\end{equation}
+where
+\begin{equation}
+  S^*(t)=\frac{\beta R_{\mathrm{inst}}(t)}{q(t)}.
+\end{equation}
+If $q(t)=0$, then $S(t+\Delta t)=S(t)$. This formulation preserves $S\in[0,1]$,
+accumulates unresolved exposure when instantaneous residual posture is non-zero,
+dissipates accumulated exposure when mitigation is effective, and makes sampling
+cadence explicit through $\Delta t$. When historical state cannot be reconstructed,
+$S(t_0)=R_{\mathrm{inst}}(t_0)$ provides a bounded state-neutral initialization. It
+makes no assertion about unresolved exposure preceding $t_0$. Outputs should therefore
+carry reduced temporal-history confidence until sufficient observation history
+accumulates or prior state is reconstructed.
+
+Effective mitigation affects persistence through two distinct pathways. First, it
+reduces the rate at which current hazard becomes unresolved residual exposure through
+$R_{\mathrm{inst}}$. Second, it represents the organization's capacity to remediate
+previously accumulated unresolved exposure through the $\kappa M(t)S(t)$ outflow term.
+These effects are intentionally separated as prevention or containment of new residual
+exposure and retirement of existing exposure stock.
+
+\subsection{Executive Posture Envelope}
+The board-facing CRPI value is the conservative envelope
+\begin{equation}
+  CRPI(t)=\max\left(R_{\mathrm{inst}}(t),S(t)\right).
+  \label{eq:crpi-envelope}
+\end{equation}
+The maximum is a reporting operator, not a causal law. It prevents recent operational
+improvement from masking material persistent exposure while keeping the result bounded
+and directly decomposable.
+
+\subsection{Governed Parameter Boundary}
+The governing equation form is stable, but the model is not parameter-free. The
+parameters $\varepsilon_X$, $v_j$, $\rho_j$, $\mathbf{a}_j$, $m_0$, $\beta$, $\kappa$, $\alpha$, and
+normalization bounds are explicit calibration or construct-composition parameters.
+They must be versioned, justified by construct semantics or observed data, sensitivity
+tested, and prohibited from ad hoc tuning solely to make the headline posture value
+appear desirable.
+
+\section{Interpreting CRPI Outputs}
+The top-level $CRPI(t)$ value is a bounded operational posture index in $[0,1]$, where
+values closer to zero indicate lower modeled residual cyber-risk posture and values
+closer to one indicate higher modeled residual posture under a defined calibration
+profile. It is not a direct probability of breach or monetary-loss estimate.
+
+The value should be read together with its decomposition:
+\begin{itemize}
+  \item $H(t)$ answers: \emph{How much hazard pressure exists before current operational
+    mitigation?} It rises as threat exposure or resilience-adjusted consequence rises.
+  \item $M(t)$ answers: \emph{How much effective mitigation can the organization apply?}
+    It reflects operational execution as modulated by the quality of continuous
+    observability.
+  \item $R_{\mathrm{inst}}(t)$ answers: \emph{What residual posture is implied by current
+    conditions now?}
+  \item $S(t)$ answers: \emph{How much unresolved residual exposure remains from current
+    and recent conditions?}
+  \item $CRPI(t)$ reports the conservative residual-risk envelope used for executive
+    posture communication.
+\end{itemize}
+
+Two organizations can have the same $CRPI(t)$ for materially different reasons. One may
+have high current threat pressure but low accumulated exposure; another may have
+moderate current hazard but substantial persistent stock. Management action therefore
+requires the decomposition, Tier~2 values, evidence coverage, and uncertainty
+qualification rather than the scalar alone.
+
+\begin{longtable}{p{0.20\textwidth} p{0.18\textwidth} p{0.52\textwidth}}
+  \caption{Score direction and executive interpretation}
+  \label{tab:score-direction}\\
+  \toprule
+  Quantity & Higher Means & Interpretation \\
+  \midrule
+  \endfirsthead
+  \toprule
+  Quantity & Higher Means & Interpretation \\
+  \midrule
+  \endhead
+  $CM(t)$ & Better & More complete, current, and trustworthy visibility. \\
+  $USOM(t)$ & Better & Stronger ability to detect, respond, remediate, and change safely. \\
+  $RRAS(t)$ & Better & Stronger scalar structural survivability and assurance summary. \\
+  $R_j(t)$ & Better & Stronger resilience projection for consequence domain $j$. \\
+  $CS(t)$ & More severe & Greater aggregate consequence if the system or data is compromised. \\
+  $TE(t)$ & More exposed & Greater adversary pressure, exploitability, or attackability. \\
+  $D_{\mathrm{eff}}(t)$ & More severe & Greater consequence remaining after consequence-specific resilience adjustment. \\
+  $H(t)$ & More hazardous & More inherent hazard before current operational mitigation. \\
+  $M(t)$ & Better & Greater effective mitigation capacity. \\
+  $R_{\mathrm{inst}}(t)$ & More residual risk & Worse current residual posture. \\
+  $S(t)$ & More persistent & More unresolved exposure carried forward. \\
+  $CRPI(t)$ & More residual risk & Higher modeled operational cyber-risk posture. \\
+  \bottomrule
+\end{longtable}
+
+\section{Tier~2 Risk Dimensions}
+The CRPI decomposes cyber risk into five Tier~2 dimensions that correspond to stable,
+technology-agnostic constructs: Continuous Monitoring (CM), Consequence Severity (CS),
+Threat Exposure (TE), Unified Security Operations Metric (USOM), and Resilience and
+Risk Assurance Score (RRAS). Each Tier~2 metric is bounded in $[0,1]$ and instantiated
+from measurable sub-metrics derived from telemetry, governance artifacts, engineering
+workflows, or architectural evidence.
+
+The purpose of the Tier~2 layer is twofold. First, it decomposes cyber risk into
+constructs that remain semantically meaningful across technology eras, organizational
+models, and governance frameworks. Second, it provides a stable interface between the
+top-level CRPI equations and the evolving evidence sources used to operationalize the
+model in practice.
+
+A central design requirement is that the mathematical role of each Tier~2 metric remain
+stable even as specific sub-metrics, tooling, or evidence sources change. In other
+words, the CRPI assumes that organizations will monitor different technologies, process
+different data, face different threat landscapes, operate with different engineering
+practices, and depend on different ecosystems, but it maintains that the underlying
+risk constructs of visibility, consequence, susceptibility, execution capability, and
+structural survivability remain stable.
+
+Accordingly, the Tier~2 layer is defined by \emph{construct semantics} rather than by
+tool categories. This distinction is important. A Tier~2 metric should not be read as a
+bundle of today's technologies, but as an abstract risk function whose current
+instantiation may be realized using whichever telemetry and governance mechanisms an
+organization has available. This is what allows the CRPI to remain defensible over time.
+
+Internal Tier~2 weights, where present, are treated as construct-composition parameters
+rather than discretionary preference levers. They exist to ensure semantic completeness
+of a construct when multiple sub-metrics are required to operationalize it. These
+weights are therefore constrained by model governance, versioned, empirically
+reviewable, and not intended to encode shifting business risk appetite at the level of
+the top-level CRPI output.
+
+The sections that follow define each Tier~2 metric in terms of its purpose, construct
+boundaries, mathematical form, representative measurement interfaces, and role within
+the larger CRPI system.
+
+\subsection{Continuous Monitoring (CM)}
+\subsubsection{Purpose and Philosophy}
+Continuous Monitoring (CM) represents an organization’s sustained ability to observe
+security-relevant system state and to continuously verify that intended controls,
+instrumentation, and operational policies remain present, active, and current. CM is
+not defined by any specific tool, but by the enduring properties of visibility
+coverage, freshness, integrity, and verification across relevant assets and control
+points.
+
+The foundational role of CM in the CRPI is to model the epistemic quality of the
+organization’s security posture: an organization cannot manage, remediate, or validate
+risk in near real-time if it cannot reliably observe changes, detect drift, or confirm
+the operational state of controls. CM therefore measures capability to know rather than
+capability to respond.
+
+\subsubsection{Construct Definition}
+CM quantifies four stable invariants:
+\begin{enumerate}
+  \item \textbf{Coverage}: Are all in-scope assets and control points instrumented and
+    reporting?
+  \item \textbf{Freshness}: How recent is the telemetry and validation evidence?
+  \item \textbf{Integrity}: Can the telemetry and control-state evidence be trusted?
+  \item \textbf{Verification}: Does monitoring validate control state rather than merely
+    collect signals?
+\end{enumerate}
+
+\subsubsection{Metric Form}
+CM is modeled as
+\begin{equation}
+  CM(t)=\sum_{j=1}^{m} w_j^{CM}\widetilde{CM}_j(t),
+  \qquad \sum_{j=1}^{m}w_j^{CM}=1,
+\end{equation}
+where each $\widetilde{CM}_j(t)\in[0,1]$.
+
+\subsubsection{Measurement Interfaces and Representative Inputs}
+Representative data sources include authoritative asset inventories, telemetry
+presence and last-seen indicators, policy and configuration repositories, and audit or
+review artifacts. Example sub-metrics include telemetry coverage, telemetry freshness,
+telemetry integrity and provenance, audit log monitoring coverage, control-state drift
+detection, control update cadence, and documentation/procedure freshness.
+
+\subsubsection{Boundary Conditions}
+CM excludes incident response performance (USOM), exploitability signal and adversary
+pressure (TE), structural resilience (RRAS), and impact severity (CS).
+
+\subsubsection{Interpretation}
+A high CM score indicates continuous, trustworthy visibility into security-relevant
+state. A low CM score indicates that posture may be poorly observed or managed in near
+real-time. Within the governing model, CM modulates operational execution through
+Equation~\ref{eq:mitigation}; visibility improves the effectiveness of action but is not
+itself treated as remediation.
+
+\subsection{Consequence Severity (CS)}
+\subsubsection{Purpose and Philosophy}
+Consequence Severity (CS) quantify the consequence potential of compromise by measuring
+the sensitivity, criticality, and mission relevance of information and functions handled
+by a system, component, or organization. CS is intentionally defined in terms of
+consequence rather than threat or control mechanism.
+
+\subsubsection{Construct Definition}
+The baseline profile captures consequence through governed domains such as:
+\begin{enumerate}
+  \item \textbf{Confidentiality and Sensitivity}: intrinsic sensitivity, classification,
+    regulatory exposure, ethical obligation, and derived or inferential sensitivity;
+  \item \textbf{Integrity and Mission Consequence}: harm caused by unauthorized change,
+    corrupted decisions, unsafe operation, or loss of mission trust; and
+  \item \textbf{Availability and Continuity}: harm resulting from loss or degradation of
+    access to data, systems, or essential services.
+\end{enumerate}
+Other environments may use a different finite domain set $\mathcal{D}$ when the mapping
+is documented and governed. The domain structure is retained in the governing hazard
+calculation because resilience does not mitigate every consequence class equally.
+
+\subsubsection{Metric Form}
+Each consequence domain $D_j(t)$ is composed from normalized sub-metrics assigned only
+to that domain. The reporting aggregate $CS(t)$ is then calculated using
+Equation~\ref{eq:cs-aggregate}. Hazard pressure uses the resilience-adjusted
+$D_{\mathrm{eff}}(t)$ from Equation~\ref{eq:effective-consequence} rather than applying
+a single global fragility multiplier to the aggregate CS score.
+
+\subsubsection{Measurement Interfaces and Representative Inputs}
+Representative sources include data inventories and catalogs, classification and
+labeling artifacts, business impact analyses, lineage graphs, mission dependency
+models, and access/usage metadata. Example sub-metrics include direct data sensitivity,
+derived sensitivity and inference amplification, integrity consequence, mission and
+business criticality, and availability/continuity impact.
+
+\subsubsection{Boundary Conditions}
+CS excludes exploitability signal (TE), monitoring quality (CM), response effectiveness
+(USOM), and resilience capability (RRAS). RRAS affects realized consequence through
+the explicitly governed $R_j$ and $\rho_j$ interactions in
+Equation~\ref{eq:effective-consequence}.
+
+\subsubsection{Interpretation}
+A high CS score indicates severe aggregate consequence if compromise occurs. A high
+$D_{\mathrm{eff}}$ indicates that substantial consequence remains even after accounting
+for the forms of harm that structural resilience can demonstrably mitigate.
+
+\subsection{Threat Exposure (TE)}
+\subsubsection{Purpose and Philosophy}
+Threat Exposure (TE) measures an entity's susceptibility to adversarial action given
+prevailing threat conditions, system characteristics, and exposure properties. TE
+represents the susceptibility and adversarial-exposure dimension of posture and is intentionally
+separated from consequence, response capability, and resilience.
+
+\subsubsection{Construct Definition}
+TE captures two interacting invariants:
+\begin{enumerate}
+  \item \textbf{External Adversary Pressure}: relevance, capability, observed activity,
+    and targeting intensity associated with adversaries applicable to the environment;
+  \item \textbf{Internal Exposure Conditions}: reachable attack surface,
+    exploitability, identity/privilege exposure, and conditions that enable control
+    bypass.
+\end{enumerate}
+
+\subsubsection{Metric Form}
+TE uses the zero-safe regularized geometric operator from
+Equation~\ref{eq:regularized-geomean}:
+\begin{equation}
+  TE_{\mathrm{inst}}(t)=
+  \mathcal{G}_{\varepsilon_{TE}}
+  \left(\widetilde{X}_1(t),\ldots,\widetilde{X}_q(t);\mathbf{w}^{TE}\right),
+  \label{eq:te-inst}
+\end{equation}
+with temporal smoothing
+\begin{equation}
+  TE(t)=\alpha_{TE}TE_{\mathrm{inst}}(t)
+       +(1-\alpha_{TE})TE(t-1).
+  \label{eq:te-smooth}
+\end{equation}
+A zero in one valid TE sub-metric therefore creates a multiplicative penalty
+proportional to its governed construct weight; it does not mathematically assert that
+all threat exposure is zero.
+
+\subsubsection{Measurement Interfaces and Representative Inputs}
+Representative sources include exposure inventories, vulnerability and exploitability
+signals, threat-intelligence artifacts, identity and privilege data, and architecture
+characteristics. Example sub-metrics include attack-surface exposure, exploitability
+signal, privilege and identity exposure, threat-intelligence relevance, and control
+bypass potential.
+
+\subsubsection{AI-Era Threat Acceleration and Model Interpretation}
+AI does not require a new governing risk dimension. To the extent that AI changes the
+speed, scale, or cost of reconnaissance, vulnerability discovery, exploit development,
+social engineering, or defensive evasion, those changes should appear in the same TE
+evidence channels already represented by the model \cite{nist-ai-rmf,cisa-ai-roadmap}.
+The CRPI therefore treats AI as a potential driver of existing exposure variables rather
+than as an independent top-level risk multiplier.
+
+This paper does \emph{not} infer that observed increases in vulnerability publication,
+known exploitation, or other cyber activity were caused by AI. Temporal association is
+not causal identification. Public cyber datasets are affected by multiple confounders,
+including changes in vulnerability reporting, growth in the CVE Numbering Authority
+(CNA) ecosystem, vendor disclosure practice, CISA collection and catalog policy,
+security-research activity, and the underlying installed technology base. The purpose
+of the following illustration is narrower: to show how an externally observed
+acceleration or change signal would enter TE and propagate through the unchanged CRPI
+equations.
+
+\subsubsection{Public-Data AI-Era Illustration}
+Figure~\ref{fig:ai-public-crpi} uses two descriptive public signals. Annual CVE
+publication volume is normalized as a discovery/reporting-pressure proxy using official
+CVE Program annual totals \cite{cve-metrics}. CISA KEV additions are normalized as an
+observed-exploitation catalog proxy using the CISA KEV \texttt{dateAdded} field
+\cite{cisa-kev,cisa-kev-data}. Because the KEV catalog launched with substantial
+historical backfill, only 2023--2025 additions are used in the composite illustration.
+
+Let
+\begin{equation}
+  D_y=\frac{\mathrm{CVE}_y}{\max_y\mathrm{CVE}_y},
+  \qquad
+  K_y=\frac{\mathrm{KEVAdditions}_y}{\max_y\mathrm{KEVAdditions}_y}.
+\end{equation}
+For the three-year composite illustration only, equal weights and
+$\varepsilon_{TE}=0.05$ are used:
+\begin{equation}
+  TE^{\mathrm{pub}}_y=
+  \mathcal{G}_{0.05}\left(D_y,K_y;0.5,0.5\right),
+  \qquad y\in\{2023,2024,2025\}.
+\end{equation}
+Holding resilience-adjusted consequence at $D_{\mathrm{eff}}=0.48$ solely to visualize
+propagation,
+\begin{equation}
+  H^{\mathrm{pub}}_y=0.48\,TE^{\mathrm{pub}}_y.
+\end{equation}
+The 2022.5 marker in Figure~\ref{fig:ai-public-crpi} is a contextual marker for the period
+of widespread generative-AI availability, not a treatment boundary and not evidence of
+causation.
+
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{c r c r c c c}
+  \caption{Public descriptive inputs and derived CRPI illustration}
+  \label{tab:ai-public-proxy}\\
+  \toprule
+  Year & CVEs & $D_y$ & KEV adds & $K_y$ & $TE^{\mathrm{pub}}_y$ & $H^{\mathrm{pub}}_y$ \\
+  \midrule
+  \endfirsthead
+  \toprule
+  Year & CVEs & $D_y$ & KEV adds & $K_y$ & $TE^{\mathrm{pub}}_y$ & $H^{\mathrm{pub}}_y$ \\
+  \midrule
+  \endhead
+  2018 & 16,512 & 0.342 & -- & -- & -- & -- \\
+  2019 & 17,308 & 0.359 & -- & -- & -- & -- \\
+  2020 & 18,375 & 0.381 & -- & -- & -- & -- \\
+  2021 & 20,161 & 0.418 & -- & -- & -- & -- \\
+  2022 & 25,059 & 0.519 & -- & -- & -- & -- \\
+  2023 & 28,961 & 0.600 & 187 & 0.763 & 0.677 & 0.325 \\
+  2024 & 40,077 & 0.831 & 186 & 0.759 & 0.794 & 0.381 \\
+  2025 & 48,244 & 1.000 & 245 & 1.000 & 1.000 & 0.480 \\
+  \bottomrule
+\end{longtable}
+\endgroup
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[
+        width=0.93\linewidth,
+        height=0.46\textheight,
+        xlabel={Year},
+        ylabel={Normalized descriptive / CRPI proxy score},
+        xmin=2017.5, xmax=2025.5,
+        ymin=0, ymax=1.05,
+        xtick={2018,2019,2020,2021,2022,2023,2024,2025},
+        xticklabel style={/pgf/number format/1000 sep={}},
+        ytick={0,0.25,0.5,0.75,1.0},
+        grid=major,
+        legend style={font=\small, at={(0.5,-0.18)}, anchor=north, legend columns=2}
+      ]
+      \addplot+[mark=*, thick] coordinates {
+        (2018,0.342) (2019,0.359) (2020,0.381) (2021,0.418)
+        (2022,0.519) (2023,0.600) (2024,0.831) (2025,1.000)
+      }; \addlegendentry{$D_y$: CVE publication proxy}
+      \addplot+[mark=square*, thick] coordinates {
+        (2023,0.763) (2024,0.759) (2025,1.000)
+      }; \addlegendentry{$K_y$: KEV-addition proxy}
+      \addplot+[mark=triangle*, thick] coordinates {
+        (2023,0.677) (2024,0.794) (2025,1.000)
+      }; \addlegendentry{$TE^{\mathrm{pub}}_y$ composite}
+      \addplot+[mark=diamond*, thick] coordinates {
+        (2023,0.325) (2024,0.381) (2025,0.480)
+      }; \addlegendentry{$H^{\mathrm{pub}}_y$ illustration}
+      \addplot+[dashed, thick] coordinates {(2022.5,0) (2022.5,1.05)};
+      \addlegendentry{AI-era context marker only}
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Descriptive public-data illustration of how changing threat signals enter the
+  CRPI calculation path. The CVE series is affected by reporting-system growth and other
+  confounders; KEV is a curated catalog rather than a census of exploitation. The
+  2022.5 marker is contextual only. The figure does not estimate an AI treatment effect
+  and does not support a causal claim that AI produced the observed changes.}
+  \label{fig:ai-public-crpi}
+\end{figure}
+
+\subsubsection{Boundary Conditions}
+TE excludes consequence severity (CS), monitoring quality (CM), response execution
+(USOM), and resilience (RRAS).
+
+\subsubsection{Interpretation}
+A high TE score indicates greater modeled susceptibility to adversarial action under the
+available evidence. TE contributes directly to hazard pressure through
+Equation~\ref{eq:hazard}.
+
+\subsection{Unified Security Operations Metric (USOM)}
+\subsubsection{Purpose and Philosophy}
+The Unified Security Operations Metric (USOM) captures an organization’s demonstrated
+ability to detect, respond to, remediate, and safely deploy changes in the presence of
+adversarial activity. USOM represents the operational execution dimension of cyber
+risk.
+
+USOM is intentionally defined as an outcome-oriented capability rather than a
+measurement of specific tools, team structures, or processes. This ensures
+applicability across traditional IT operations, DevOps, DevSecOps, and future
+engineering paradigms.
+
+\subsubsection{Construct Definition}
+USOM captures the organization's ability to convert awareness into effective action.
+Where CM asks whether the organization can observe and verify security-relevant state,
+USOM asks whether the organization can act on that knowledge quickly, safely, and
+repeatably. It therefore represents the execution side of mitigation capacity: the
+operational pathway by which detected issues are triaged, contained, remediated,
+validated, and converted into durable improvement.
+
+USOM captures four stable operational invariants:
+\begin{enumerate}
+  \item \textbf{Detection Effectiveness}: the ability to identify meaningful security
+    events, suspicious behavior, exposed weaknesses, and control failures quickly enough
+    for action to matter. This includes timeliness of alerting, quality of triage, and
+    reduction of blind or noisy detection pathways. Detection effectiveness differs from
+    CM because it measures operational recognition and escalation, not merely the
+    existence or freshness of telemetry.
+  \item \textbf{Response and Remediation Velocity}: the ability to contain incidents,
+    close vulnerabilities, restore secure configuration, and complete corrective actions
+    within timeframes appropriate to the hazard. This invariant includes mean time to
+    detect, respond, remediate, and patch, but its conceptual focus is elapsed exposure
+    time: how long a known or actionable problem remains unresolved.
+  \item \textbf{Change Safety and Reliability}: the ability to introduce defensive,
+    corrective, and routine engineering changes without creating avoidable outages,
+    regressions, misconfigurations, or new exposure. This invariant captures whether the
+    organization can move quickly without increasing fragility through failed changes,
+    rollbacks, emergency fixes, or uncontrolled exceptions.
+  \item \textbf{Operational Learning and Throughput}: the ability to sustain a reliable
+    cadence of improvement, absorb lessons from incidents and near misses, and convert
+    findings into repeatable engineering and security practices. This includes deployment
+    regularity, preventive quality controls, post-incident learning, and security-gate
+    effectiveness.
+\end{enumerate}
+
+The construct is intentionally outcome-oriented. USOM does not require a particular SOC
+model, ticketing platform, CI/CD toolchain, or staffing structure. A centralized
+security operations center, a product-aligned DevSecOps model, and a highly automated
+cloud-native operation can all score well if they demonstrate the same underlying
+capability: fast recognition, disciplined response, safe change, and continuous
+improvement. Conversely, strong tooling alone does not imply high USOM if issues remain
+untriaged, fixes stall, emergency changes frequently fail, or lessons do not alter
+future behavior.
+
+Within the CRPI, USOM is the execution capability that is modulated by CM through
+Equation~\ref{eq:mitigation}. This separation is deliberate. Visibility without
+execution does not remediate hazards, while execution with weak visibility can be
+misdirected or incomplete. The parameter $m_0$ allows an empirically governed baseline
+for response pathways that do not depend on continuous telemetry instead of forcing
+mitigation to zero whenever CM is zero.
+
+\subsubsection{Metric Form}
+USOM is modeled as
+\begin{equation}
+  USOM(t)=\sum_{\ell=1}^{s}w_\ell^{USOM}\widetilde{U}_\ell(t),
+  \qquad \sum_{\ell=1}^{s}w_\ell^{USOM}=1,
+\end{equation}
+where each $\widetilde{U}_\ell(t)\in[0,1]$.
+
+\subsubsection{Measurement Interfaces and Representative Inputs}
+Representative sources include incident and case-management systems, vulnerability and
+patch-management systems, CI/CD and deployment logs, engineering quality artifacts, and
+supply-chain transparency artifacts. Example sub-metrics include MTTD, MTTR, MTTP,
+change failure rate, deployment throughput and regularity, preventive quality coverage,
+and supply chain execution assurance.
+
+\subsubsection{Boundary Conditions}
+USOM excludes threat environment (TE), telemetry quality (CM), impact severity (CS),
+and structural resilience or dependency trust (RRAS).
+
+\subsubsection{Interpretation}
+A high USOM score indicates an organization capable of rapidly detecting, responding
+to, and remediating security issues while sustaining safe and continuous change.
+USOM directly influences effective mitigation $M(t)$ and thereby affects both instantaneous residual posture and the dissipation of persistent exposure.
+
+\subsection{Resilience and Risk Assurance Score (RRAS)}
+\subsubsection{Purpose and Philosophy}
+RRAS measures an organization’s ability to withstand adverse events, limit cascading
+failure, and recover essential functions while maintaining assurance over critical
+dependencies. RRAS represents the structural survivability dimension of cyber risk.
+
+RRAS is intentionally separated from day-to-day operational execution. While USOM
+measures how quickly teams detect and respond, RRAS measures whether the system can
+recover at all and whether its dependencies can be trusted during disruption.
+
+\subsubsection{Construct Definition}
+RRAS captures two interacting invariant constructs:
+\begin{enumerate}
+  \item \textbf{Internal Resilience}: Structural properties enabling continued operation
+    and recovery under failure.
+  \item \textbf{Dependency and Assurance Resilience}: The degree of trust, transparency,
+    and control over dependencies whose failure could propagate risk.
+\end{enumerate}
+
+\subsubsection{Metric Form}
+RRAS retains a scalar reporting aggregate for leadership views. It uses the
+regularized geometric operator from Equation~\ref{eq:regularized-geomean}:
+\begin{equation}
+  RRAS(t)=
+  \mathcal{G}_{\varepsilon_{RRAS}}
+  \left(\widetilde{Y}_1(t),\ldots,\widetilde{Y}_r(t);\mathbf{w}^{RRAS}\right),
+  \qquad \sum_i w_i^{RRAS}=1.
+\end{equation}
+For the governing hazard equation, the same resilience primitives are projected onto
+each consequence domain using a governed domain-specific weight vector:
+\begin{equation}
+  R_j(t)=
+  \mathcal{G}_{\varepsilon_R}
+  \left(\widetilde{Y}_1(t),\ldots,\widetilde{Y}_r(t);\mathbf{a}_j\right),
+  \qquad a_{ji}\geq0,\qquad \sum_i a_{ji}=1.
+  \label{eq:domain-resilience}
+\end{equation}
+The vectors $\mathbf{a}_j$ govern how the common resilience primitives are composed for
+each consequence domain; they are composition weights, not mitigability parameters.
+The resulting $R_j(t)$ is the domain-applicable resilience capability. By contrast,
+$\rho_j$ is the maximum mitigability of domain $j$: it governs how much of that
+capability may reduce the domain's consequence in $D_{\mathrm{eff}}$. This distinction
+prevents, for example, strong dependency assurance from fully compensating for weak
+recoverability in an availability consequence domain. The regularized operator retains
+a multiplicative penalty for weak components proportional to their governed construct
+weights, without asserting that a single zero-valued component makes all organizational
+resilience zero.
+
+\subsubsection{Measurement Interfaces and Representative Inputs}
+Representative sources include architecture and dependency inventories, recovery and
+continuity artifacts, supply-chain and dependency assurance artifacts, and governance
+records. Example sub-metrics include recoverability capability, redundancy and failover
+coverage, diversity and independence, dependency transparency and provenance,
+dependency trustworthiness, and assured change integrity.
+
+\subsubsection{Boundary Conditions}
+RRAS excludes incident response speed (USOM), exploitability signal (TE), impact severity
+(CS), and monitoring coverage (CM).
+
+\subsubsection{Interpretation}
+A high RRAS score indicates a system that is structurally resilient, recoverable, and
+supported by trustworthy and transparent dependencies. Within the governing model,
+the domain projection $R_j$ modifies consequence through the consequence-specific
+mitigability factors $\rho_j$ in Equation~\ref{eq:effective-consequence}; it does not
+automatically erase all forms of impact.
+
+\section{Measurement Specification}
+This section defines how Tier~2 constructs are operationalized from telemetry,
+artifacts, and governance evidence. Its purpose is not to restate Tier~2 philosophy,
+but to specify the measurement layer that makes the CRPI implementable, testable, and
+governable in practice.
+
+The measurement layer is intentionally separated from the governing equations. This
+separation is central to the CRPI’s invariance claim: the equations remain fixed, while
+the evidence sources, normalization profiles, sampling cadences, and sub-metric
+instantiations may evolve under governance. In this way, the CRPI can accommodate new
+technologies, telemetry sources, or operating models without requiring a change to the
+mathematical structure of risk.
+
+\subsection{Common Measurement Conventions}
+\paragraph{Normalization.}
+Each raw measure $x$ is converted to a normalized score $\widetilde{x}\in[0,1]$ using
+bounded mapping with explicit directionality:
+\begin{equation}
+  \widetilde{x}=\clip\left(\frac{x-L}{U-L},0,1\right)
+\end{equation}
+for higher-is-better quantities, and
+\begin{equation}
+  \widetilde{x}=1-\clip\left(\frac{x-L}{U-L},0,1\right)
+\end{equation}
+for lower-is-better quantities. Bounds must be versioned, reviewable, and associated
+with the calibration profile under which a score was produced.
+
+\paragraph{Construct aggregation.}
+Weighted sums are used where components are compensatory parts of a single construct.
+The regularized geometric operator in Equation~\ref{eq:regularized-geomean} is reserved
+for constructs where weak components should materially reduce the aggregate in
+proportion to their governed weights without creating an unintended absorbing zero. The choice of aggregation
+operator is therefore part of construct semantics and must be documented rather than
+selected for numerical convenience. In particular, the operator retains a
+multiplicative penalty for weak components proportional to their governed construct
+weights; it does not guarantee that one weak component dominates the aggregate.
+
+\paragraph{Smoothing.}
+For volatile measures, an exponentially weighted moving average (EWMA) may be applied:
+\begin{equation}
+  s_t=\alpha \widetilde{x}_t+(1-\alpha)s_{t-1},\qquad \alpha\in(0,1].
+\end{equation}
+Smoothing is a measurement-estimation choice, not a change to construct semantics.
+
+\paragraph{Missing Data.}
+Missingness is treated explicitly rather than silently ignored. For any sub-metric
+$\widetilde{x}$, an availability indicator $a\in\{0,1\}$ is maintained. If
+unavailable, the sub-metric is imputed using one of three governed policies:
+\begin{enumerate}
+  \item \emph{Last observation carried forward} (LOCF) for slow-moving quantities;
+  \item \emph{Neutral imputation} where no directional assumption is justified;
+  \item \emph{Risk-averse imputation} where lack of evidence plausibly implies lack of
+    control, lack of assurance, or lack of visibility.
+\end{enumerate}
+
+\paragraph{Sampling Frequency.}
+Each sub-metric has an expected cadence. High-frequency measures are aggregated to the
+reporting interval using robust statistics (e.g., median, quantiles, bounded moving
+averages), while slow-moving artifacts are evaluated on change events or scheduled
+review cycles.
+
+\subsection{Coverage and Evidence Qualification}
+The CRPI should not be reported as a naked scalar without qualification of evidence
+quality. For each Tier~2 metric $X\in\{CM,CS,TE,USOM,RRAS\}$, define a coverage score
+$C_X(t)\in[0,1]$ as the governed fraction of expected evidence that is observed and
+verifiable at time $t$. For each consequence domain $j\in\mathcal{D}$, also define
+$C_{D_j}(t)$ for evidence supporting $D_j(t)$ and $C_{R_j}(t)$ for evidence supporting
+the corresponding resilience projection $R_j(t)$. Report both
+\begin{equation}
+  \bar C_{\mathrm{CRPI}}(t)=
+  \frac{1}{5}\sum_X C_X(t)
+\end{equation}
+and
+\begin{equation}
+  C_{\min}(t)=\min_X C_X(t).
+\end{equation}
+The governing path has an additional hard evidence-completeness diagnostic:
+\begin{equation}
+  C_{\mathrm{gov}}(t)=\min\left(
+    C_{TE}(t),C_{CM}(t),\min_{j\in\mathcal{D}}C_{D_j}(t),
+    \min_{j\in\mathcal{D}}C_{R_j}(t),C_{USOM}(t)
+  \right).
+  \label{eq:governing-coverage}
+\end{equation}
+Tier~2 coverage remains useful for construct-level reporting, but $C_{\mathrm{gov}}$
+prevents a scalar RRAS or CS report from hiding a poorly observed consequence or
+resilience domain. Coverage gates qualify the report; they do not multiply or otherwise
+alter the CRPI value.
+The minimum gate prevents strong coverage in four constructs from masking the complete
+absence of evidence in a fifth construct. Any qualitative label such as High, Medium,
+or Low evidence coverage must require both an aggregate-coverage threshold, a
+minimum-per-construct threshold, and a governing-path threshold, plus governed recency
+and source-integrity criteria.
+Thresholds belong to the calibration profile and are not universal constants.
+
+\paragraph{Coverage is not statistical confidence.}
+Coverage describes evidence completeness. It must not be represented as a statistical
+confidence interval. Where sub-metrics have defensible uncertainty ranges or
+probability distributions, implementations should propagate those uncertainties through
+the CRPI equations, for example by Monte Carlo simulation, and report a distribution or
+quantile interval for $CRPI(t)$. Such intervals characterize measurement/model
+uncertainty; they still do not convert CRPI into a probability of breach.
+
+For temporal analyses, uncertainty propagation should evolve sampled trajectories through
+the persistence state $S(t)$; independently resampling each reporting interval would
+discard temporal dependence and is not equivalent to uncertainty propagation through the
+CRPI state model.
+
+\subsection{Measurement Governance and Internal Weights}
+Internal composition weights and calibration parameters do not violate the CRPI stability claim because stability is defined at the level of governing equation form and construct semantics, not universal fixed coefficients for every environment. These weights are restricted
+to construct composition, must preserve semantic completeness, are versioned and
+auditable under calibration governance, and are empirically reviewable. They are not
+discretionary top-level business preference controls and should not be tuned to make
+output posture “look right.”
+
+
+
+\subsection{Tier~2 Measurement Summary}
+Table~\ref{tab:tier2summary} provides a compact summary of the Tier~2 metrics and their
+measurement roles.
+
+\begingroup
+\setlength{\tabcolsep}{3pt}
+\begingroup
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{p{0.115\textwidth} p{0.175\textwidth} p{0.195\textwidth} p{0.155\textwidth} p{0.22\textwidth}}
+  \caption{Tier~2 metric summary}
+  \label{tab:tier2summary}\\
+  \toprule
+  Tier~2 & Risk Role & Example Inputs & Aggregation & Temporal Behavior \\
+  \midrule
+  \endfirsthead
+  \toprule
+  Tier~2 & Risk Role & Example Inputs & Aggregation & Temporal Behavior \\
+  \midrule
+  \endhead
+  CM & Ability to know & telemetry coverage, freshness, integrity, drift detection & weighted sum & optional smoothing \\
+  CS & Consequence of failure & sensitivity, criticality, derived sensitivity, availability impact & weighted sum & slow-moving, change-driven \\
+  TE & Susceptibility to attack & attack surface, exploitability, identity exposure, intel relevance & regularized geometric + EWMA & moderately volatile \\
+  USOM & Ability to act & MTTD, MTTR, MTTP, change safety, throughput, quality checks & weighted sum & event-driven, optional smoothing \\
+  RRAS & Ability to survive & recoverability, redundancy, diversity, provenance, trustworthiness & scalar regularized geometric plus domain projections & slow-moving, structural updates \\
+  \bottomrule
+\end{longtable}
+\endgroup
+\endgroup
+
+\subsection{Illustrative Sub-metric Interfaces}
+The following sub-metric interfaces constitute a baseline implementation profile.
+
+\paragraph{CM examples.}
+Telemetry Coverage, Telemetry Freshness, Telemetry Integrity and Provenance, Audit Log
+Monitoring Coverage, Control-State Drift Detection, Control Update Cadence, and
+Documentation/Procedure Freshness.
+
+\paragraph{CS examples.}
+Direct Data Sensitivity, Mission and Business Criticality, Derived Sensitivity and
+Inference Amplification, and Availability/Integrity Impact.
+
+\paragraph{TE examples.}
+  Attack Surface Exposure, Exploitability Signal, Privilege and Identity Exposure,
+Threat Intelligence Relevance, and Bypass Potential \cite{epss}.
+
+\paragraph{USOM examples.}
+MTTD, MTTR, MTTP, Change Failure Rate, Deployment Throughput and Regularity,
+Preventive Quality Coverage, and Supply Chain Execution Assurance.
+
+\paragraph{RRAS examples.}
+Recoverability Capability, Redundancy and Failover Coverage, Diversity and
+Independence, Dependency Transp. and Provenance, Dependency Trustworthiness, and
+Assured Change Integrity.
+
+\section{Stakeholder Views}
+One of the strengths of the CRPI is that the same underlying model can support distinct
+stakeholder views without changing the governing equations.
+
+\subsection{Board View}
+Boards primarily require a bounded, comprehensible indicator of current posture. The
+primary board-facing output is therefore $CRPI(t)$, optionally accompanied by a concise
+statement of trend and evidence quality.
+
+\subsection{CISO View}
+Security leadership requires decomposition and actionability. The core diagnostic view
+includes:
+\begin{equation}
+  \{D_{\mathrm{eff}}(t),H(t),M(t),R_{\mathrm{inst}}(t),S(t)\},
+\end{equation}
+together with Tier~2 values and coverage indicators. This view supports prioritization,
+investment allocation, and interpretation of whether posture is driven by threat pressure, consequence, weak resilience, slow execution, poor visibility, or persistent unresolved exposure.
+
+\subsection{Engineering and Operations View}
+Engineering and operations teams require sub-metric traceability. Their view is composed
+primarily of Tier~2 measurements, sub-metric trends, missing-data indicators, and
+normalization diagnostics that reveal where operational improvement is most likely to
+reduce posture.
+
+\section{Temporal Behavior and Calibration}
+Cyber risk is non-stationary. Changes in adversary behavior, technology, organizational
+structure, and defensive capability cause posture to evolve continuously rather than at
+assessment boundaries. Time is therefore a first-class component of the CRPI.
+
+Temporal behavior appears at two levels. First, volatile Tier~2 evidence may be smoothed
+using governed estimators such as EWMA. Second, the top-level persistence state $S(t)$
+uses the bounded stock-flow model in Equation~\ref{eq:stock-ode}. The rate parameters
+$\beta$ and $\kappa$ have inverse-time units and the exact interval update explicitly
+uses $\Delta t$; this prevents the meaning of persistence from silently changing when an
+implementation moves from daily to hourly or other reporting cadences.
+
+Calibration is required for longitudinal comparability, but recalibration must not be
+silent. Normalization bounds, $\alpha$, $\varepsilon_X$, consequence-composition weights
+$v_j$, resilience-mitigability factors $\rho_j$, $m_0$, $\beta$, and $\kappa$ are all
+versioned under a named calibration profile.
+
+Each calibration profile should explicitly identify the model/version identifier, declared
+time unit, finite domain set $\mathcal{D}$, consequence weights $v_j$, resilience
+primitive definitions, domain-projection weights $\mathbf{a}_j$, mitigability factors
+$\rho_j$, normalization bounds, smoothing and regularization parameters, evidence
+thresholds, missing-data policy, and temporal-initialization policy. Without the profile
+identifier, longitudinal or cross-organizational comparisons are not interpretable as
+comparisons under the same model instantiation.
+
+\subsection{Calibration Governance}
+At a minimum:
+\begin{itemize}
+  \item calibration profiles must be versioned and identify their time unit;
+  \item historical scores must remain associated with the profile under which they were
+    produced;
+  \item recalibration triggers must be explicit, such as sustained distribution shift,
+    material scope change, major architecture change, instrumentation change, or
+    evidence of validation breakdown;
+  \item composition parameters must be justified by construct semantics or evidence, not
+    by a desire to move the headline score;
+  \item parameter changes must be sensitivity tested against historical and synthetic
+    scenarios before adoption; and
+  \item when profiles change materially, organizations should either preserve the old
+    series or recompute a clearly labeled comparable historical series.
+\end{itemize}
+
+\begin{longtable}{p{0.20\textwidth} p{0.25\textwidth} p{0.43\textwidth}}
+  \caption{Implementation-oriented calibration guidance}
+  \label{tab:calibration-guidance}\\
+  \toprule
+  Parameter & Initial analysis range/profile & Governance interpretation \\
+  \midrule
+  \endfirsthead
+  \toprule
+  Parameter & Initial analysis range/profile & Governance interpretation \\
+  \midrule
+  \endhead
+  $\alpha_{TE}$ & 0.40--0.70 sensitivity range & Higher values react faster; lower values damp noisy threat feeds. \\
+  $\alpha$ for CM/USOM & 0.20--0.50 sensitivity range & Moderate smoothing may reduce reaction to short operational fluctuations. \\
+  $\varepsilon_X$ & 0.01--0.10 sensitivity range & Keep small; select per construct and verify that zero-safety does not over-soften severe weakness. \\
+  $m_0$ & No universal default & Estimate the portion of operational effectiveness demonstrably independent of continuous telemetry; sensitivity test broadly. \\
+  $\rho_j$, $\mathbf{a}_j$ & Domain-specific in $[0,1]$ & $\rho_j$ encodes demonstrated consequence mitigability; $\mathbf{a}_j$ governs the resilience-primitive projection for each domain, not risk appetite. \\
+  $\beta,\kappa$ & Positive rates in declared time units & Fit or backtest against observed accumulation and remediation dynamics; do not copy values across cadences without unit conversion. \\
+  Normalization bounds & Annual and event-driven review & Reassess after material scope, telemetry, architecture, or adversary changes. \\
+  Evidence gates & Profile-defined $\bar C_{\mathrm{CRPI}}$, $C_{\min}$, and $C_{\mathrm{gov}}$ thresholds & Aggregate, minimum, and governing-path coverage must pass before a high-coverage label is allowed. \\
+  AI-era review & Quarterly or after material threat shift & Shorten review windows when evidence shows discovery-to-exploitation dynamics have changed. \\
+  \bottomrule
+\end{longtable}
+
+\section{Worked Example}
+This section exercises the intended behavior of the revised governing equations under a
+small synthetic sequence. It is an illustrative calculation, not empirical validation.
+
+Assume five equal intervals with $\Delta t=1$. To keep the table compact, assume the
+consequence composition remains stable and, for this compact special case, each
+domain-applicable resilience projection equals the scalar report
+$R_j(t)=RRAS(t)$. The consequence-weighted resilience mitigability is
+$\bar\rho=0.60$, making the domain equation reduce to
+\begin{equation}
+  D_{\mathrm{eff}}(t)=CS(t)\left[1-0.60\,RRAS(t)\right].
+\end{equation}
+Let
+\begin{equation}
+  m_0=0.25,\qquad \beta=0.30,\qquad \kappa=0.80.
+\end{equation}
+These are illustration parameters, not recommended universal defaults.
+
+At $t_0$ let
+\begin{equation}
+  TE=0.60,\quad CS=0.80,\quad RRAS=0.40,\quad CM=0.50,\quad USOM=0.40.
+\end{equation}
+Then
+\begin{align}
+  D_{\mathrm{eff}}(0) &=0.80(1-0.60\cdot0.40)=0.608,\\
+  H(0)&=0.60\cdot0.608=0.365,\\
+  M(0)&=0.40[0.25+0.75(0.50)]=0.250,\\
+  R_{\mathrm{inst}}(0)&=0.365(1-0.250)=0.274.
+\end{align}
+Because no prior state is reconstructed in this illustrative sequence, use the bounded
+state-neutral initialization $S(0)=R_{\mathrm{inst}}(0)=0.274$, giving $CRPI(0)=0.274$.
+This initialization makes no assertion about unresolved exposure before $t_0$; the
+illustrative outputs therefore carry reduced temporal-history confidence until
+sufficient observation history accumulates or prior state is reconstructed.
+
+At $t_1$, threat exposure rises to $TE=0.80$ while the other Tier~2 scores remain
+unchanged. Instantaneous residual posture rises to $0.365$. The persistence stock also
+rises, but more gradually, to $0.295$, so the current condition controls the executive
+envelope.
+
+At $t_2$, monitoring and operational execution improve to $CM=0.75$ and $USOM=0.70$.
+Effective mitigation rises to $M=0.569$, reducing instantaneous residual posture to
+$0.189$. Persistent stock remains higher at $0.221$, so the executive envelope does not
+immediately forget the recent period of elevated unresolved exposure.
+
+By $t_3$ and $t_4$, threat exposure moderates and resilience improves. Instantaneous
+posture continues to fall while the persistent channel dissipates more gradually.
+
+\subsection{Expanded Time-Series View}
+\begingroup
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{c c c c c c c c c c c c}
+  \caption{Worked example over time using the revised governing model}
+  \label{tab:worked-timeseries}\\
+  \toprule
+  $t$ & $TE$ & $CS$ & $RRAS$ & $CM$ & $USOM$ & $D_{\mathrm{eff}}$ & $H$ & $M$ & $R_{\mathrm{inst}}$ & $S$ & $CRPI$ \\
+  \midrule
+  \endfirsthead
+  \toprule
+  $t$ & $TE$ & $CS$ & $RRAS$ & $CM$ & $USOM$ & $D_{\mathrm{eff}}$ & $H$ & $M$ & $R_{\mathrm{inst}}$ & $S$ & $CRPI$ \\
+  \midrule
+  \endhead
+  $t_0$ & 0.600 & 0.800 & 0.400 & 0.500 & 0.400 & 0.608 & 0.365 & 0.250 & 0.274 & 0.274 & 0.274 \\
+  $t_1$ & 0.800 & 0.800 & 0.400 & 0.500 & 0.400 & 0.608 & 0.486 & 0.250 & 0.365 & 0.295 & 0.365 \\
+  $t_2$ & 0.750 & 0.800 & 0.450 & 0.750 & 0.700 & 0.584 & 0.438 & 0.569 & 0.189 & 0.221 & 0.221 \\
+  $t_3$ & 0.650 & 0.780 & 0.550 & 0.820 & 0.780 & 0.523 & 0.340 & 0.675 & 0.111 & 0.150 & 0.150 \\
+  $t_4$ & 0.550 & 0.750 & 0.650 & 0.880 & 0.840 & 0.458 & 0.252 & 0.764 & 0.059 & 0.093 & 0.093 \\
+  \bottomrule
+\end{longtable}
+\endgroup
+
+\subsection{Interpretation of Model Behavior}
+Four behaviors are visible. First, higher TE immediately increases $H$ and
+$R_{\mathrm{inst}}$. Second, stronger CM improves mitigation only through its effect on
+operational execution; CM alone is not modeled as remediation. Third, stronger
+domain-applicable resilience projections $R_j$ reduce only the consequence that the
+governed $\rho_j$ terms identify as mitigable.
+Fourth, $S(t)$ retains recent unresolved exposure after instantaneous posture improves
+and then dissipates under stronger mitigation.
+
+The stock-flow boundary cases are also concrete. If $R_{\mathrm{inst}}>0$ and $M=0$,
+$S$ monotonically approaches one. If $R_{\mathrm{inst}}=0$ and $M>0$, $S$ decays toward
+zero. If both are zero, the stock remains unchanged. These are the intended semantics
+of unresolved exposure accumulation and remediation.
+
+\subsection{Figures}
+Figure~\ref{fig:tier2-trajectories} shows the Tier~2 input trajectories. Figure~\ref{fig:state-trajectories}
+shows hazard, effective mitigation, and persistent stock. Figure~\ref{fig:residual-trajectories}
+shows instantaneous residual posture, persistent exposure, and the executive envelope.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[
+        width=0.95\linewidth,
+        height=0.34\textheight,
+        xlabel={Time step $t$}, ylabel={Tier~2 score},
+        xmin=0, xmax=4, ymin=0, ymax=1,
+        xtick={0,1,2,3,4}, grid=major,
+        legend style={font=\small, at={(0.5,-0.2)}, anchor=north, legend columns=5}
+      ]
+      \addplot+[mark=*] coordinates {(0,0.600) (1,0.800) (2,0.750) (3,0.650) (4,0.550)}; \addlegendentry{$TE$}
+      \addplot+[mark=square*] coordinates {(0,0.800) (1,0.800) (2,0.800) (3,0.780) (4,0.750)}; \addlegendentry{$CS$}
+      \addplot+[mark=triangle*] coordinates {(0,0.400) (1,0.400) (2,0.450) (3,0.550) (4,0.650)}; \addlegendentry{$RRAS$}
+      \addplot+[mark=diamond*] coordinates {(0,0.500) (1,0.500) (2,0.750) (3,0.820) (4,0.880)}; \addlegendentry{$CM$}
+      \addplot+[mark=otimes*] coordinates {(0,0.400) (1,0.400) (2,0.700) (3,0.780) (4,0.840)}; \addlegendentry{$USOM$}
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Tier~2 input trajectories in the revised worked example.}
+  \label{fig:tier2-trajectories}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[
+        width=0.95\linewidth,
+        height=0.34\textheight,
+        xlabel={Time step $t$}, ylabel={Model state/value},
+        xmin=0, xmax=4, ymin=0, ymax=0.85,
+        xtick={0,1,2,3,4}, grid=major,
+        legend style={font=\small, at={(0.5,-0.2)}, anchor=north, legend columns=3}
+      ]
+      \addplot+[mark=*] coordinates {(0,0.365) (1,0.486) (2,0.438) (3,0.340) (4,0.252)}; \addlegendentry{$H(t)$}
+      \addplot+[mark=square*] coordinates {(0,0.250) (1,0.250) (2,0.569) (3,0.675) (4,0.764)}; \addlegendentry{$M(t)$}
+      \addplot+[mark=triangle*] coordinates {(0,0.274) (1,0.295) (2,0.221) (3,0.150) (4,0.093)}; \addlegendentry{$S(t)$}
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Hazard pressure, effective mitigation, and persistent unresolved exposure.}
+  \label{fig:state-trajectories}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[
+        width=0.95\linewidth,
+        height=0.34\textheight,
+        xlabel={Time step $t$}, ylabel={Residual posture score},
+        xmin=0, xmax=4, ymin=0, ymax=0.42,
+        xtick={0,1,2,3,4}, grid=major,
+        legend style={font=\small, at={(0.5,-0.2)}, anchor=north, legend columns=3}
+      ]
+      \addplot+[mark=*] coordinates {(0,0.274) (1,0.365) (2,0.189) (3,0.111) (4,0.059)}; \addlegendentry{$R_{\mathrm{inst}}(t)$}
+      \addplot+[mark=square*] coordinates {(0,0.274) (1,0.295) (2,0.221) (3,0.150) (4,0.093)}; \addlegendentry{$S(t)$}
+      \addplot+[mark=triangle*] coordinates {(0,0.274) (1,0.365) (2,0.221) (3,0.150) (4,0.093)}; \addlegendentry{$CRPI(t)$}
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Instantaneous residual posture, persistent exposure, and the CRPI envelope.}
+  \label{fig:residual-trajectories}
+\end{figure}
+
+\FloatBarrier
+\section{Verification, Validation, and Research Discipline}
+CRPI is a formally specified operational posture model for which selected mathematical
+invariants and directional properties are analytically established under stated
+assumptions. It is not yet empirically validated. The present paper records those
+boundedness, directional, and persistence properties in Appendix~\ref{app:analytical-properties}
+and exercises them with synthetic checks. Empirical validation requires historical or
+prospective organizational data and comparison against observed outcomes and simpler
+baselines.
+
+\subsection{Mathematical Verification Objectives}
+Before empirical deployment, an implementation should reproduce the following
+properties:
+\begin{itemize}
+  \item \textbf{Boundedness}: all Tier~2 constructs, $D_{\mathrm{eff}}$, $H$, $M$,
+    $R_{\mathrm{inst}}$, $S$, and $CRPI$ remain in $[0,1]$ under valid inputs.
+  \item \textbf{Directional correctness}: higher TE or consequence increases posture
+    holding other terms constant; stronger effective mitigation lowers
+    $R_{\mathrm{inst}}$; resilience lowers only consequence classes to which $\rho_j$
+    assigns mitigability.
+  \item \textbf{Zero-safe aggregation}: one zero-valued component with positive weight
+    must not force the entire construct to zero; all-zero inputs must return zero and
+    all-one inputs must return one. Components with zero weight have no directional
+    influence by construction.
+  \item \textbf{Temporal coherence}: persistent stock accumulates under unresolved
+    residual exposure and dissipates under effective mitigation without leaving
+    $[0,1]$.
+  \item \textbf{Cadence consistency}: changing the reporting interval while preserving
+    the same physical rate parameters and elapsed time should not materially change the
+    modeled persistence trajectory.
+  \item \textbf{Decomposability}: every change in $CRPI(t)$ must be traceable through
+    $R_{\mathrm{inst}}$, $S$, $H$, $M$, Tier~2 constructs, and underlying evidence.
+\end{itemize}
+
+\subsection{Simulation-Based Stress Testing}
+Synthetic simulations should include at least:
+\begin{itemize}
+  \item \textbf{Threat surge}: rapid increase in TE with stable mitigation;
+  \item \textbf{Operational improvement}: increase in CM and/or USOM with explicit
+    separation of observability and execution effects;
+  \item \textbf{Consequence-specific resilience}: increase domain-applicable
+    projections $R_j$ while varying $\rho_j$ to verify that confidentiality-like
+    irreversible consequence is not incorrectly erased;
+  \item \textbf{Delayed remediation}: sustained $R_{\mathrm{inst}}>0$ with weak $M$ to
+    verify accumulation of $S$;
+  \item \textbf{Recovery}: $R_{\mathrm{inst}}\rightarrow0$ with strong $M$ to verify
+    controlled dissipation of $S$; and
+  \item \textbf{Missing evidence}: remove one entire Tier~2 or governing-path evidence
+    family to verify that coverage gates prevent a high-coverage label.
+\end{itemize}
+
+Parameter sweeps should cover $\varepsilon_X$, $m_0$, $\rho_j$, $\beta$, $\kappa$,
+$\alpha$, composition weights, normalization bounds, and reporting cadence. Monte Carlo
+methods may propagate input uncertainty where defensible input distributions or ranges
+exist.
+
+\subsection{Illustrative One-Step Sensitivity Check}
+Using the $t_0$ worked-example profile with $\bar\rho=0.60$ and $m_0=0.25$, the baseline
+is $D_{\mathrm{eff}}=0.608$, $H=0.365$, $M=0.250$, and
+$R_{\mathrm{inst}}=0.274$. Table~\ref{tab:sensitivity-check} perturbs selected inputs.
+This verifies direction only; it is not evidence that the parameter magnitudes are
+empirically calibrated.
+
+\begin{longtable}{p{0.30\textwidth} c c c c}
+  \caption{One-step sensitivity check for directional correctness}
+  \label{tab:sensitivity-check}\\
+  \toprule
+  Scenario & $D_{\mathrm{eff}}$ & $H$ & $M$ & $R_{\mathrm{inst}}$ \\
+  \midrule
+  \endfirsthead
+  \toprule
+  Scenario & $D_{\mathrm{eff}}$ & $H$ & $M$ & $R_{\mathrm{inst}}$ \\
+  \midrule
+  \endhead
+  Baseline & 0.608 & 0.365 & 0.250 & 0.274 \\
+  Threat surge: $TE=0.80$ & 0.608 & 0.486 & 0.250 & 0.365 \\
+  Consequence rise: $CS=0.95$ & 0.722 & 0.433 & 0.250 & 0.325 \\
+  Domain resilience degradation: $R_j=0.20$ (special-case $RRAS=0.20$) & 0.704 & 0.422 & 0.250 & 0.317 \\
+  Monitoring improvement: $CM=0.75$ & 0.608 & 0.365 & 0.325 & 0.246 \\
+  Operations improvement: $USOM=0.70$ & 0.608 & 0.365 & 0.438 & 0.205 \\
+  Balanced mitigation: $CM=0.75,USOM=0.70$ & 0.608 & 0.365 & 0.569 & 0.157 \\
+  Domain resilience improvement: $R_j=0.65$ (special-case $RRAS=0.65$) & 0.488 & 0.293 & 0.250 & 0.220 \\
+  \bottomrule
+\end{longtable}
+
+\subsection{Empirical Backtesting}
+Where historical data is available, CRPI outputs should be compared with outcomes such
+as incident frequency and severity, recovery duration, realized business impact,
+near-miss events, control failures, and remediation performance. The goal is not exact
+prediction. Evaluation should test correlation, discrimination, calibration stability,
+and explanatory value under the stated posture interpretation.
+
+Where possible, the CRPI should also be benchmarked against simpler alternatives such as
+a governed additive posture index and against scenario/probability-oriented approaches
+when comparable data exists. The research question is whether the additional structure
+and persistence state provide explanatory or decision value beyond a simpler score.
+
+\subsection{Implementation via Statistical Tooling}
+Statistical environments such as \texttt{R} or Python may be used to simulate time
+series, compute the governing model, perform parameter sweeps, propagate uncertainty,
+backtest calibration profiles, and reproduce all tables and figures. A publication
+artifact should include machine-readable metric definitions and executable reference
+calculations.
+
+\subsection{Evaluation Outputs}
+Validation should produce time-series plots, boundary-condition tests, parameter
+sensitivity analyses, uncertainty summaries, scenario comparisons, empirical backtest
+results where data is available, baseline comparisons, and versioned calibration
+profiles. Until those empirical studies are completed, CRPI should be described as a
+formally specified operational posture model for which selected mathematical invariants
+and directional properties are analytically established under stated assumptions. It is
+not yet empirically validated and should not be described as a validated predictive
+cyber-risk metric.
+
+\section{Related Work and Positioning}
+Prior cyber-risk scholarship spans governance, financial quantification, vulnerability
+prioritization, probabilistic dynamic risk assessment, architecture-aware analysis,
+resilience, and security measurement.
+
+Governance frameworks including NIST CSF, NIST SP 800-30/39, NIST IR 8286, ISO/IEC
+27001, ISO/IEC 27005, ISO 31000, and CIS Controls are strong at defining risk processes,
+accountability, control expectations, and assurance lifecycles
+\cite{nist-csf,nist80030,nist80039,nistir8286r1,iso27001,iso27005,iso31000,cis-controls}.
+They generally do not prescribe one continuously updated, bounded organizational
+posture equation. CRPI is positioned as a framework-compatible mathematical layer above
+such governance systems, not a replacement for them.
+
+Quantitative cyber-risk approaches including FAIR and economics-oriented literature
+provide rigorous reasoning about loss-event frequency, magnitude, uncertainty, and
+investment trade-offs \cite{fair-book,openfair-bok,gordon-loeb,biener-eling-wirfs,he-jin-li}.
+CRPI addresses a different question. It does not estimate financial loss or breach
+probability; it targets a continuously updateable operational posture signal that may
+serve as evidence for downstream scenario or financial analysis.
+
+Vulnerability and exploitability approaches including CVSS, EPSS, CISA KEV, and SSVC
+provide actionable signals at vulnerability granularity
+\cite{cvss31,cvss40,epss,cisa-kev,cisa-ssvc}. CRPI treats such values as possible TE
+evidence rather than complete organization-level posture measures.
+
+Dynamic cyber-risk research already includes Bayesian networks, Markov models, attack
+graphs, simulation, and intelligence-driven approaches. Cheimonidis and Rantos propose
+a proactive dynamic methodology using open-source evidence, EPSS, and a Bayesian
+network to estimate attack success probability in a SCADA use case
+\cite{cheimonidis-rantos-2025}. More recent DRIMAX work combines intelligence,
+context-aware scoring, attack paths, and dynamic assessment in critical environments
+\cite{drimax-2026}. These approaches reinforce the importance of time-varying evidence
+and contextual dependencies while clarifying CRPI's narrower contribution: CRPI is not a
+competing attack-probability engine. It is a telemetry-compatible, framework-agnostic,
+decomposable operational posture index that separates instantaneous residual posture
+from persistent unresolved exposure and supplies a governed measurement interface.
+
+Architecture and critical-infrastructure research further emphasizes dependency
+structure, cascading impact, and rigorous validation
+\cite{jiang-jeusfeld-mosaad-oo,ci-resilience-review}. Resilience and survivability
+literature emphasizes continuity, recoverability, dependency assurance, and security
+categorization \cite{fips199,nist80039,iso27001,ci-resilience-review}. CRPI incorporates
+resilience explicitly but constrains its effect through consequence-specific
+mitigability factors rather than assuming that recoverability can erase all harm.
+
+Security measurement research, including NIST SP 800-55, contributes disciplined
+methods for measure definition, normalization governance, data quality, and repeatable
+measurement operations \cite{nist80055v1,nist80055v2}. CRPI adopts this measurement
+orientation and adds a stable state model, explicit zero-safe aggregation, evidence
+coverage gates, and temporal persistence. The intended contribution is therefore the
+combination of operational telemetry compatibility, mathematical decomposability,
+governed adaptation, and stateful posture representation in a single bounded index.
+
+\section{Assumptions and Limitations}
+The CRPI is mathematically specified but not assumption-free.
+
+First, normalization quality depends on calibration quality. Poorly chosen bounds can
+degrade interpretability even if equation implementation is correct.
+
+Second, several inputs are proxies rather than direct observables. Exploitability,
+derived sensitivity, threat relevance, dependency trustworthiness, and resilience
+applicability may rely on modeled or aggregated evidence rather than ground truth.
+
+Third, composition and calibration parameters remain judgment-bearing quantities.
+Regularization $\varepsilon_X$, consequence weights $v_j$, resilience mitigability
+$\rho_j$, the observability-independent baseline $m_0$, smoothing, and persistence rates
+must be empirically reviewed. CRPI reduces subjectivity by localizing and governing these
+choices; it does not eliminate subjectivity.
+
+Fourth, the consequence-domain model assumes that a finite governed set
+$\mathcal{D}$ can adequately represent the material forms of harm in scope. Poor domain
+definition or double-counting across domains can invalidate $D_{\mathrm{eff}}$.
+
+Fifth, evidence completeness materially affects interpretation. Aggregate coverage
+alone is insufficient, which is why the model reports $C_{\min}$ as a hard diagnostic.
+Even full coverage does not imply low uncertainty if the observed measures themselves
+are noisy or weak proxies.
+
+Sixth, the stock-flow model is an abstraction. The functional form in
+Equation~\ref{eq:stock-ode} provides desirable bounded behavior, but $\beta$ and
+$\kappa$ require empirical calibration. Different organizations may exhibit different
+accumulation and remediation dynamics.
+
+Seventh, the CRPI measures operational posture rather than direct financial loss or
+breach probability. It can inform enterprise risk management but does not replace
+scenario-based loss quantification \cite{gordon-loeb,biener-eling-wirfs}.
+
+Eighth, AI-era public data cannot isolate an AI treatment effect. CVE publication volume
+is influenced by reporting-system growth, including expansion of the CNA ecosystem, and
+KEV is a curated catalog with its own inclusion and collection processes. The public
+illustration is therefore descriptive and mechanistic: it demonstrates how changing
+signals propagate through CRPI, not why those signals changed.
+
+\subsection{Threats to Validity}
+The primary threats to validity are measurement validity, construct validity,
+parameter-identification validity, external validity, and incentive distortion.
+Measurement validity is threatened by incomplete, stale, or biased telemetry.
+Construct validity is threatened when evidence is assigned to the wrong Tier~2 or
+consequence domain, when a metric is double-counted, or when an aggregation operator
+does not match construct semantics. Parameter-identification validity is threatened
+when values are chosen from convenience rather than data or defensible expert
+elicitation. External validity is threatened when calibration profiles are transferred
+between organizations or environments without recalibration. Incentive distortion is
+threatened when teams optimize visible sub-metrics instead of reducing actual exposure.
+
+The CRPI mitigates these risks through explicit evidence ownership, coverage gates,
+versioned definitions and parameters, uncertainty reporting, outcome-informed
+recalibration, and end-to-end decomposition. These mechanisms make model risk
+observable and governable; they do not eliminate it.
+
+\section{Governance, Adaptation, and Longevity}
+For a posture model to remain useful over long time horizons, adaptation must be
+explicit, controlled, and auditable. CRPI therefore separates stable equation form from
+versioned measurement and calibration profiles.
+
+At a minimum, implementations should enforce:
+\begin{itemize}
+  \item \textbf{Explicit Evidence Ownership}: each primitive measurement is assigned to
+    one primary construct/domain unless a documented transformation prevents
+    double-counting;
+  \item \textbf{Versioned Metric Definitions}: sub-metric definitions, evidence sources,
+    normalization functions, and consequence-domain mappings are versioned;
+  \item \textbf{Versioned Parameters}: $\alpha$, $\varepsilon_X$, $v_j$, $\rho_j$,
+    $m_0$, $\beta$, $\kappa$, coverage gates, and time units are managed as named
+    calibration profiles;
+  \item \textbf{Outcome-Informed Recalibration}: incidents, near misses, recovery
+    performance, validation failures, and distribution shifts inform recalibration;
+  \item \textbf{Sensitivity Review}: proposed parameter changes are evaluated against
+    representative scenarios and historical data before adoption;
+  \item \textbf{End-to-End Traceability}: every CRPI value can be decomposed into
+    $R_{\mathrm{inst}}$, $S$, $H$, $M$, $D_{\mathrm{eff}}$, Tier~2 constructs, domain
+    components, and underlying measurements; and
+  \item \textbf{Comparability Controls}: historical outputs remain tied to their
+    calibration profile, and recalculated historical series are explicitly labeled.
+\end{itemize}
+
+These controls allow telemetry, organizational context, technologies, and threat
+environments to evolve without silently changing what the governing model means. The
+goal is controlled adaptation rather than a claim of universal coefficients
+\cite{nist80039,nistir8286r1,iso31000}. This is particularly important when AI-related
+or other rapid environmental changes shorten the useful life of historical calibration
+assumptions \cite{nist-ai-rmf,verizon-dbir}.
+
+\section{Reproducibility and Artifact Availability}
+The accompanying repository contains the manuscript source, an executable dependency-light
+reference implementation of the governing equations, a versioned illustrative calibration
+profile, synthetic non-sensitive scenario data, unit and invariant tests, reference
+calculations, and scripts that reproduce the scenario tables and decomposed outputs. The
+artifact is intended to make equation interpretation, parameterization, coverage
+qualification, and use-case behavior inspectable. It does not contain empirical
+organizational data and does not claim empirical validation.
+
+\section{Conclusion}
+This work presents the Cyber Risk Posture Index as a telemetry-compatible,
+framework-agnostic, decomposable operational posture index for representing cyber risk
+over time. Its contribution is not a universal law of cyber risk or a replacement for
+probability- or loss-based quantification. It is a stable mathematical interface that
+separates current hazard, effective mitigation, instantaneous residual posture, and
+persistent unresolved exposure while preserving traceability to the evidence that
+produced those values.
+
+The revised governing model addresses several important failure modes of simpler
+scoring systems. Regularized geometric aggregation prevents accidental absorbing zeros;
+consequence-specific resilience avoids treating recoverability as universally capable
+of erasing impact; observability modulates operational execution rather than acting as
+remediation by itself; and the bounded stock-flow equation gives persistent exposure an
+explicit accumulation and dissipation mechanism. The top-level CRPI value remains a
+conservative reporting envelope rather than a breach probability.
+
+The model also makes its remaining judgment explicit. Composition weights,
+regularization, resilience mitigability, observability baselines, normalization, and
+temporal rates are governed calibration parameters, not hidden preferences. The
+research claim is therefore narrower but more defensible: CRPI is a formally specified
+operational posture model for which selected mathematical invariants and directional
+properties are analytically established under stated assumptions. It is not yet
+empirically validated. CRPI constrains, localizes, and exposes subjectivity through
+mathematically specified and testable relationships. Empirical backtesting, baseline
+comparison, and parameter identification remain required before any stronger empirical
+claim is warranted.
+
+\appendix
+\section{Appendix: Analytical Properties}
+\label{app:analytical-properties}
+
+This appendix records the principal mathematical properties of the governing model
+under its stated assumptions. Let all normalized inputs lie in $[0,1]$, let all
+composition weights be non-negative and sum to one, let $\varepsilon\in(0,1)$, and
+let $\beta,\kappa\geq0$. The results concern boundedness, direction, and temporal
+behavior; they do not establish empirical validity.
+
+\paragraph{Proposition 1 (Regularized aggregation).}
+The operator $\mathcal{G}_{\varepsilon}$ maps $[0,1]^n$ to $[0,1]$, preserves the
+all-zero and all-one endpoints, and is non-decreasing in each input with positive
+weight.
+
+\paragraph{Proof.}
+Write $y_i=\varepsilon+(1-\varepsilon)x_i$. Then $y_i\in[\varepsilon,1]$ and the
+weighted geometric product $P=\prod_i y_i^{w_i}$ lies in $[\varepsilon,1]$ because
+$\sum_iw_i=1$. Therefore $(P-\varepsilon)/(1-\varepsilon)\in[0,1]$. If all
+$x_i=0$, then $P=\varepsilon$ and the result is zero; if all $x_i=1$, then $P=1$
+and the result is one. For $w_k>0$,
+\begin{equation}
+  \frac{\partial \mathcal{G}_{\varepsilon}}{\partial x_k}
+  =\frac{w_kP}{\varepsilon+(1-\varepsilon)x_k}\geq0,
+\end{equation}
+which proves monotonicity. $\square$
+
+\paragraph{Proposition 2 (Bounded consequence, hazard, and mitigation).}
+Under valid inputs, $D_{\mathrm{eff}}$, $H$, $M$, and $R_{\mathrm{inst}}$ all lie in
+$[0,1]$.
+
+\paragraph{Proof.}
+Each factor $1-\rho_jR_j$ lies in $[0,1]$, so each term
+$v_jD_j(1-\rho_jR_j)$ lies in $[0,v_j]$. Summing gives
+$D_{\mathrm{eff}}\in[0,1]$. The product $H=TE\,D_{\mathrm{eff}}$ is therefore
+bounded. The quantity $m_0+(1-m_0)CM$ is a convex combination of $m_0$ and one,
+so $M=USOM[m_0+(1-m_0)CM]\in[0,1]$. Finally,
+$R_{\mathrm{inst}}=H(1-M)\in[0,1]$. $\square$
+
+\paragraph{Proposition 3 (Persistence invariance and equilibrium).}
+For $S(t_0)\in[0,1]$, the stock-flow model preserves $S(t)\in[0,1]$. Under constant
+$R_{\mathrm{inst}}$ and $M$, if $q=\beta R_{\mathrm{inst}}+\kappa M>0$, the unique
+equilibrium is $S^*=\beta R_{\mathrm{inst}}/q$ and the exact solution converges to it.
+
+\paragraph{Proof.}
+Let $a=\beta R_{\mathrm{inst}}$ and $b=\kappa M$. At $S=0$, the vector field is
+$a\geq0$; at $S=1$, it is $-b\leq0$. Thus the interval boundaries point inward.
+When $q=a+b>0$, the ODE is $\dot S=a-qS$, whose unique equilibrium is $S^*=a/q$.
+The interval update is
+\begin{equation}
+  S(t+\Delta t)=S^*+[S(t)-S^*]e^{-q\Delta t}.
+\end{equation}
+It is a convex combination of $S(t)$ and $S^*$, both in $[0,1]$, and the exponential
+factor tends to zero as time increases. If $q=0$, then $a=b=0$ and the stock remains
+constant. $\square$
+
+\paragraph{Proposition 4 (Cadence consistency).}
+For constant interval inputs, applying the exact update over adjacent intervals is
+equivalent to applying it once over their combined duration.
+
+\paragraph{Proof.}
+With constant $S^*$ and $q$, applying durations $\Delta t_1$ and $\Delta t_2$ gives
+\begin{equation}
+  S^*+\left[S^*+(S-S^*)e^{-q\Delta t_1}-S^*\right]e^{-q\Delta t_2}
+  =S^*+(S-S^*)e^{-q(\Delta t_1+\Delta t_2)},
+\end{equation}
+which is the single combined-interval update. $\square$
+
+\paragraph{Proposition 5 (Directional sensitivity).}
+Holding other valid terms fixed, $R_{\mathrm{inst}}$ is non-decreasing in $TE$ and
+each $D_j$, and non-increasing in each domain projection $R_j$, $USOM$, and $CM$.
+
+\paragraph{Proof.}
+The partial derivatives of effective consequence with respect to $D_j$ and $R_j$ are
+$v_j(1-\rho_jR_j)\geq0$ and $-v_jD_j\rho_j\leq0$, respectively. Since
+$H=TE\,D_{\mathrm{eff}}$, its direction follows. Also,
+\begin{equation}
+  \frac{\partial M}{\partial USOM}=m_0+(1-m_0)CM\geq0,
+  \qquad
+  \frac{\partial M}{\partial CM}=USOM(1-m_0)\geq0.
+\end{equation}
+Because $R_{\mathrm{inst}}=H(1-M)$, increasing either mitigation input cannot
+increase instantaneous residual posture. Strict inequalities require non-degenerate
+values for the relevant multiplicative factors. $\square$
+
+\paragraph{Proposition 6 (CRPI boundedness and envelope switching).}
+If $R_{\mathrm{inst}}(t),S(t)\in[0,1]$, then
+$CRPI(t)=\max(R_{\mathrm{inst}}(t),S(t))\in[0,1]$. The envelope is non-decreasing
+in each component and is non-differentiable on the switching boundary
+$R_{\mathrm{inst}}(t)=S(t)$. The boundary is a reporting characteristic, not a defect;
+gradient-based calibration should operate on the underlying differentiable components
+or use an explicitly governed smooth surrogate rather than silently treating the maximum
+as differentiable.
+
+\paragraph{Proof.}
+The maximum of two values in $[0,1]$ is in $[0,1]$. If either component increases while
+the other is held fixed, their maximum cannot decrease. The two affine branches have
+different gradients at $R_{\mathrm{inst}}=S$, so the maximum is not differentiable there.
+$\square$
+
+\section{Appendix: Sub-metric Measurement Detail}
+\label{app:submetric-detail}
+
+The detailed row-level measurement specifications referenced in the Measurement Specification section should be
+provided as supplementary material or an implementation artifact. Formula expressions
+should use the common normalization conventions defined there, where $N_+(x)$
+denotes higher-is-better normalization and $N_-(x)$ denotes lower-is-better
+normalization.
+
+\subsection{Supplementary Measurement Tables}
+For publication, the full row-level sub-metric measurement tables should be maintained
+as supplementary material or an implementation artifact rather than forced into the
+main manuscript. This avoids reducing readability of the main article while preserving
+reproducibility for implementers. The supplementary measurement artifact should include,
+for each baseline sub-metric, the following fields: construct owner, formula or
+normalization direction, evidence source, expected cadence, missing-data policy,
+normalization bounds, calibration profile, and boundary notes.
+
+The baseline supplementary table set should contain the following construct and consequence groups:
+\begin{itemize}
+  \item \textbf{CM}: telemetry coverage, freshness, integrity, audit-log coverage,
+  control-state drift detection, control update cadence, and procedure freshness.
+  \item \textbf{CS}: consequence-domain mappings for confidentiality/sensitivity,
+  integrity/mission, and availability/continuity, including direct and derived
+  sensitivity and business criticality.
+  \item \textbf{TE}: attack-surface exposure, exploitability signal,
+  privilege/identity exposure, threat-intelligence relevance, and control-bypass
+  potential.
+  \item \textbf{USOM}: MTTD, MTTR, MTTP, change failure rate, deployment regularity,
+  preventive quality coverage, and supply-chain execution assurance.
+  \item \textbf{RRAS}: recoverability, redundancy/failover, diversity, dependency
+  transparency, dependency trust, and assured change integrity.
+\end{itemize}
+
+A publication artifact should additionally include machine-readable definitions for
+$N_+(x)$ and $N_-(x)$, the raw-to-normalized bounds $(L,U)$, the governing parameters
+$(\varepsilon_X,v_j,\rho_j,\mathbf{a}_j,m_0,\beta,\kappa,\alpha)$, the declared time unit,
+the domain-projection mappings used to construct $R_j$, and a version identifier for
+each calibration profile. This preserves the paper's traceability requirements without
+requiring dense implementation tables to consume main-paper space.
+
+
+\section{Venue Formatting Note}
+This manuscript is currently formatted as a standalone article for review and model
+development. Before submission, the paper should be converted to the target venue's
+required template, bibliography style, page limits, figure-placement rules, appendix
+policy, and artifact-availability requirements. If page limits are strict, the appendix
+measurement tables are suitable candidates for supplementary material while the main
+paper retains the equations, validation summary, and interpretation guidance.
+
+\begin{thebibliography}{99}
+
+  \bibitem{nist-csf}
+  National Institute of Standards and Technology (NIST),
+  \emph{The NIST Cybersecurity Framework (CSF) 2.0},
+  NIST, 2024.
+
+  \bibitem{nist80030}
+  National Institute of Standards and Technology (NIST),
+  \emph{Guide for Conducting Risk Assessments},
+  NIST Special Publication 800-30 Revision 1, 2012.
+
+  \bibitem{nist80039}
+  National Institute of Standards and Technology (NIST),
+  \emph{Managing Information Security Risk: Organization, Mission, and Information System View},
+  NIST Special Publication 800-39, 2011.
+
+  \bibitem{fips199}
+  National Institute of Standards and Technology (NIST),
+  \emph{Standards for Security Categorization of Federal Information and Information Systems},
+  FIPS Publication 199, 2004.
+
+  \bibitem{nistir8286r1}
+  National Institute of Standards and Technology (NIST),
+  \emph{Integrating Cybersecurity and Enterprise Risk Management (ERM)},
+  NIST IR 8286 Revision 1, 2025.
+
+  \bibitem{iso27001}
+  International Organization for Standardization and International Electrotechnical Commission (ISO/IEC),
+  \emph{ISO/IEC 27001:2022 Information security, cybersecurity and privacy protection --- Information security management systems --- Requirements},
+  ISO/IEC, 2022.
+
+  \bibitem{iso27005}
+  International Organization for Standardization and International Electrotechnical Commission (ISO/IEC),
+  \emph{ISO/IEC 27005:2022 Information security, cybersecurity and privacy protection --- Guidance on managing information security risks},
+  ISO/IEC, 2022.
+
+  \bibitem{iso31000}
+  International Organization for Standardization,
+  \emph{ISO 31000:2018 Risk management --- Guidelines},
+  ISO, 2018.
+
+  \bibitem{cis-controls}
+  Center for Internet Security,
+  \emph{CIS Critical Security Controls v8},
+  CIS, 2021.
+
+  \bibitem{fair-book}
+  Jack Freund and Jack Jones,
+  \emph{Measuring and Managing Information Risk: A FAIR Approach},
+  Butterworth-Heinemann, 2014.
+
+  \bibitem{cvss31}
+  FIRST,
+  \emph{Common Vulnerability Scoring System v3.1: Specification Document},
+  Forum of Incident Response and Security Teams, 2019.
+
+  \bibitem{cvss40}
+  FIRST,
+  \emph{Common Vulnerability Scoring System v4.0: Specification Document},
+  Forum of Incident Response and Security Teams, 2023.
+
+  \bibitem{cve-metrics}
+  CVE Program,
+  \emph{CVE Program Metrics},
+  Common Vulnerabilities and Exposures, 2026.
+
+  \bibitem{epss}
+  FIRST,
+  \emph{Exploit Prediction Scoring System (EPSS)},
+  Forum of Incident Response and Security Teams, 2025.
+
+  \bibitem{cisa-kev}
+  Cybersecurity and Infrastructure Security Agency (CISA),
+  \emph{Known Exploited Vulnerabilities Catalog},
+  CISA, 2026.
+
+  \bibitem{cisa-ssvc}
+  Cybersecurity and Infrastructure Security Agency (CISA),
+  \emph{Stakeholder-Specific Vulnerability Categorization (SSVC) Guide},
+  CISA, 2025.
+
+  \bibitem{gordon-loeb}
+  Lawrence A. Gordon and Martin P. Loeb,
+  ``The Economics of Information Security Investment,''
+  \emph{ACM Transactions on Information and System Security},
+  vol. 5, no. 4, pp. 438--457, 2002.
+
+  \bibitem{biener-eling-wirfs}
+  Christian Biener, Martin Eling, and Jan Henrik Wirfs,
+  ``Insurability of Cyber Risk: An Empirical Analysis,''
+  \emph{The Geneva Papers on Risk and Insurance --- Issues and Practice},
+  vol. 40, pp. 131--158, 2015.
+
+  \bibitem{openfair-bok}
+  The Open Group,
+  \emph{Open FAIR Body of Knowledge},
+  The Open Group, 2025.
+
+  \bibitem{he-jin-li}
+  Rong He, Zhuo Jin, and Johnny Siu-Hang Li,
+  ``Modeling and Management of Cyber Risk: A Cross-Disciplinary Review,''
+  \emph{Annals of Actuarial Science}, 2024.
+
+  \bibitem{jiang-jeusfeld-mosaad-oo}
+  Yuning Jiang, Manfred A. Jeusfeld, Michael Mosaad, and Nay Oo,
+  ``Enterprise Architecture Modeling for Cybersecurity Analysis in Critical Infrastructures: A Systematic Literature Review,''
+  \emph{International Journal of Critical Infrastructure Protection},
+  vol. 46, article 100700, 2024.
+
+  \bibitem{ci-resilience-review}
+  Ali Aghazadeh Ardebili, Marianna Lezzi, and Mahdad Pourmadadkar,
+  ``Risk Assessment for Cyber Resilience of Critical Infrastructures: Methods, Governance, and Standards,''
+  \emph{Applied Sciences},
+  vol. 14, no. 24, article 11807, 2024.
+
+  \bibitem{nist80055v1}
+  National Institute of Standards and Technology (NIST),
+  \emph{Security and Privacy Performance Measurement: Volume 1, Identifying and Selecting Measures},
+  NIST Special Publication 800-55 Volume 1, 2024.
+
+  \bibitem{nist80055v2}
+  National Institute of Standards and Technology (NIST),
+  \emph{Security and Privacy Performance Measurement: Volume 2, Developing and Implementing an Information Security Measurement Program},
+  NIST Special Publication 800-55 Volume 2, 2024.
+
+  \bibitem{nist-ai-rmf}
+  National Institute of Standards and Technology (NIST),
+  \emph{AI Risk Management Framework (AI RMF 1.0)},
+  NIST AI 100-1, 2023.
+
+  \bibitem{cisa-ai-roadmap}
+  Cybersecurity and Infrastructure Security Agency (CISA),
+  \emph{2023--2024 CISA Roadmap for Artificial Intelligence},
+  CISA, 2023.
+
+  \bibitem{verizon-dbir}
+  Verizon,
+  \emph{2025 Data Breach Investigations Report},
+  Verizon, 2025.
+
+
+  \bibitem{cisa-kev-data}
+  Cybersecurity and Infrastructure Security Agency (CISA),
+  \emph{Known Exploited Vulnerabilities Data Repository},
+  \url{https://github.com/cisagov/kev-data}, accessed August 31, 2026.
+
+  \bibitem{cheimonidis-rantos-2025}
+  Pavlos Cheimonidis and Konstantinos Rantos,
+  ``A novel proactive and dynamic cyber risk assessment methodology,''
+  \emph{Computers \& Security}, vol. 154, article 104439, 2025,
+  doi:10.1016/j.cose.2025.104439.
+
+  \bibitem{drimax-2026}
+  E. Eleftheriadis, P. Cheimonidis, A. Dimitriadis, K. Rantos, I. Mavridis, and D. Gritzalis,
+  ``DRIMAX: An intelligence-driven and context-aware dynamic risk assessment methodology for cyber security,''
+  \emph{Computers \& Security}, vol. 170, article 105061, 2026,
+  doi:10.1016/j.cose.2026.105061.
+
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,24 @@
+# Generated model outputs
+artifacts/*.csv
+artifacts/*.json
+
+# LaTeX build products
+paper/build/
+paper/*.aux
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.log
+paper/*.out
+paper/*.pdf
+paper/*.synctex.gz
+paper/*.xdv
+
+# Python caches and local environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
