@@ -20,7 +20,7 @@ validation checks.
 
 ## Why this repository exists
 
-Cyber risk changes over time and rarely has one explanatory cause. The paper defines a
+Cyber risk changes over time and rarely has one explanatory driver. The paper defines a
 bounded, decomposable model that keeps five operational constructs distinct:
 
 | Construct | Meaning | Model role |
@@ -29,7 +29,7 @@ bounded, decomposable model that keeps five operational constructs distinct:
 | CS | Consequence Severity | Represents consequence severity across governed domains |
 | TE | Threat Exposure | Represents adversary pressure and exposure conditions |
 | USOM | Unified Security Operations Metric | Represents operational execution and mitigation capability |
-| RRAS | Resilience and Risk Assurance Score | Scalar leadership summary of structural resilience |
+| RRAS | Resilience and Risk Assurance Score | Scalar structural-resilience summary |
 
 The governing path is:
 
@@ -48,12 +48,17 @@ The implementation mirrors the paper’s equations:
 - observability-modulated mitigation: `M = USOM * [m0 + (1 - m0) CM]`
 - instantaneous residual posture: `R_inst = H * (1 - M)`
 - persistent exposure: bounded exact stock-flow update with `beta`, `kappa`, and `dt`
-- executive envelope: `CRPI = max(R_inst, S)`
+- posture envelope: `CRPI = max(R_inst, S)`
 
 Coverage is reported separately from posture. In addition to the Tier-2 aggregate and
 minimum coverage diagnostics, the governing-path gate is
 `C_gov = min(C_TE, C_CM, min_j C_Dj, min_j C_Rj, C_USOM)`. It is an evidence-completeness
 qualification, not statistical confidence, and it never scales CRPI.
+
+CRPI is scope-aware rather than executive-only. The same equations can be evaluated for
+a component, sub-system, system, network, organizational domain, or enterprise. Parent
+scores should use parent-scope evidence where available; a child-score average is a
+separate roll-up and should be labelled as such.
 
 The regularized geometric operator is zero-safe: one weak component contributes a
 multiplicative penalty proportional to its governed weight without turning a non-zero
