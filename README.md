@@ -64,6 +64,10 @@ The regularized geometric operator is zero-safe: one weak component contributes 
 multiplicative penalty proportional to its governed weight without turning a non-zero
 construct into an accidental absorbing zero.
 
+## Formal verification protocol
+
+The reviewable [CRPI Formal Verification Protocol](docs/FORMAL_VERIFICATION_PROTOCOL.md) governs the planned Lean 4/Mathlib work: proof scope and assumptions, trust/axiom audits, prohibition of proof shortcuts, local verification evidence, manuscript-implementation conformance, and release acceptance criteria. **The protocol is published; Lean proofs are not yet implemented or verified.**
+
 ## Reproduce the artifact
 
 The reference implementation uses only the Python standard library. Python 3.10 or
