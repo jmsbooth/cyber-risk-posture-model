@@ -64,7 +64,7 @@ The regularized geometric operator is zero-safe: one weak component contributes 
 multiplicative penalty proportional to its governed weight without turning a non-zero
 construct into an accidental absorbing zero.
 
-## Formal verification — Phases A and B
+## Formal verification — Phases A–C
 
 The [CRPI Formal Verification Protocol](docs/FORMAL_VERIFICATION_PROTOCOL.md) governs the mathematical scope, trusted axioms, version pins, source-to-manuscript correspondence, and release criteria.
 
@@ -72,20 +72,21 @@ The [CRPI Formal Verification Protocol](docs/FORMAL_VERIFICATION_PROTOCOL.md) go
 
 **Phase B — Verified (2026-10-22):** 24 additional Lean 4.24.0 statements for regularized geometric aggregation, zero-weight handling, endpoints, nonabsorbing zeros, and directional properties of the **composed instantaneous residual**. [Archived exact-revision evidence](verification/evidence/e457153dc5ac5b48b432b3a6fec57d492432b1bb/phase-b-summary.json) · [Claim-level status](formal/lean/PHASE_B_STATUS.md) · [Statement review](formal/lean/PHASE_B_STATEMENT_REVIEW.md).
 
-**Phase C — local checks passed; release evidence pending:** The separately developed exact stock-flow and fixed-input cadence theorems have passed an owner-local build and axiom collector but are not merged or marked Verified until their generated records are committed and inspected in [PR #3](https://github.com/jmsbooth/cyber-risk-posture-model/pull/3).
+**Phase C — Verified (2026-10-22):** 21 additional Lean 4.24.0 statements for bounded stock transitions, zero-rate identity, equilibrium, convergence and exact fixed-input cadence consistency. [Archived evidence](verification/evidence/9dab18ba0e7045c28754746a0ba61a2cb1d2e592/phase-c-summary.json) · [Claim-level status](formal/lean/PHASE_C_STATUS.md) · [Statement review](formal/lean/PHASE_C_STATEMENT_REVIEW.md).
 
 The remaining Phase D work includes reference-implementation/numerical conformance. No proof establishes empirical calibration, measurement accuracy, or the complete real-world validity of CRPI.
 
-To reproduce the merged mathematical proofs (with Lean 4.24.0 and the pinned Lake dependencies):
+To reproduce the machine-checked mathematical proofs (with Lean 4.24.0 and pinned Mathlib):
 
 ```bash
 cd formal/lean
 lake build
 lake env lean CRPI/Audit.lean
 lake env lean CRPI/AuditB.lean
+lake env lean CRPI/AuditC.lean
 ```
 
-The PowerShell collectors `scripts/capture_phase_a.ps1` and `scripts/capture_phase_b.ps1` additionally retain exact source revisions, compiler/dependency attestations, full theorem axiom output, and build logs.
+The PowerShell collectors `scripts/capture_phase_a.ps1`, `scripts/capture_phase_b.ps1` and `scripts/capture_phase_c.ps1` retain source revisions, compiler/dependency attestations, theorem axiom output, and build logs. Together the three phases cover **56 conditional theorem declarations**; numerical Python conformance (Phase D) and empirical validity are separate questions.
 
 ## Reproduce the artifact
 
