@@ -3,13 +3,13 @@
 This is the bounded Phase A formalization of the CRPI elementary equations,
 governed by [CRPI-FVP-001](../../docs/FORMAL_VERIFICATION_PROTOCOL.md).
 
-**Status: owner-local Lean build and 11-theorem axiom audit PASSED and were
-archived for source `c75d073`.** The
-[statement-to-manuscript review](PHASE_A_STATEMENT_REVIEW.md) also passed within
-the documented conditional scope. **Release qualification remains pending:** the
-first evidence collector recorded the root-selected Lean 4.35.0 rather than
-asserting the project's pinned Lean 4.24.0. A corrected collector now verifies
-the effective compiler version from inside `formal/lean`.
+**Status: Phase A verified (11 conditional theorem statements).** A complete
+[Lean 4.24.0 machine-check record](../../verification/evidence/b50dea4aaf40cad56c42cff436d450278459efbf/summary.json)
+contains the passing build, axiom audit, exact mathematical source revision,
+toolchain attestation, and pinned dependency set. The
+[theorem-to-manuscript statement review](PHASE_A_STATEMENT_REVIEW.md)
+is complete. See [PROOF_STATUS.md](PROOF_STATUS.md) for the per-claim scope
+and outstanding work.
 
 ## Frozen dependency versions
 
@@ -48,15 +48,18 @@ the exact source revision.
 - `CRPI.Mitigation`: effective mitigation and instantaneous residual bounds.
 - `CRPI.Envelope`: CRPI envelope boundedness and coordinate monotonicity.
 
-These are **candidate Lean declarations**. See
-[PROOF_STATUS.md](PROOF_STATUS.md) for the proof/assumption ledger.
+All 11 listed Phase A theorem statements were machine-checked under their
+declared hypotheses. These proofs establish boundedness properties of the
+elementary equations and conditional envelope monotonicity/boundedness.
 Formal aggregation using the regularized geometric operator belongs to
-Phase B; exact stock-flow transition to Phase C.
+Phase B; exact stock-flow transition belongs to Phase C.
 
-After a clean-source revision is committed, run
-`./scripts/capture_phase_a.ps1` **from the repository root in PowerShell**
-to capture the project-selected Lean version, rebuild, re-audit axioms, and
-record `verification/evidence/<commit>/`. Review and commit the result.
+To reproduce or extend the evidence, execute
+`./scripts/capture_phase_a.ps1` from the repository root in PowerShell
+against the current clean checked-out revision, then review and commit the
+generated `verification/evidence/<commit>/` artifacts.
+The accepted Phase A attestation uses source `b50dea4`; subsequent
+documentation/evidence-only revisions do not modify the checked Lean theorems.
 
 The formalization does **not** yet cover regularized geometric construction,
 the persistence update, or full end-to-end model properties. Do not describe the
