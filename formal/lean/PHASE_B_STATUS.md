@@ -2,7 +2,7 @@
 
 Protocol: [CRPI-FVP-001](../../docs/FORMAL_VERIFICATION_PROTOCOL.md)  
 Based on accepted [Phase A](PROOF_STATUS.md), Lean 4.24.0 and Mathlib4 commit `f897ebcf72cd16f89ab4577d0c826cd14afaafc7`.  
-**Status: PHASE B VERIFIED — within the stated mathematical hypotheses and scope.** The [exact-revision evidence](../../verification/evidence/e457153dc5ac5b48b432b3a6fec57d492432b3a6fec57d492432b1bb/phase-b-summary.json) was published on the Phase B branch, and the repository-hosted build and 24-declaration axiom logs were inspected. Lean 4.24.0 and pinned Mathlib revision `f897ebcf72cd16f89ab4577d0c826cd14afaafc7` were attested; build and axiom audit exit codes were both zero. The [theorem-to-manuscript correspondence](PHASE_B_STATEMENT_REVIEW.md) passed. **The accepted evidence applies to source `e457153dc5ac5b48b432b3a6fec57d492432b1bb`; later changes were documentation/evidence-only.**
+**Status: PHASE B VERIFIED — within the stated mathematical hypotheses and scope.** The [exact-revision evidence](../../verification/evidence/e457153dc5ac5b48b432b3a6fec57d492432b1bb/phase-b-summary.json) was published on the Phase B branch, and the repository-hosted build and 24-declaration axiom logs were inspected. Lean 4.24.0 and pinned Mathlib revision `f897ebcf72cd16f89ab4577d0c826cd14afaafc7` were attested; build and axiom audit exit codes were both zero. The [theorem-to-manuscript correspondence](PHASE_B_STATEMENT_REVIEW.md) passed. **The accepted evidence applies to source `e457153dc5ac5b48b432b3a6fec57d492432b1bb`; later changes were documentation/evidence-only.**
 
 ## Scope
 
