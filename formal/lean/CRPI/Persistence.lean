@@ -30,6 +30,39 @@ noncomputable def stockEquilibrium
   accumulationRate beta residual /
     totalRate beta kappa residual mitigationValue
 
+/-- The paper's affine stock-flow ODE right-hand side. -/
+def stockDrift (beta kappa residual mitigationValue stock : ℝ) : ℝ :=
+  accumulationRate beta residual * (1 - stock) -
+    dissipationRate kappa mitigationValue * stock
+
+theorem stockDrift_affine
+    (beta kappa residual mitigationValue stock : ℝ) :
+    stockDrift beta kappa residual mitigationValue stock =
+      accumulationRate beta residual -
+        totalRate beta kappa residual mitigationValue * stock := by
+  unfold stockDrift totalRate
+  ring
+
+/-- The q>0 equilibrium is the unique stock with zero ODE drift. -/
+theorem stockDrift_zero_iff_equilibrium
+    {beta kappa residual mitigationValue stock : ℝ}
+    (hq : 0 < totalRate beta kappa residual mitigationValue) :
+    stockDrift beta kappa residual mitigationValue stock = 0 ↔
+      stock = stockEquilibrium beta kappa residual mitigationValue := by
+  have hn : totalRate beta kappa residual mitigationValue ≠ 0 := ne_of_gt hq
+  rw [stockDrift_affine]
+  unfold stockEquilibrium
+  constructor
+  · intro h
+    have hp : stock * totalRate beta kappa residual mitigationValue =
+        accumulationRate beta residual := by
+      nlinarith
+    exact (eq_div_iff hn).2 hp
+  · intro h
+    have hp : stock * totalRate beta kappa residual mitigationValue =
+        accumulationRate beta residual := (eq_div_iff hn).1 h
+    nlinarith
+
 /-- Positive exponential factor exp(-q * dt). -/
 noncomputable def decayFactor (q dt : ℝ) : ℝ :=
   Real.exp ((-q) * dt)
