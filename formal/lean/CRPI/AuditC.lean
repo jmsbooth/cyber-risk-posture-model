@@ -4,7 +4,7 @@ import CRPI
 Run from formal/lean:
   lake env lean CRPI/AuditC.lean
 
-All proof status remains OPEN until source compiles and this axiom report
+All proof status remains OPEN until source compiles and this dependency report
 is captured with the pinned project toolchain on an exact commit.
 -/
 
