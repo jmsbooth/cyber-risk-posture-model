@@ -27,6 +27,18 @@ Figures 1–4 (PDF pages 18, 28 and 29) rendered with axes and captions. The tit
 
 No page text block was outside the physical PDF page boundaries; the findings concern **normal body-text margins and readability**, not file corruption. The PDF is not tagged for PDF/UA accessibility; tagging remains an optional future publishing improvement, not a silent pass claim.
 
+## First revised full-manuscript build — remaining warnings
+
+On 2026-10-22, the owner built the first typographically revised branch with **Tectonic 0.17.0**. The engine exited successfully, producing PDF SHA-256 `b85f658119abfacb18ac3a47a6e4403b9e9d0ce17896e0709a30005db0175cc9` and writing `paper/build/CRM_revised.log`. This first post-correction build was **not accepted**: with `\\hfuzz=2pt` restored, the log exposed 18 overfull boxes per TeX pass (the messages were repeated on the second compilation pass).
+
+- Fifteen identical **10.4187pt** overfull alignment warnings came from the header and repeated headers of five four-column submetric measurement `longtable` environments: source lines 639–657, 703–720, 774–791, 991–1010 and 1074–1091. The five tables used column fractions summing to `0.92\\textwidth`, which **plus eight default tabcolsep paddings** exceeded the text block width. The column fractions now sum to **0.88\\textwidth** with ragged-right `P{}` cells.
+- Three paragraph warnings occurred at source lines 40–55 (**16.74695pt**, abstract), 1685–1695 (**3.25648pt**, model risk) and 1840–1842 (**5.739pt**, directional sensitivity proposition). A restrained `\\emergencystretch=2em` was added to allow less severe line-spacing/break adjustments without suppressing margin diagnostics.
+- The owner also received an ignored-parent-directory error when adding `paper/build/CRM_revised.pdf`. This can arise if a user/global `build/` exclusion matches the directory before the repository's negated PDF filename rule can apply. The repository `.gitignore` now explicitly unignores **both** `paper/build/` and `paper/build/CRM_revised.pdf`; the workaround `git add -f` is not needed when the updated rules are effective. The precise source of the owner's ignore rule can be checked with `git check-ignore -v paper/build/CRM_revised.pdf`.
+
+**Independent targeted test (not full-manuscript acceptance):** A native XeLaTeX document exercising the exact abstract, representative four-column table, and the two affected proof/model-risk paragraphs compiled without `Overfull` warnings; table text remained inside the normal text margins and was visually checked. This isolated test cannot substitute for a full Tectonic build or inspection of the regenerated final PDF.
+
+**Current action:** Rebuild from the latest publication branch and inspect the new log. The earlier `b85f...` PDF **must not** be committed as final; source now has further changes. The draft PR remains unmerged pending a warning-free full build and page-by-page PDF inspection.
+
 ## Corrections prepared in this PR
 
 - Layout-only edits to `paper/CRM_revised.tex`, including the two overlong displays and three dense tables.
