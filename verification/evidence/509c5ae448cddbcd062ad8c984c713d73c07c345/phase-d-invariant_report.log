@@ -1,0 +1,25 @@
+{
+  "status": "pass",
+  "checks": [
+    {
+      "name": "bounded outputs",
+      "status": "pass"
+    },
+    {
+      "name": "zero-safe aggregation",
+      "status": "pass"
+    },
+    {
+      "name": "directional correctness",
+      "status": "pass"
+    },
+    {
+      "name": "consequence-specific resilience",
+      "status": "pass"
+    },
+    {
+      "name": "cadence consistency",
+      "status": "pass"
+    }
+  ]
+}

@@ -1,0 +1,344 @@
+{
+  "schema_version": "crpi-phase-d-v1",
+  "authority": "paper/CRM_revised.tex",
+  "reference_profile": "illustrative-v0.1",
+  "oracle": "Independent Python decimal arithmetic at 70 digits, not models.crm_reference",
+  "decimal_precision": 70,
+  "absolute_tolerance": "0.00000000005",
+  "relative_tolerance": "0.00000000005",
+  "manuscript_rounded_tolerance": "0.0015",
+  "aggregation": [
+    {
+      "id": "manuscript_te",
+      "values": [
+        "0.55",
+        "0.65"
+      ],
+      "weights": [
+        "0.5",
+        "0.5"
+      ],
+      "epsilon": "0.05",
+      "expected": "0.59808185862660329080396416554643"
+    },
+    {
+      "id": "all_zero",
+      "values": [
+        "0",
+        "0"
+      ],
+      "weights": [
+        "0.5",
+        "0.5"
+      ],
+      "epsilon": "0.05",
+      "expected": "0.00000000000000000000000000000000"
+    },
+    {
+      "id": "all_one",
+      "values": [
+        "1",
+        "1"
+      ],
+      "weights": [
+        "0.5",
+        "0.5"
+      ],
+      "epsilon": "0.05",
+      "expected": "1.00000000000000000000000000000000"
+    },
+    {
+      "id": "nonabsorbing_zero",
+      "values": [
+        "0",
+        "0.8"
+      ],
+      "weights": [
+        "0.5",
+        "0.5"
+      ],
+      "epsilon": "0.05",
+      "expected": "0.15920643997366428702823750545875"
+    },
+    {
+      "id": "zero_weight",
+      "values": [
+        "0.4",
+        "0"
+      ],
+      "weights": [
+        "1",
+        "0"
+      ],
+      "epsilon": "0.05",
+      "expected": "0.40000000000000000000000000000000"
+    },
+    {
+      "id": "domain_resilience",
+      "values": [
+        "0.7",
+        "0.6"
+      ],
+      "weights": [
+        "0.1",
+        "0.9"
+      ],
+      "epsilon": "0.05",
+      "expected": "0.60937075325305998723968933102583"
+    },
+    {
+      "id": "weighted_3d",
+      "values": [
+        "0.15",
+        "0.6",
+        "0.95"
+      ],
+      "weights": [
+        "0.2",
+        "0.3",
+        "0.5"
+      ],
+      "epsilon": "0.05",
+      "expected": "0.58756380811424863042532460481762"
+    },
+    {
+      "id": "small_regularizer",
+      "values": [
+        "0.02",
+        "0.4"
+      ],
+      "weights": [
+        "0.75",
+        "0.25"
+      ],
+      "epsilon": "0.001",
+      "expected": "0.04289918506017066860966468964518"
+    },
+    {
+      "id": "large_regularizer",
+      "values": [
+        "0.02",
+        "0.4"
+      ],
+      "weights": [
+        "0.75",
+        "0.25"
+      ],
+      "epsilon": "0.9",
+      "expected": "0.11353501588440418910263590158236"
+    },
+    {
+      "id": "near_one_regularizer",
+      "values": [
+        "0.3",
+        "0.8"
+      ],
+      "weights": [
+        "0.5",
+        "0.5"
+      ],
+      "epsilon": "0.9999999999999999",
+      "expected": "0.54999999999999999687500000000000"
+    }
+  ],
+  "worked_example": {
+    "id": "manuscript_walkthrough",
+    "source": "paper/CRM_revised.tex Governing Model; rounded figures not the oracle",
+    "inputs": {
+      "te_values": [
+        "0.55",
+        "0.65"
+      ],
+      "te_weights": [
+        "0.5",
+        "0.5"
+      ],
+      "epsilon_te": "0.05",
+      "consequence_domains": {
+        "confidentiality": "0.90",
+        "integrity": "0.80",
+        "availability": "0.70"
+      },
+      "consequence_weights": {
+        "confidentiality": "0.3333333333333333",
+        "integrity": "0.3333333333333333",
+        "availability": "0.3333333333333333"
+      },
+      "resilience_applicability": {
+        "confidentiality": "0",
+        "integrity": "0.4",
+        "availability": "0.9"
+      },
+      "domain_resilience": {
+        "confidentiality": "0.655",
+        "integrity": "0.675",
+        "availability": "0.695"
+      },
+      "cm": "0.725",
+      "usom": "0.600",
+      "m0": "0.25",
+      "stock_prev": "0.2",
+      "beta": "0.3",
+      "kappa": "0.8",
+      "dt": "1",
+      "rras_report_only": "0.65"
+    },
+    "expected": {
+      "te": "0.59808185862660329080396416554643",
+      "cs": "0.79999999999999992000000000000000",
+      "d_eff": "0.58204999999999994179500000000000",
+      "hazard": "0.34811354581361441060109276119486",
+      "mitigation": "0.47625000000000000000000000000000",
+      "residual": "0.18232446961988054755232233367581",
+      "q": "0.43569734088596416426569670010274",
+      "stock_equilibrium": "0.12553976293438108462040203152553",
+      "stock": "0.17370164652573048375913751175929",
+      "crpi": "0.18232446961988054755232233367581"
+    },
+    "manuscript_rounded": {
+      "te": "0.598",
+      "cs": "0.800",
+      "d_eff": "0.582",
+      "hazard": "0.348",
+      "mitigation": "0.476",
+      "residual": "0.182",
+      "stock": "0.174",
+      "crpi": "0.182"
+    }
+  },
+  "persistence": [
+    {
+      "id": "zero_all_rates",
+      "stock": "0.27",
+      "residual": "0",
+      "mitigation": "0",
+      "beta": "0",
+      "kappa": "0",
+      "dt": "2",
+      "expected_stock": "0.27000000000000000000000000000000",
+      "expected_q": "0.00000000000000000000000000000000",
+      "equilibrium_if_positive_rate": null
+    },
+    {
+      "id": "zero_rate_inputs",
+      "stock": "0.27",
+      "residual": "0",
+      "mitigation": "0",
+      "beta": "0.3",
+      "kappa": "0.8",
+      "dt": "2",
+      "expected_stock": "0.27000000000000000000000000000000",
+      "expected_q": "0.00000000000000000000000000000000",
+      "equilibrium_if_positive_rate": null
+    },
+    {
+      "id": "zero_duration",
+      "stock": "0.27",
+      "residual": "0.35",
+      "mitigation": "0.4",
+      "beta": "0.3",
+      "kappa": "0.8",
+      "dt": "0",
+      "expected_stock": "0.27000000000000000000000000000000",
+      "expected_q": "0.42500000000000000000000000000000",
+      "equilibrium_if_positive_rate": "0.24705882352941176470588235294118"
+    },
+    {
+      "id": "below_equilibrium",
+      "stock": "0.1",
+      "residual": "0.8",
+      "mitigation": "0",
+      "beta": "0.3",
+      "kappa": "0.8",
+      "dt": "1",
+      "expected_stock": "0.29203492504010193170282372723593",
+      "expected_q": "0.24000000000000000000000000000000",
+      "equilibrium_if_positive_rate": "1.00000000000000000000000000000000"
+    },
+    {
+      "id": "above_equilibrium",
+      "stock": "0.9",
+      "residual": "0.1",
+      "mitigation": "0.8",
+      "beta": "0.3",
+      "kappa": "0.8",
+      "dt": "1",
+      "expected_stock": "0.48240151503237140308465107667271",
+      "expected_q": "0.67000000000000000000000000000000",
+      "equilibrium_if_positive_rate": "0.04477611940298507462686567164179"
+    },
+    {
+      "id": "nominal_transition",
+      "stock": "0.2",
+      "residual": "0.35",
+      "mitigation": "0.4",
+      "beta": "0.3",
+      "kappa": "0.8",
+      "dt": "2",
+      "expected_stock": "0.22694517967300109788609643100346",
+      "expected_q": "0.42500000000000000000000000000000",
+      "equilibrium_if_positive_rate": "0.24705882352941176470588235294118"
+    },
+    {
+      "id": "near_max_stock",
+      "stock": "1",
+      "residual": "0",
+      "mitigation": "0.5",
+      "beta": "0.3",
+      "kappa": "0.8",
+      "dt": "0.5",
+      "expected_stock": "0.81873075307798185866993550861904",
+      "expected_q": "0.40000000000000000000000000000000",
+      "equilibrium_if_positive_rate": "0.00000000000000000000000000000000"
+    },
+    {
+      "id": "full_accumulation",
+      "stock": "0",
+      "residual": "1",
+      "mitigation": "0",
+      "beta": "0.3",
+      "kappa": "0.8",
+      "dt": "10",
+      "expected_stock": "0.95021293163213605702065758434994",
+      "expected_q": "0.30000000000000000000000000000000",
+      "equilibrium_if_positive_rate": "1.00000000000000000000000000000000"
+    }
+  ],
+  "readme_scenarios_rounded": {
+    "baseline": {
+      "initial": "0.160",
+      "peak": "0.160",
+      "final": "0.160",
+      "qualification": "qualified"
+    },
+    "threat_surge": {
+      "initial": "0.133",
+      "peak": "0.248",
+      "final": "0.167",
+      "qualification": "qualified"
+    },
+    "operational_recovery": {
+      "initial": "0.287",
+      "peak": "0.287",
+      "final": "0.096",
+      "qualification": "qualified"
+    },
+    "resilience_gap": {
+      "initial": "0.157",
+      "peak": "0.212",
+      "final": "0.180",
+      "qualification": "qualified"
+    },
+    "evidence_gap": {
+      "initial": "0.167",
+      "peak": "0.170",
+      "final": "0.170",
+      "qualification": "restricted"
+    }
+  },
+  "scope_limits": [
+    "The oracle is numerical, not a machine-checked proof of floating-point code.",
+    "The input mappings for the manuscript worked example use rounded R_j projections, not their unrounded precursor values.",
+    "The documented scenario headlines are independently rounded presentation values and have a looser tolerance."
+  ]
+}

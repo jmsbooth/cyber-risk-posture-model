@@ -1,0 +1,72 @@
+{
+  "profile_id": "illustrative-v0.1",
+  "input": "data\\examples\\scenarios.csv",
+  "rows": 25,
+  "scenarios": {
+    "baseline": {
+      "min": 0.16037166730404154,
+      "mean": 0.16037166730404154,
+      "max": 0.16037166730404154,
+      "bootstrap_mean_lower": 0.16037166730404154,
+      "bootstrap_mean_upper": 0.16037166730404154,
+      "initial_crpi": 0.16037166730404154,
+      "final_crpi": 0.16037166730404154,
+      "final_coverage_mean": 0.9299999999999999,
+      "final_coverage_min": 0.9,
+      "final_coverage_gov": 0.9,
+      "final_coverage_qualification": "qualified"
+    },
+    "threat_surge": {
+      "min": 0.1334639090878183,
+      "mean": 0.18337512867108346,
+      "max": 0.24794686366050325,
+      "bootstrap_mean_lower": 0.1402643047105449,
+      "bootstrap_mean_upper": 0.22648595263162205,
+      "initial_crpi": 0.1334639090878183,
+      "final_crpi": 0.1674658872014513,
+      "final_coverage_mean": 0.9299999999999999,
+      "final_coverage_min": 0.9,
+      "final_coverage_gov": 0.9,
+      "final_coverage_qualification": "qualified"
+    },
+    "operational_recovery": {
+      "min": 0.09596867366542514,
+      "mean": 0.19963804865511076,
+      "max": 0.2869261732525616,
+      "bootstrap_mean_lower": 0.1392162844596194,
+      "bootstrap_mean_upper": 0.26220317911057767,
+      "initial_crpi": 0.2869261732525616,
+      "final_crpi": 0.09596867366542514,
+      "final_coverage_mean": 0.9299999999999999,
+      "final_coverage_min": 0.9,
+      "final_coverage_gov": 0.9,
+      "final_coverage_qualification": "qualified"
+    },
+    "resilience_gap": {
+      "min": 0.15744515980600032,
+      "mean": 0.18206744793119,
+      "max": 0.21219818189423537,
+      "bootstrap_mean_lower": 0.161996026386409,
+      "bootstrap_mean_upper": 0.20213886947597104,
+      "initial_crpi": 0.15744515980600032,
+      "final_crpi": 0.18019949270804372,
+      "final_coverage_mean": 0.9299999999999999,
+      "final_coverage_min": 0.9,
+      "final_coverage_gov": 0.9,
+      "final_coverage_qualification": "qualified"
+    },
+    "evidence_gap": {
+      "min": 0.16262299109770867,
+      "mean": 0.16700711958811523,
+      "max": 0.1700149452385136,
+      "bootstrap_mean_lower": 0.16456014953920572,
+      "bootstrap_mean_upper": 0.1689953220236887,
+      "initial_crpi": 0.1674658872014513,
+      "final_crpi": 0.1700149452385136,
+      "final_coverage_mean": 0.9299999999999999,
+      "final_coverage_min": 0.9,
+      "final_coverage_gov": 0.3,
+      "final_coverage_qualification": "restricted"
+    }
+  }
+}

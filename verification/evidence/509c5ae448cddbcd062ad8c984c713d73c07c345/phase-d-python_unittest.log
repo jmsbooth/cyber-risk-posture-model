@@ -1,0 +1,25 @@
+test_core_outputs_are_bounded (tests.test_crm_reference.CRPIReferenceTests.test_core_outputs_are_bounded) ... ok
+test_domain_projection_can_weight_resilience_primitives_differently (tests.test_crm_reference.CRPIReferenceTests.test_domain_projection_can_weight_resilience_primitives_differently) ... ok
+test_effective_consequence_respects_domain_applicability (tests.test_crm_reference.CRPIReferenceTests.test_effective_consequence_respects_domain_applicability) ... ok
+test_exact_stock_update_is_cadence_consistent (tests.test_crm_reference.CRPIReferenceTests.test_exact_stock_update_is_cadence_consistent) ... ok
+test_regularized_geometric_is_zero_safe_and_bounded (tests.test_crm_reference.CRPIReferenceTests.test_regularized_geometric_is_zero_safe_and_bounded) ... ok
+test_zero_weight_components_are_accepted (tests.test_crm_reference.CRPIReferenceTests.test_zero_weight_components_are_accepted) ... ok
+test_cadence_semigroup_at_valid_rates (tests.test_phase_d_conformance.PhaseDConformanceTests.test_cadence_semigroup_at_valid_rates) ... ok
+test_default_history_initialization_and_state_carry (tests.test_phase_d_conformance.PhaseDConformanceTests.test_default_history_initialization_and_state_carry) ... ok
+test_fixture_metadata_and_independent_decimal_oracle (tests.test_phase_d_conformance.PhaseDConformanceTests.test_fixture_metadata_and_independent_decimal_oracle) ... ok
+test_manuscript_full_governing_path (tests.test_phase_d_conformance.PhaseDConformanceTests.test_manuscript_full_governing_path) ... ok
+test_persistent_stock_against_decimal_goldens (tests.test_phase_d_conformance.PhaseDConformanceTests.test_persistent_stock_against_decimal_goldens) ... ok
+test_published_synthetic_scenario_headlines (tests.test_phase_d_conformance.PhaseDConformanceTests.test_published_synthetic_scenario_headlines) ... ok
+test_regularized_aggregation_against_decimal_goldens (tests.test_phase_d_conformance.PhaseDConformanceTests.test_regularized_aggregation_against_decimal_goldens) ... ok
+test_reject_invalid_boundaries (tests.test_phase_d_conformance.PhaseDConformanceTests.test_reject_invalid_boundaries) ... ok
+test_scalar_rras_is_report_only (tests.test_phase_d_conformance.PhaseDConformanceTests.test_scalar_rras_is_report_only) ... ok
+test_seeded_float_vs_independent_decimal_samples (tests.test_phase_d_conformance.PhaseDConformanceTests.test_seeded_float_vs_independent_decimal_samples) ... ok
+test_bootstrap_is_reproducible (tests.test_validation.ValidationTests.test_bootstrap_is_reproducible) ... ok
+test_calibration_profile_declares_model_governance (tests.test_validation.ValidationTests.test_calibration_profile_declares_model_governance) ... ok
+test_invariant_suite_passes (tests.test_validation.ValidationTests.test_invariant_suite_passes) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.103s
+
+OK
+Phase D Decimal oracle: verified 44 fields

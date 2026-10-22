@@ -13,7 +13,7 @@ model. Calibration values belong in a versioned profile such as
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
-from math import exp, isfinite, log
+from math import exp, expm1, isfinite, log, log1p
 from typing import Iterable, Mapping, Sequence
 
 
@@ -39,7 +39,9 @@ def _validate_weights(weights: Sequence[float], expected_length: int) -> tuple[f
     normalized = tuple(float(weight) for weight in weights)
     if any(not isfinite(weight) or weight < 0.0 for weight in normalized):
         raise ValueError("weights must be finite and non-negative")
-    if abs(sum(normalized) - 1.0) > 1e-9:
+    # A looser tolerance can admit a sum above one by more than the
+    # permitted output-roundoff guard, violating the bounded-score contract.
+    if abs(sum(normalized) - 1.0) > 1e-12:
         raise ValueError(f"weights must sum to 1; got {sum(normalized)!r}")
     return normalized
 
@@ -76,11 +78,25 @@ def regularized_geometric(
     if not isfinite(epsilon) or not 0.0 < epsilon < 1.0:
         raise ValueError(f"epsilon must be finite and in (0, 1); got {epsilon!r}")
 
-    log_product = sum(
-        weight * log(epsilon + (1.0 - epsilon) * value)
-        for value, weight in zip(checked_values, checked_weights)
-    )
-    result = (exp(log_product) - epsilon) / (1.0 - epsilon)
+    if epsilon > 0.5:
+        # Identical real-valued equation, evaluated with a cancellation-safe
+        # identity near epsilon=1. Let delta=1-epsilon and L be the weighted
+        # log product. (exp(L)-epsilon)/delta = 1+expm1(L)/delta, with each
+        # log(epsilon+delta*x) = log1p(-delta*(1-x)).
+        delta = 1.0 - epsilon
+        log_product = sum(
+            weight * log1p(-delta * (1.0 - value))
+            for value, weight in zip(checked_values, checked_weights)
+        )
+        result = 1.0 + expm1(log_product) / delta
+    else:
+        # The direct log-product is stable for small epsilon, including
+        # zero-valued inputs where epsilon keeps the logarithm well-defined.
+        log_product = sum(
+            weight * log(epsilon + (1.0 - epsilon) * value)
+            for value, weight in zip(checked_values, checked_weights)
+        )
+        result = (exp(log_product) - epsilon) / (1.0 - epsilon)
     return _clamp_roundoff(result)
 
 
@@ -170,6 +186,10 @@ def update_persistent_stock(
         raise ValueError(f"dt must be finite and non-negative; got {dt!r}")
 
     q = beta * checked_residual + kappa * checked_mitigation
+    # Finite individual rates can overflow when added. Never return a
+    # seemingly valid but mathematically wrong equilibrium from q = +inf.
+    if not isfinite(q):
+        raise ValueError("combined stock-flow rate must remain finite")
     if q == 0.0 or dt == 0.0:
         return checked_stock
     steady_state = beta * checked_residual / q

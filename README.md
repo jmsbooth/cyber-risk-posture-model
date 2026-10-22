@@ -64,7 +64,7 @@ The regularized geometric operator is zero-safe: one weak component contributes 
 multiplicative penalty proportional to its governed weight without turning a non-zero
 construct into an accidental absorbing zero.
 
-## Formal verification — Phases A–C
+## Formal verification and numerical conformance — Phases A–D
 
 The [CRPI Formal Verification Protocol](docs/FORMAL_VERIFICATION_PROTOCOL.md) governs the mathematical scope, trusted axioms, version pins, source-to-manuscript correspondence, and release criteria.
 
@@ -74,7 +74,9 @@ The [CRPI Formal Verification Protocol](docs/FORMAL_VERIFICATION_PROTOCOL.md) go
 
 **Phase C — Verified (2026-10-22):** 21 additional Lean 4.24.0 statements for bounded stock transitions, zero-rate identity, equilibrium, convergence and exact fixed-input cadence consistency. [Archived evidence](verification/evidence/9dab18ba0e7045c28754746a0ba61a2cb1d2e592/phase-c-summary.json) · [Claim-level status](formal/lean/PHASE_C_STATUS.md) · [Statement review](formal/lean/PHASE_C_STATEMENT_REVIEW.md).
 
-The remaining Phase D work includes reference-implementation/numerical conformance. No proof establishes empirical calibration, measurement accuracy, or the complete real-world validity of CRPI.
+**Phase D — Numerical conformance accepted (2026-10-22):** [Exact-revision evidence](verification/evidence/509c5ae448cddbcd062ad8c984c713d73c07c345/phase-d-summary.json) records 19/19 Python tests, 44 high-precision Decimal oracle fields, five invariants, 25 scenario rows and 56/56 repeated theorem axiom audits under pinned Lean 4.24.0. The [conformance ledger](verification/PHASE_D_STATUS.md) and [P1–P6 proof-coverage matrix](verification/PROOF_COVERAGE_MATRIX.md) distinguish supported mathematical claims from the paper's unformalized optional P6 derivative statement and broader empirical questions.
+
+**Release boundary:** The required mathematical subclaims of Propositions 1–6 are machine-checked under documented hypotheses, and the Python implementation passed independently sourced numerical vectors. This is **not** a claim of empirically calibrated risk, breach probability, financial-loss prediction or universal floating-point correctness. The final manuscript **PDF build and visual publication check have not been run** under Phase D and remain separate.
 
 To reproduce the machine-checked mathematical proofs (with Lean 4.24.0 and pinned Mathlib):
 
@@ -86,7 +88,9 @@ lake env lean CRPI/AuditB.lean
 lake env lean CRPI/AuditC.lean
 ```
 
-The PowerShell collectors `scripts/capture_phase_a.ps1`, `scripts/capture_phase_b.ps1` and `scripts/capture_phase_c.ps1` retain source revisions, compiler/dependency attestations, theorem axiom output, and build logs. Together the three phases cover **56 conditional theorem declarations**; numerical Python conformance (Phase D) and empirical validity are separate questions.
+To rerun the complete numerical and Lean evidence capture locally, use `python scripts/capture_phase_d.py` from the repository root. The `--with-tex` option attempts a separate manuscript PDF build only when Tectonic is available.
+
+The PowerShell collectors `scripts/capture_phase_a.ps1`, `scripts/capture_phase_b.ps1` and `scripts/capture_phase_c.ps1` retain separate Lean verification artifacts; the Python `scripts/capture_phase_d.py` collector independently checks the reference model and repeats all 56 theorem audits. All accepted source revisions and dependencies are archived. Empirical validity remains outside these tests.
 
 ## Reproduce the artifact
 

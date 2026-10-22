@@ -1,14 +1,14 @@
 # CRPI Formal Verification Protocol
 
 **Protocol ID:** CRPI-FVP-001  
-**Version:** 0.1.3  
-**Status:** Active protocol — Phases A–C conditional theorems verified; Phase D numerical conformance open  
+**Version:** 0.1.4  
+**Status:** Bounded mathematical verification and numerical reference conformance accepted; manuscript PDF publication gate open  
 **Date:** 2026-10-22  
 **Repository:** [jmsbooth/cyber-risk-posture-model](https://github.com/jmsbooth/cyber-risk-posture-model)  
 **Source baseline:** `main` at `6752d3a32162848bcd73b6274a90b6e2442f163a` (manuscript and Python reference implementation)  
 **Owner:** Repository maintainer
 
-**Implementation status (2026-10-22):** [Phase A](../formal/lean/PROOF_STATUS.md) has 11 verified conditional theorem statements with [accepted build/axiom evidence](../verification/evidence/b50dea4aaf40cad56c42cff436d450278459efbf/summary.json). [Phase B](../formal/lean/PHASE_B_STATUS.md) has 24 verified conditional statements for Proposition 1 and Proposition 5 with [accepted build/axiom evidence](../verification/evidence/e457153dc5ac5b48b432b3a6fec57d492432b1bb/phase-b-summary.json) and an independent manuscript correspondence review. [Phase C](../formal/lean/PHASE_C_STATUS.md) has 21 verified conditional statements for persistent stock, equilibrium, convergence and exact cadence, supported by [archived source-matched evidence](../verification/evidence/9dab18ba0e7045c28754746a0ba61a2cb1d2e592/phase-c-summary.json). The three accepted phases comprise 56 machine-checked theorem declarations, each bounded by its documented hypotheses. Phase D reference-implementation conformance and a manuscript-wide release decision remain open. Version 0.1.3 updates status references only; the trust, scope and acceptance gates are unchanged.
+**Implementation status (2026-10-22):** [Phase A](../formal/lean/PROOF_STATUS.md) has 11 verified conditional theorem statements with [accepted build/axiom evidence](../verification/evidence/b50dea4aaf40cad56c42cff436d450278459efbf/summary.json). [Phase B](../formal/lean/PHASE_B_STATUS.md) has 24 verified conditional statements for Proposition 1 and Proposition 5 with [accepted build/axiom evidence](../verification/evidence/e457153dc5ac5b48b432b3a6fec57d492432b1bb/phase-b-summary.json) and an independent manuscript correspondence review. [Phase C](../formal/lean/PHASE_C_STATUS.md) has 21 verified conditional statements for persistent stock, equilibrium, convergence and exact cadence, supported by [archived source-matched evidence](../verification/evidence/9dab18ba0e7045c28754746a0ba61a2cb1d2e592/phase-c-summary.json). The three accepted phases comprise 56 machine-checked theorem declarations, each bounded by its documented hypotheses. Phase D [numerical conformance evidence](../verification/evidence/509c5ae448cddbcd062ad8c984c713d73c07c345/phase-d-summary.json) is accepted: Python 3.11.15, 19/19 tests, 44 Decimal oracle fields, 5 invariants, 25 scenario rows, and 56/56 theorem audits at source revision `509c5ae448cddbcd062ad8c984c713d73c07c345`. The [P1–P6 matrix](../verification/PROOF_COVERAGE_MATRIX.md) qualifies the six propositions' required subclaims and retains all boundaries. Version 0.1.4 changes implementation status only; trust and acceptance policies are unchanged. A separate verified manuscript PDF build/publication check remains open.
 
 ## 1. Purpose and verification boundary
 
@@ -52,7 +52,7 @@ The first formal-verification milestone covers the existing six analytical propo
 | P5 — directional sensitivity | Non-decreasing response to `TE` and consequence; non-increasing response to applicable resilience, `CM`, and `USOM`, with other variables fixed | B | Not started |
 | P6 — CRPI envelope | Bounded `max(R_inst,S)` and monotonicity in its arguments | A | Not started |
 
-The **Initial status** column documents the original October 21 baseline. It is intentionally historical; the [current proof ledger](../formal/lean/PROOF_STATUS.md), not this table, governs live claim acceptance. Phases A–C now provide the required conditional mathematical counterparts of P1–P5 and P6 boundedness/monotonicity; the optional P6 nondifferentiability property and general nonautonomous ODE proof remain out of scope. Phase D's implementation and numerical conformance acceptance are still pending.
+The **Initial status** column documents the original October 21 baseline. It is intentionally historical; the [current proof ledger](../formal/lean/PROOF_STATUS.md), not this table, governs live claim acceptance. Phases A–C now provide the required conditional mathematical counterparts of P1–P5 and P6 boundedness/monotonicity; the optional P6 nondifferentiability property and general nonautonomous ODE proof remain out of scope. Phase D's [Python numerical conformance](../verification/PHASE_D_STATUS.md) is now accepted, with the final manuscript PDF regeneration explicitly not run.
 
 ### Explicit mathematical conditions
 
