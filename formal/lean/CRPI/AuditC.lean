@@ -9,6 +9,10 @@ is captured with the pinned project toolchain on an exact commit.
 -/
 
 #print axioms CRPI.totalRate_nonneg
+#print axioms CRPI.stockDrift_affine
+#print axioms CRPI.stockDrift_lower_boundary_nonneg
+#print axioms CRPI.stockDrift_upper_boundary_nonpos
+#print axioms CRPI.stockDrift_zero_iff_equilibrium
 #print axioms CRPI.zero_totalRate_zero_terms
 #print axioms CRPI.stockEquilibrium_bounded
 #print axioms CRPI.decayFactor_bounded
