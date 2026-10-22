@@ -64,23 +64,28 @@ The regularized geometric operator is zero-safe: one weak component contributes 
 multiplicative penalty proportional to its governed weight without turning a non-zero
 construct into an accidental absorbing zero.
 
-## Formal verification — Phase A
+## Formal verification — Phases A and B
 
-The [CRPI Formal Verification Protocol](docs/FORMAL_VERIFICATION_PROTOCOL.md) governs the scope, assumptions, trusted axioms, evidence capture, and release criteria.
+The [CRPI Formal Verification Protocol](docs/FORMAL_VERIFICATION_PROTOCOL.md) governs the mathematical scope, trusted axioms, version pins, source-to-manuscript correspondence, and release criteria.
 
-**Phase A complete (2026-10-22):** 11 conditional boundedness and envelope-property theorems were machine-checked in **Lean 4.24.0** against the pinned Mathlib4 revision. The exact-revision [local build and axiom audit](verification/evidence/b50dea4aaf40cad56c42cff436d450278459efbf/summary.json) passed, and the [theorem-to-manuscript statement review](formal/lean/PHASE_A_STATEMENT_REVIEW.md) qualified the scope. Consult the [formal proof ledger](formal/lean/PROOF_STATUS.md) for theorem names and assumptions.
+**Phase A — Verified:** 11 Lean 4.24.0 theorem statements for elementary score algebra, consequence/hazard/mitigation/residual boundedness and the conditional posture envelope. [Archived evidence](verification/evidence/b50dea4aaf40cad56c42cff436d450278459efbf/summary.json) · [Proof ledger](formal/lean/PROOF_STATUS.md).
 
-The verified properties cover elementary score algebra, normalized weighted sums, consequence/hazard/mitigation/residual bounds, and bounded/monotone `max` envelope **assuming bounded stock**. Formal verification of the regularized geometric operator (Phase B), persistent stock and cadence (Phase C), and end-to-end numerical conformance (Phase D) remains outstanding. Machine-checked invariants do **not** constitute empirical validation.
+**Phase B — Verified (2026-10-22):** 24 additional Lean 4.24.0 statements for regularized geometric aggregation, zero-weight handling, endpoints, nonabsorbing zeros, and directional properties of the **composed instantaneous residual**. [Archived exact-revision evidence](verification/evidence/e457153dc5ac5b48b432b3a6fec57d492432b1bb/phase-b-summary.json) · [Claim-level status](formal/lean/PHASE_B_STATUS.md) · [Statement review](formal/lean/PHASE_B_STATEMENT_REVIEW.md).
 
-To reproduce the Phase A checks locally, with Lean and Lake installed:
+**Phase C — local checks passed; release evidence pending:** The separately developed exact stock-flow and fixed-input cadence theorems have passed an owner-local build and axiom collector but are not merged or marked Verified until their generated records are committed and inspected in [PR #3](https://github.com/jmsbooth/cyber-risk-posture-model/pull/3).
+
+The remaining Phase D work includes reference-implementation/numerical conformance. No proof establishes empirical calibration, measurement accuracy, or the complete real-world validity of CRPI.
+
+To reproduce the merged mathematical proofs (with Lean 4.24.0 and the pinned Lake dependencies):
 
 ```bash
 cd formal/lean
 lake build
 lake env lean CRPI/Audit.lean
+lake env lean CRPI/AuditB.lean
 ```
 
-The Windows evidence collector at `scripts/capture_phase_a.ps1` records the pinned project compiler version, full proof/audit output, and source revision.
+The PowerShell collectors `scripts/capture_phase_a.ps1` and `scripts/capture_phase_b.ps1` additionally retain exact source revisions, compiler/dependency attestations, full theorem axiom output, and build logs.
 
 ## Reproduce the artifact
 
