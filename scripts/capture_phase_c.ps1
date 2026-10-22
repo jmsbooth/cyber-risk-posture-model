@@ -46,8 +46,8 @@ if ($forbidden.Count -gt 0) {
 
 $evidence = Join-Path $root ("verification/evidence/" + $revision)
 New-Item -ItemType Directory -Path $evidence -Force | Out-Null
-$buildLog = Join-Path $evidence "lake-build.log"
-$auditLog = Join-Path $evidence "axiom-audit.log"
+$buildLog = Join-Path $evidence "phase-c-lake-build.log"
+$auditLog = Join-Path $evidence "phase-c-axiom-audit.log"
 
 # Elan may select a different compiler from the repository root.
 # Read the pinned project toolchain without triggering the root compiler.
@@ -158,7 +158,7 @@ $summary = [ordered]@{
     manual_statement_review = "PENDING — new Phase C statements require independent manuscript comparison"
     status = "BUILD_AND_AXIOM_AUDIT_PASS_REVIEW_PENDING"
 }
-$summary | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $evidence "summary.json") -Encoding utf8
+$summary | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $evidence "phase-c-summary.json") -Encoding utf8
 
 Write-Host "Phase C local machine check passed for source revision: $revision"
 Write-Host "Effective project toolchain: $leanVersion"
