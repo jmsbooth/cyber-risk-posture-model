@@ -5,7 +5,7 @@
 **Candidate proof source revision:** `e457153dc5ac5b48b432b3a6fec57d492432b1bb`  
 **Reviewed sources:** [manuscript governing equations and appendix](../../paper/CRM_revised.tex), [aggregation proofs](CRPI/Aggregation.lean), and [direction proofs](CRPI/Direction.lean).
 
-**Statement-to-manuscript decision: PASS for Proposition 1 and Proposition 5 in their stated mathematical scope.** This is a theorem-type review. The repository owner reported a successful local Lean 4.24.0 build and 24-target axiom audit; the machine-generated evidence must be committed and inspected before changing the proof ledger to release-qualified **Verified**.
+**Statement-to-manuscript decision: PASS for Proposition 1 and Proposition 5 in their stated mathematical scope.** This is a theorem-type review, distinct from empirical validity. The owner-local Lean 4.24.0 [build and 24-target axiom audit](../../verification/evidence/e457153dc5ac5b48b432b3a6fec57d492432b1bb/phase-b-summary.json) have now been committed and independently inspected, completing the separate machine-check acceptance requirement.
 
 ## Proposition 1 — Regularized geometric aggregation
 
@@ -39,8 +39,8 @@ Some Lean monotonicity statements use fewer domain restrictions than the paper's
 
 1. **Local execution reported:** Source `e457153dc5ac5b48b432b3a6fec57d492432b1bb`, successful `lake build` (7,358 jobs), and successful `scripts/capture_phase_b.ps1` with pinned Lean 4.24.0 and 24 theorem audit targets. The script accepts only standard declared foundational axioms.
 2. **Two nonblocking warnings:** Unused hypotheses `hε0` in `regularizedBase_bounds` and `hε1` in `regularizedGeometric_zero`. Neither is a missing proof, but changing them would alter theorem source and require another exact-revision build. Keep the checked code intact for this evidence.
-3. **Evidence upload pending:** The local `verification/evidence/e457153dc5ac5b48b432b3a6fec57d492432b1bb/` artifacts must be pushed and inspected before final proof promotion.
+3. **Evidence archived:** The exact source-revision `verification/evidence/e457153dc5ac5b48b432b3a6fec57d492432b1bb/` includes [summary](../../verification/evidence/e457153dc5ac5b48b432b3a6fec57d492432b1bb/phase-b-summary.json), successful build log, 24 theorem axiom reports, pinned compiler, dependency revision and manifest hash. This satisfies the artifact gate for the reviewed mathematical source.
 4. **No proof shortcuts:** Source review found no `sorry`, `admit`, custom `axiom`, `unsafe` proof dependencies or `native_decide`.
 5. **Out of scope:** Phase C temporal invariance/equilibrium/cadence and Phase D manuscript/Python conformance remain unverified. Empirical calibration/validity remains a separate research concern.
 
-**Decision:** The Proposition 1 and 5 source-to-manuscript correspondence review **passes**. Promote the 24 mathematical statements to Verified and merge Phase B **only after** the exact-revision build and axiom logs, toolchain information, dependency manifest hash and theorem list are committed and inspected.
+**Final decision:** The Proposition 1 and 5 statement correspondence review **passes**, and the source-matched machine-check record is archived. The 24 conditional theorem claims are **Verified** in their mathematical scope; Phase B may merge. The derivative equations, unproved persistence dynamics, Python numerical conformance and empirical validity are explicitly excluded.
