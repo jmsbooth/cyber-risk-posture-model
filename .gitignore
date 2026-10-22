@@ -4,6 +4,8 @@ artifacts/*.json
 
 # LaTeX build products - track only the reviewed final manuscript PDF.
 paper/build/*
+# Keep the directory visible even if a user-level gitignore excludes build/.
+!paper/build/
 !paper/build/CRM_revised.pdf
 paper/*.aux
 paper/*.fdb_latexmk
