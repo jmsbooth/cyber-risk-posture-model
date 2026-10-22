@@ -3,7 +3,7 @@
 Protocol: [CRPI-FVP-001](../../docs/FORMAL_VERIFICATION_PROTOCOL.md)  
 This branch is stacked atop Phase B, whose proofs are also **pending** real
 machine-checking. The accepted Phase A proofs are unchanged.  
-**Status: PREPARED ONLY. No Phase C `lake build`, axiom audit, or evidence has run.**
+**Status: STATEMENT REVIEW PASSED; LEAN BUILD/AXIOM AUDIT NOT YET RUN.** The [Phase C theorem-to-manuscript correspondence review](PHASE_C_STATEMENT_REVIEW.md) confirms the intended P3/P4 exact-transition semantics and conditional P6 envelope claim. Compilation and kernel proof checking remain open for all 21 Phase C declarations.
 
 ## Manuscript alignment and proof scope
 
@@ -45,9 +45,7 @@ time-varying ODE existence/uniqueness proof is deliberately out of scope.
    4.24.0/Mathlib4 versions.
 2. All **21 Phase C declarations** are checked and appear in
    `lake env lean CRPI/AuditC.lean` without unexpected axioms.
-3. Review the theorem statements, mathematical assumptions, and correspondence
-   against the manuscript's Proposition 3, Proposition 4 and the conditional
-   Proposition 6.
+3. The theorem-to-manuscript review [is complete](PHASE_C_STATEMENT_REVIEW.md) for the intended candidate statements; verify that final compiler-accepted declarations retain those statements and assumptions.
 4. Commit exact-revision `verification/evidence/<commit>/` proof and axiom logs.
 5. Keep this pull request draft until the prior Phase B PR is merged and the
    Phase C theorem audit / statement review are independently accepted.
