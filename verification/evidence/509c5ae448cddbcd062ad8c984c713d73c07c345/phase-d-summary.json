@@ -1,0 +1,98 @@
+{
+  "schema": "crpi-phase-d-evidence-v1",
+  "source_commit": "509c5ae448cddbcd062ad8c984c713d73c07c345",
+  "captured_utc": "2026-10-22T20:26:15.136249+00:00",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "python_version": "3.11.15",
+  "lean_version": "Lean (version 4.24.0, x86_64-w64-windows-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)",
+  "lean_toolchain_pin": "leanprover/lean4:v4.24.0",
+  "mathlib_revision": "f897ebcf72cd16f89ab4577d0c826cd14afaafc7",
+  "input_sha256": {
+    "models/crm_reference.py": "02ac6d27367c4ed912135f3ffee8f91e1c73faa72fe525c3343cc3c2588f6155",
+    "models/validation.py": "793704a481ddbbef08aa339657a300e795dbff955a4a1699c4b1a7f82da1d188",
+    "config/calibration_baseline.json": "de85cd87d5d571412b41a6b40c0f4c54be1126c70f6e1647d3e962305078d995",
+    "paper/CRM_revised.tex": "85574072217ebc9c6976b3b6a7d5cc2c615b024eced2e327fe1f5f66734959e7",
+    "data/examples/scenarios.csv": "d585cc224b1ef7082d03e47e679a7bd6c02f97bd6f9e472b8feb9f90a2cae06b",
+    "verification/reference_vectors.json": "69e29796fcaff38e3e0a091bf701918e212bef2ccea6dafb2accce23b6312211",
+    "scripts/regenerate_phase_d.py": "3fc5a438dc6692cd75beb871335b2a58ddc0a448d639e94da25c26d6d9f48f49",
+    "tests/test_phase_d_conformance.py": "c69eff3add8b5825625fbb80d1d652c1394f72dc1041ce7d536523ea472f5b28",
+    "formal/lean/lake-manifest.json": "c3c1ac12354571388bf36c1532f77dfe9ffa7cac846f786b479b3c072d10e308"
+  },
+  "results": {
+    "decimal_oracle": {
+      "status": "pass",
+      "exit_code": 0,
+      "command": [
+        "scripts/regenerate_phase_d.py",
+        "--check"
+      ]
+    },
+    "python_unittest": {
+      "status": "pass",
+      "exit_code": 0,
+      "command": [
+        "-m",
+        "unittest",
+        "discover",
+        "-v"
+      ],
+      "test_count": 19
+    },
+    "invariant_report": {
+      "status": "pass",
+      "exit_code": 0,
+      "command": [
+        "scripts/validate_model.py"
+      ],
+      "check_count": 5
+    },
+    "scenarios": {
+      "status": "pass",
+      "exit_code": 0,
+      "row_count": 25,
+      "scenario_count": 5
+    },
+    "lean_build": {
+      "status": "pass",
+      "exit_code": 0
+    },
+    "lean_axioms_a": {
+      "theorem_count": 11,
+      "observed_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "status": "pass"
+    },
+    "lean_axioms_b": {
+      "theorem_count": 24,
+      "observed_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "status": "pass"
+    },
+    "lean_axioms_c": {
+      "theorem_count": 21,
+      "observed_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "status": "pass"
+    },
+    "manuscript_pdf": {
+      "status": "not_run",
+      "reason": "--with-tex not requested"
+    }
+  },
+  "tolerances": {
+    "absolute_tolerance": "0.00000000005",
+    "relative_tolerance": "0.00000000005",
+    "manuscript_rounded_tolerance": "0.0015"
+  },
+  "scope": "Numerical conformance under synthetic inputs; not an empirical cyber-risk validation",
+  "status": "pass"
+}
