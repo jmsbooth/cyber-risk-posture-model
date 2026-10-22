@@ -119,9 +119,11 @@ theorem regularizedGeometric_one {ι : Type*}
     (s : Finset ι) (ε : ℝ) (w : ι → ℝ)
     (hε1 : ε < 1) :
     regularizedGeometric s ε w (fun _ => 1) = 1 := by
+  have hbase : regularizedBase ε (1 : ℝ) = 1 := by
+    unfold regularizedBase
+    ring
   have hp : regularizedProduct s ε w (fun _ => 1) = 1 := by
-    unfold regularizedProduct
-    simp [regularizedBase, sub_add_cancel]
+    simp [regularizedProduct, hbase]
   have hd : 1 - ε ≠ 0 := ne_of_gt (by linarith : 0 < 1 - ε)
   simp [regularizedGeometric, hp, hd]
 
