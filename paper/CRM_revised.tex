@@ -16,6 +16,9 @@
 \hbadness=10000
 \vbadness=10000
 \hfuzz=2pt
+% Permit limited additional line-breaking flexibility instead of accepting
+% paragraphs that intrude into the 1-inch body-text margins.
+\emergencystretch=2em
 \vfuzz=30pt
 
 \geometry{margin=1in}
@@ -636,7 +639,7 @@ Representative data sources include authoritative asset inventories, telemetry
 presence and last-seen indicators, policy and configuration repositories, and audit or
 review artifacts. The recommended discrete inputs are:
 
-\begin{longtable}{p{0.19\textwidth} p{0.37\textwidth} p{0.19\textwidth} p{0.17\textwidth}}
+\begin{longtable}{P{0.18\textwidth} P{0.35\textwidth} P{0.18\textwidth} P{0.17\textwidth}}
   \caption{Recommended discrete inputs for Continuous Monitoring}\\
   \toprule
   Discrete input & Recommended evidence or input & Normalization & Cadence \\
@@ -700,7 +703,7 @@ Representative sources include data inventories and catalogs, classification and
 labeling artifacts, business impact analyses, lineage graphs, mission dependency
 models, and access/usage metadata. The recommended discrete inputs are:
 
-\begin{longtable}{p{0.19\textwidth} p{0.37\textwidth} p{0.19\textwidth} p{0.17\textwidth}}
+\begin{longtable}{P{0.18\textwidth} P{0.35\textwidth} P{0.18\textwidth} P{0.17\textwidth}}
   \caption{Recommended discrete inputs for Consequence Severity}\\
   \toprule
   Discrete input & Recommended evidence or input & Primary domain & Normalization \\
@@ -771,7 +774,7 @@ Representative sources include exposure inventories, vulnerability and exploitab
 signals, threat-intelligence artifacts, identity and privilege data, and architecture
 characteristics. The recommended discrete inputs are:
 
-\begin{longtable}{p{0.19\textwidth} p{0.37\textwidth} p{0.19\textwidth} p{0.17\textwidth}}
+\begin{longtable}{P{0.18\textwidth} P{0.35\textwidth} P{0.18\textwidth} P{0.17\textwidth}}
   \caption{Recommended discrete inputs for Threat Exposure}\\
   \toprule
   Discrete input & Recommended evidence or input & Normalization & Cadence \\
@@ -988,7 +991,7 @@ Representative sources include incident and case-management systems, vulnerabili
 patch-management systems, CI/CD and deployment logs, engineering quality artifacts, and
 supply-chain transparency artifacts. The recommended discrete inputs are:
 
-\begin{longtable}{p{0.19\textwidth} p{0.37\textwidth} p{0.19\textwidth} p{0.17\textwidth}}
+\begin{longtable}{P{0.18\textwidth} P{0.35\textwidth} P{0.18\textwidth} P{0.17\textwidth}}
   \caption{Recommended discrete inputs for Unified Security Operations}\\
   \toprule
   Discrete input & Recommended evidence or input & Normalization & Cadence \\
@@ -1071,7 +1074,7 @@ Representative sources include architecture and dependency inventories, recovery
 continuity artifacts, supply-chain and dependency assurance artifacts, and governance
 records. The recommended discrete inputs are:
 
-\begin{longtable}{p{0.19\textwidth} p{0.37\textwidth} p{0.19\textwidth} p{0.17\textwidth}}
+\begin{longtable}{P{0.18\textwidth} P{0.35\textwidth} P{0.18\textwidth} P{0.17\textwidth}}
   \caption{Recommended discrete inputs for Resilience and Risk Assurance}\\
   \toprule
   Discrete input & Recommended evidence or input & Primary capability & Cadence \\
