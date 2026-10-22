@@ -3,7 +3,7 @@
 **Date:** 2026-10-22  
 **Protocol:** [CRPI-FVP-001](../../docs/FORMAL_VERIFICATION_PROTOCOL.md)  
 **Review basis:** CRPI manuscript on `main` (`paper/CRM_revised.tex`, Governing Model and Analytical Properties), and the Phase A definitions under `formal/lean/CRPI/`.  
-**Disposition:** **PASS for Phase A statement correspondence**, with expressly limited scope below. The Lean build and axiom audit were recorded for source `c75d07309581454e01fb4ef9eba120a720423d4d`; final release qualification is pending a project-toolchain-specific version attestation at the current revision.
+**Disposition:** **PASS for Phase A statement correspondence**, with expressly limited scope below. Machine-check acceptance is documented by the [Lean 4.24.0 source-revision evidence](../../verification/evidence/b50dea4aaf40cad56c42cff436d450278459efbf/summary.json), captured for source `b50dea4aaf40cad56c42cff436d450278459efbf` and committed at `962f05a674dfc2a58ca9d8e0f1ed15268e4ba891`.
 
 ## Mathematical correspondence
 
@@ -26,8 +26,13 @@
 2. **Persistent stock is an input here:** No stock-flow state update, equilibrium, or cadence theorem is part of Phase A. The conditional `CRPI` bound therefore does not claim to prove an end-to-end bounded state trajectory. Persistence belongs to **Phase C**.
 3. **No general empirical statement follows:** The proof hypotheses concern real-valued inputs and governed coefficients. They do not show measurements, parameters, impact domains, or cyber-risk phenomena have been validated.
 4. **No false completeness claim:** The 11 Phase A declarations cover supporting lemmas and the boundedness parts of Propositions 2 and 6, not all six analytical propositions in the paper.
-5. **Root-versus-project Lean version discrepancy:** The first archived evidence records Lean 4.35.0 while `formal/lean/lean-toolchain` specifies Lean 4.24.0. The original Windows evidence script executed its version check from repository root and the build inside `formal/lean`. The script has been amended to record `lake env lean --version` *inside* the pinned project and reject mismatches. This corrected check must pass and be archived before release qualification.
+5. **Compiler attestation reconciled:** The initial collector reported root-selected Lean 4.35.0, rather than the effective compiler inside the project. The corrected collector enforces and records **Lean 4.24.0** inside `formal/lean`; the evidence and axiom audit passed for source `b50dea4`. Both records are retained, and the corrected one supersedes the original for acceptance.
 
 ## Acceptance and next action
 
-The source-to-manuscript comparison for the Phase A statements is approved **within the above assumptions and scope**. Keep PR #1 draft until the current proof branch's effective Lean compiler version is attested by the corrected collector, and the resulting exact-revision evidence is committed. Then the ledger can label these **specific theorem statements** Verified; do not mark the entire manuscript, all six propositions, or empirical CRPI as formally verified.
+The source-to-manuscript comparison for the Phase A statements is approved
+**within the above assumptions and scope**, and the toolchain-attested
+machine-check evidence is committed. The ledger may therefore label these
+**specific conditional theorem statements** Verified. This acceptance supports
+merging Phase A. It does **not** verify the entire manuscript, all six
+propositions, or the empirical validity of CRPI.
