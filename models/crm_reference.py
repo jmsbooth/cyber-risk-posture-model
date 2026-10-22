@@ -39,7 +39,9 @@ def _validate_weights(weights: Sequence[float], expected_length: int) -> tuple[f
     normalized = tuple(float(weight) for weight in weights)
     if any(not isfinite(weight) or weight < 0.0 for weight in normalized):
         raise ValueError("weights must be finite and non-negative")
-    if abs(sum(normalized) - 1.0) > 1e-9:
+    # A looser tolerance can admit a sum above one by more than the
+    # permitted output-roundoff guard, violating the bounded-score contract.
+    if abs(sum(normalized) - 1.0) > 1e-12:
         raise ValueError(f"weights must sum to 1; got {sum(normalized)!r}")
     return normalized
 
@@ -170,6 +172,10 @@ def update_persistent_stock(
         raise ValueError(f"dt must be finite and non-negative; got {dt!r}")
 
     q = beta * checked_residual + kappa * checked_mitigation
+    # Finite individual rates can overflow when added. Never return a
+    # seemingly valid but mathematically wrong equilibrium from q = +inf.
+    if not isfinite(q):
+        raise ValueError("combined stock-flow rate must remain finite")
     if q == 0.0 or dt == 0.0:
         return checked_stock
     steady_state = beta * checked_residual / q
