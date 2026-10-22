@@ -75,6 +75,10 @@ if ($mathlibRevision -ne $mathlibLock[0].rev) {
 
 $required = @(
     "CRPI.totalRate_nonneg",
+    "CRPI.stockDrift_affine",
+    "CRPI.stockDrift_lower_boundary_nonneg",
+    "CRPI.stockDrift_upper_boundary_nonpos",
+    "CRPI.stockDrift_zero_iff_equilibrium",
     "CRPI.zero_totalRate_zero_terms",
     "CRPI.stockEquilibrium_bounded",
     "CRPI.decayFactor_bounded",
