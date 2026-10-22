@@ -10,6 +10,7 @@ machine-checking. The accepted Phase A proofs are unchanged.
 | Claim | Candidate Lean theorem | Goal | Status |
 | --- | --- | --- | --- |
 | P3 | `totalRate_nonneg` / `zero_totalRate_zero_terms` | Nonnegative rates and degenerate no-update case | Open |
+| P3 | `stockDrift_affine`, `stockDrift_lower_boundary_nonneg`, `stockDrift_upper_boundary_nonpos`, `stockDrift_zero_iff_equilibrium` | Exact ODE drift, inward boundaries, unique equilibrium when q>0 | Open |
 | P3 | `stockEquilibrium_bounded` | Equilibrium in [0,1] when total rate positive | Open |
 | P3 | `decayFactor_bounded` | Exponential factor in (0,1] for nonnegative elapsed time and rate | Open |
 | P3 | `intervalStep_bounded` | Convex-combination invariant | Open |
@@ -42,7 +43,7 @@ time-varying ODE existence/uniqueness proof is deliberately out of scope.
 
 1. All Lean source **and Phase B dependencies** compile with the pinned Lean
    4.24.0/Mathlib4 versions.
-2. All **17 Phase C declarations** are checked and appear in
+2. All **21 Phase C declarations** are checked and appear in
    `lake env lean CRPI/AuditC.lean` without unexpected axioms.
 3. Review the theorem statements, mathematical assumptions, and correspondence
    against the manuscript's Proposition 3, Proposition 4 and the conditional
