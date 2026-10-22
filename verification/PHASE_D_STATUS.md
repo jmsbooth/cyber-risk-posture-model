@@ -1,7 +1,7 @@
 # CRPI Phase D — Independent Numerical Conformance
 
 **Protocol:** [CRPI-FVP-001](../docs/FORMAL_VERIFICATION_PROTOCOL.md)  
-**Status: IMPLEMENTED, LOCAL PYTHON CONFORMANCE RUN PENDING.**  
+**Status: NUMERICAL CONFORMANCE VERIFIED — owner-local test evidence accepted for the exact source revision. Manuscript PDF build remains untested.**  
 **Baseline:** [Phase A](../formal/lean/PROOF_STATUS.md) (11), [Phase B](../formal/lean/PHASE_B_STATUS.md) (24), and [Phase C](../formal/lean/PHASE_C_STATUS.md) (21) conditional Lean theorem declarations were already machine-checked and merged. Phase D is a separate numerical check, not a new proof of real-number equations.
 
 ## Source hierarchy and numerical oracle
@@ -40,7 +40,7 @@ The formulas for `G_epsilon`, `D_eff`, `H`, `M`, `R_inst`, the exact exponential
 
 ## Reproducible execution
 
-After pulling this branch onto a clean local checkout with Python 3.10+ and the **pinned** Lean 4.24.0/Lake/Mathlib4 dependencies:
+To reproduce the accepted tests on a clean local checkout with Python 3.10+ and the **pinned** Lean 4.24.0/Lake/Mathlib4 dependencies:
 
 ```powershell
 python scripts/regenerate_phase_d.py --check
@@ -54,15 +54,34 @@ The last command reruns the earlier checks, rebuilds the full Lean target and au
 
 Run evidence capture **only with committed source changes**; no working-tree edits to the manuscript, models, tests, vectors, calibration, scripts, or Lean sources are permitted. Commit and push the resulting small, non-sensitive evidence directory to this PR.
 
-## Acceptance / remaining work
+## Accepted machine-check and numerical evidence (2026-10-22)
 
-- [x] Independent Decimal oracle and fixed numerical vectors authored.
-- [x] Conformance, seeded and numerical-boundary regression tests authored.
-- [x] Local evidence collector authored (all three Lean phases included).
-- [x] Independent decimal generator self-check run in isolated authoring environment (44 expected fields), and new Python files syntactically compiled.
-- [ ] Python conformance/unit tests executed **against the repository's actual reference implementation** at the exact committed source revision.
-- [ ] Scenario, invariant, three-phase Lean build/axiom logs, toolchain and dependency attestations archived in Git and reviewed.
-- [ ] Manuscript PDF rebuilt and checked for technical publication where available. If not run, the manuscript build gate remains explicitly unqualified.
-- [ ] Reconcile the proof-status matrix and README with the final conformance result; decide separately on full formal-milestone wording.
+The repository owner ran `python scripts/capture_phase_d.py` from source revision **`509c5ae448cddbcd062ad8c984c713d73c07c345`**, then committed the [complete ten-file evidence archive](evidence/509c5ae448cddbcd062ad8c984c713d73c07c345/phase-d-summary.json) in `f6f052eea91007a3ea312b082426bde0db490dd9`. Each log and the JSON attestation were fetched independently from GitHub and reviewed. GitHub comparison from tested source to the evidence commit showed **only generated evidence files**; no mathematical code, test logic, vectors, manuscript equations, dependency pins, or calibration inputs changed.
 
-**Release gate:** No Phase D PASS, model-wide formal-verification release tag, or claim of empirical validity until the independent conformance run passes, the files are archived, and the manuscript/repository status is reconciled. The P6 envelope nondifferentiability discussion is not a Lean-verified derivative theorem; its formal proof is optional under CRPI-FVP-001.
+| Acceptance check | Recorded result |
+| --- | --- |
+| Python runtime | **3.11.15**, Windows |
+| Independent 70-digit Decimal oracle | **PASS**, 44 expected-value fields |
+| Python unit and conformance tests | **PASS**, 19/19; [test log](evidence/509c5ae448cddbcd062ad8c984c713d73c07c345/phase-d-python_unittest.log) |
+| Mathematical invariant suite | **PASS**, 5/5 |
+| Synthetic scenario runner | **PASS**, 25 rows across 5 scenarios |
+| Pinned Lean/Mathlib build | **PASS**, 7,359 jobs, nonblocking Phase B unused-hypothesis warnings |
+| Axiom audits | **PASS**, Phase A 11/11, Phase B 24/24, Phase C 21/21 |
+| Trusted axioms | Only `propext`, `Classical.choice`, `Quot.sound` |
+| Manifest and toolchain | `leanprover/lean4:v4.24.0` and Mathlib `f897ebcf72cd16f89ab4577d0c826cd14afaafc7`; manifest SHA-256 `c3c1ac12354571388bf36c1532f77dfe9ffa7cac846f786b479b3c072d10e308` |
+| Manuscript PDF regeneration | **NOT RUN**, explicitly recorded as `--with-tex not requested` |
+
+**Tolerance review:** The archived reference vectors declared `abs_tol=rel_tol=5e-11` for core numerical comparisons and `abs_tol=0.0015` for deliberately rounded manuscript/README display figures. This is a finite synthetic conformance claim, **not** an all-input IEEE floating-point proof. The corpus includes the near-`epsilon=1` condition and the negative-input cases for the three numerical-contract repairs.
+
+## Final acceptance and publication boundary
+
+- [x] High-precision independent oracle and 44 expected-value fields regenerated and checked.
+- [x] Python conformance tests, including exact stock state transitions, numerical boundaries and calibration-profile scenarios, executed on the reference model and passed.
+- [x] Previous Phase A–C mathematical declarations replayed and audited under the pinned toolchain.
+- [x] Source-match check and complete machine-verification evidence archived under Git.
+- [x] All six propositions mapped to their required machine-checked mathematical counterparts in the [verification coverage matrix](PROOF_COVERAGE_MATRIX.md).
+- [x] Phase D numerical conformance technical gate accepted.
+- [ ] Manuscript's final publication PDF rebuilt, inspected, and linked from the repository. This is a **separate publication-artifact gate**; it is not represented as passing in the Phase D summary.
+- [ ] Broader empirical testing/calibration on organizational data, which is outside the bounded formal-verification milestone.
+
+**Decision:** Phase D may merge into `main` under the local-manual evidence policy. The **bounded mathematical-verification and Python numerical-conformance milestone is complete** in its stated conditions. Do not claim that CRPI predictions are empirically validated, that general time-varying ODE solutions were formally proved, or that the final manuscript PDF was publication-tested. No comprehensive paper-release tag or publication-ready PDF claim is authorized by this evidence alone. The optional Proposition 6 nondifferentiability statement remains analytically argued rather than independently Lean-checked.
