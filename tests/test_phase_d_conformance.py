@@ -43,7 +43,7 @@ class PhaseDConformanceTests(unittest.TestCase):
         self.assertEqual(VECTORS["schema_version"], "crpi-phase-d-v1")
         self.assertEqual(VECTORS["reference_profile"], "illustrative-v0.1")
         self.assertEqual(VECTORS["authority"], "paper/CRM_revised.tex")
-        self.assertEqual(len(VECTORS["aggregation"]), 9)
+        self.assertEqual(len(VECTORS["aggregation"]), 10)
         self.assertEqual(len(VECTORS["persistence"]), 8)
         for group in ("aggregation", "persistence"):
             names = [item["id"] for item in VECTORS[group]]
