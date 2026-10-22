@@ -48,7 +48,7 @@ theorem regularizedProduct_bounds {ι : Type*}
   have hlo :
       (∏ i ∈ s, ε ^ (w i)) ≤
         (∏ i ∈ s, (regularizedBase ε (x i)) ^ (w i)) := by
-    apply Finset.prod_le_prod₀
+    apply Finset.prod_le_prod
     · intro i hi
       exact Real.rpow_nonneg (le_of_lt hε0) (w i)
     · intro i hi
@@ -63,7 +63,7 @@ theorem regularizedProduct_bounds {ι : Type*}
   have hupper :
       (∏ i ∈ s, (regularizedBase ε (x i)) ^ (w i)) ≤
         (∏ i ∈ s, (1 : ℝ) ^ (w i)) := by
-    apply Finset.prod_le_prod₀
+    apply Finset.prod_le_prod
     · intro i hi
       have hp : 0 < regularizedBase ε (x i) :=
         lt_of_lt_of_le hε0
@@ -159,7 +159,7 @@ theorem regularizedGeometric_mono {ι : Type*}
   have hprod : regularizedProduct s ε w x ≤
       regularizedProduct s ε w y := by
     unfold regularizedProduct
-    apply Finset.prod_le_prod₀
+    apply Finset.prod_le_prod
     · intro i hi
       have hb := regularizedBase_bounds hε0 hε1 (hx i hi)
       exact Real.rpow_nonneg (le_trans (le_of_lt hε0) hb.1) (w i)
@@ -193,7 +193,7 @@ theorem regularizedGeometric_strictMono {ι : Type*}
   have hprod : regularizedProduct s ε w x <
       regularizedProduct s ε w y := by
     unfold regularizedProduct
-    apply Finset.prod_lt_prod₀
+    apply Finset.prod_lt_prod
     · intro i hi
       have hb := regularizedBase_bounds hε0 hε1 (hx i hi)
       exact Real.rpow_pos_of_pos (lt_of_lt_of_le hε0 hb.1) (w i)
