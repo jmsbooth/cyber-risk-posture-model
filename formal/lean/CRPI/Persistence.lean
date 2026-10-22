@@ -265,20 +265,22 @@ theorem intervalStep_tendsto_equilibrium {equilibrium q stock : ℝ}
     Filter.tendsto_id.const_mul_atTop_of_neg (by linarith : -q < 0)
   have hdec : Filter.Tendsto (fun t : ℝ => decayFactor q t)
       Filter.atTop (nhds (0 : ℝ)) := by
-    simpa [decayFactor] using Real.tendsto_exp_atBot.comp hbot
-  have hscale : Filter.Tendsto
-      (fun t : ℝ => (stock - equilibrium) * decayFactor q t)
-      Filter.atTop (nhds (0 : ℝ)) := by
-    have hmul : Filter.Tendsto
-        (fun t : ℝ => (stock - equilibrium) * decayFactor q t)
-        Filter.atTop (nhds ((stock - equilibrium) * (0 : ℝ))) :=
-      Filter.tendsto_const_nhds.mul hdec
-    simpa using hmul
-  have hadd : Filter.Tendsto
-      (fun t : ℝ => equilibrium + (stock - equilibrium) * decayFactor q t)
-      Filter.atTop (nhds (equilibrium + 0)) :=
-    Filter.tendsto_const_nhds.add hscale
-  simpa [intervalStep] using hadd
+    -- Keep the actual exponential limit explicit: simp on the defining
+    -- expression can rewrite other powers and distort the target.
+    change Filter.Tendsto (fun t : ℝ => Real.exp ((-q) * t))
+      Filter.atTop (nhds (0 : ℝ))
+    exact Real.tendsto_exp_atBot.comp hbot
+  -- Continuous affine maps preserve limits. This avoids method notation on
+  -- an unqualified constant-tendsto theorem that is absent in Mathlib v4.24.
+  have hcont : Continuous
+      (fun z : ℝ => equilibrium + (stock - equilibrium) * z) := by
+    fun_prop
+  have hlimit : Filter.Tendsto
+      (fun t : ℝ => equilibrium +
+        (stock - equilibrium) * decayFactor q t)
+      Filter.atTop (nhds equilibrium) := by
+    simpa using (hcont.tendsto (0 : ℝ)).comp hdec
+  simpa only [intervalStep] using hlimit
 
 theorem stockTransition_tendsto_equilibrium
     {beta kappa residual mitigationValue stock : ℝ}
