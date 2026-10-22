@@ -3,9 +3,9 @@
 **Date:** 2026-10-22  
 **Protocol:** [CRPI-FVP-001](../../docs/FORMAL_VERIFICATION_PROTOCOL.md)  
 **Review basis:** [CRPI manuscript Governing Model and Analytical Properties](../../paper/CRM_revised.tex), [Phase C Persistence.lean](CRPI/Persistence.lean), [21-target axiom audit](CRPI/AuditC.lean).  
-**Source revision reviewed:** `fcbc6026e34fee75d8f4c26374c1e6ada3160b81` (includes unchanged persistence theorem source from earlier candidate commits).
+**Source revision for successful local verification:** `9dab18ba0e7045c28754746a0ba61a2cb1d2e592`. The convergence *proof term* was repaired after initial review, without changing the theorem statement or the physical stock equations.
 
-**Statement correspondence: PASS for the documented Phase C candidate scope. Machine-check status: NOT RUN.** This is an independent review of intended theorem statements and hypotheses, **not** a report that Lean has accepted any Phase C theorem. The compiler and axiom audit may still reveal errors.
+**Statement correspondence: PASS for the documented Phase C mathematical scope. Local machine-check: PASS REPORTED; repository evidence pending.** After a convergence-proof repair, the repository owner executed `lake build` (7,359 successful jobs) and `scripts/capture_phase_c.ps1` on Lean 4.24.0, reporting all 21 required theorem audits and permitted foundational axioms. This statement review remains distinct from the machine-check: independent inspection of the archived logs and toolchain attestation must precede release-qualified proof promotion.
 
 ## Governing equation and rate semantics
 
@@ -33,6 +33,6 @@ It defines `a = beta * R_inst`, `b = kappa * M`, `q = a+b` and (for `q>0`) `S_st
 - P3 includes analytic uniqueness and boundedness of the fixed equilibrium. Empirical correctness or calibration of `beta` and `kappa` remains separate.
 - The cadence theorem is an algebraic semigroup under identical interval inputs. It does not assert invariance under arbitrary observation frequency, missing telemetry, or changing calibration.
 - The P6 extension assumes that the supplied instantaneous residual is already in [0,1], which is covered by the earlier conditional Phase A model equations.
-- Source inspection found no deliberate weaker surrogate replacing the manuscript's rate or exact-update equations. This review does not establish that Lean tactics or imported lemmas compile; that remains a blocking next step.
+- Source inspection found no deliberate weaker surrogate replacing the manuscript's rate or exact-update equations. The corrected source was reported to compile in Lean 4.24.0 with the required axiom audit; its exact-revision artifacts have not yet been committed, so the release-qualification gate remains open.
 
-**Acceptance:** Keep [Phase C PR #3](https://github.com/jmsbooth/cyber-risk-posture-model/pull/3) in draft. Run the pinned Lean/Mathlib project build, resolve any proof errors without altering model mathematics, audit all 21 theorem declarations, inspect exact-revision evidence, and merge only after Phase B's verified prerequisite is merged and the protocol's conditional claims are qualified.
+**Acceptance:** [Phase B PR #2](https://github.com/jmsbooth/cyber-risk-posture-model/pull/2) is verified and merged, and [Phase C PR #3](https://github.com/jmsbooth/cyber-risk-posture-model/pull/3) targets `main`. The local Phase C build/axiom audit is reported as successful; the generated `verification/evidence/9dab18ba0e7045c28754746a0ba61a2cb1d2e592/` must now be committed and independently inspected. Keep PR #3 draft until that evidence passes. The formal statement review is complete; empirical model validity and full implementation conformance are not claimed.
