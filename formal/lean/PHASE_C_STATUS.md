@@ -1,25 +1,25 @@
-# Phase C proof status — local machine-check pass; evidence upload pending
+# Phase C proof status — Verified, conditional persistence/cadence claims
 
 Protocol: [CRPI-FVP-001](../../docs/FORMAL_VERIFICATION_PROTOCOL.md)  
 Phase B's [24 conditional proofs are verified and merged](PHASE_B_STATUS.md) in PR #2. The accepted Phase A proofs are unchanged. Phase C PR #3 is now based on `main`.  
-**Status: LOCAL LEAN BUILD AND AXIOM AUDIT REPORTED PASS; STATEMENT REVIEW PASSED; ARCHIVED ACCEPTANCE PENDING.** The owner reran Lean 4.24.0 after correcting `intervalStep_tendsto_equilibrium`. From exact source `9dab18ba0e7045c28754746a0ba61a2cb1d2e592`, `lake build` finished successfully (**7,359 jobs**) and `scripts/capture_phase_c.ps1` reported **21 theorem-level axiom audits**, all using only the permitted foundational axioms. The source-to-[manuscript correspondence review](PHASE_C_STATEMENT_REVIEW.md) is complete. The generated Windows files at `verification/evidence/9dab18ba0e7045c28754746a0ba61a2cb1d2e592/` must still be committed to GitHub and inspected before any theorem is labeled release-qualified **Verified**.
+**Status: PHASE C VERIFIED — 21 theorem statements under the explicitly stated mathematical hypotheses.** The [exact-revision machine-check evidence](../../verification/evidence/9dab18ba0e7045c28754746a0ba61a2cb1d2e592/phase-c-summary.json) has been committed and reviewed. For mathematical source `9dab18ba0e7045c28754746a0ba61a2cb1d2e592`, the owner-local pinned **Lean 4.24.0** and Mathlib `f897ebcf72cd16f89ab4577d0c826cd14afaafc7` build passed (**7,359 jobs**) and all **21 theorem axioms** were audited with exit code zero. Each theorem uses only `propext`, `Classical.choice` and `Quot.sound`. Manifest SHA-256: `c3c1ac12354571388bf36c1532f77dfe9ffa7cac846f786b479b3c072d10e308`. The [correspondence review](PHASE_C_STATEMENT_REVIEW.md) passed for the exact stock-transition and cadence claims. Only documentation/evidence changed after the tested source commit. The two reported unused-hypothesis warnings are in already accepted Phase B source and are nonblocking.
 
 ## Manuscript alignment and proof scope
 
 | Claim | Candidate Lean theorem | Goal | Status |
 | --- | --- | --- | --- |
-| P3 | `totalRate_nonneg` / `zero_totalRate_zero_terms` | Nonnegative rates and degenerate no-update case | Local pass reported; evidence archive pending |
-| P3 | `stockDrift_affine`, `stockDrift_lower_boundary_nonneg`, `stockDrift_upper_boundary_nonpos`, `stockDrift_zero_iff_equilibrium` | Exact ODE drift, inward boundaries, unique equilibrium when q>0 | Local pass reported; evidence archive pending |
-| P3 | `stockEquilibrium_bounded` | Equilibrium in [0,1] when total rate positive | Local pass reported; evidence archive pending |
-| P3 | `decayFactor_bounded` | Exponential factor in (0,1] for nonnegative elapsed time and rate | Local pass reported; evidence archive pending |
-| P3 | `intervalStep_bounded` | Convex-combination invariant | Local pass reported; evidence archive pending |
-| P3 | `stockTransition_zero_rate` / `stockTransition_bounded` | Exact update with q=0 branch preserves state and [0,1] | Local pass reported; evidence archive pending |
-| P3 | `intervalStep_equilibrium` / `stockTransition_equilibrium` | Fixed equilibrium under constant inputs | Local pass reported; evidence archive pending |
-| P3 | `intervalStep_contraction` | Absolute distance to equilibrium never increases | Local pass reported; evidence archive pending |
-| P3 | `intervalStep_decreases_above` / `intervalStep_increases_below` | Directional evolution toward equilibrium for longer intervals | Local pass reported; evidence archive pending |
-| P3 | `intervalStep_tendsto_equilibrium` / `stockTransition_tendsto_equilibrium` | Convergence as elapsed time tends to infinity when q>0 | Local pass reported; evidence archive pending |
-| P4 | `intervalStep_semigroup` / `stockTransition_semigroup` | Exact cadence consistency with identical interval rates and inputs | Local pass reported; evidence archive pending |
-| P6 complement | `envelope_after_transition_bounded` | CRPI envelope boundedness using verified P3 stock invariance | Local pass reported; evidence archive pending |
+| P3 | `totalRate_nonneg` / `zero_totalRate_zero_terms` | Nonnegative rates and degenerate no-update case | **Verified (Phase C; conditional)** |
+| P3 | `stockDrift_affine`, `stockDrift_lower_boundary_nonneg`, `stockDrift_upper_boundary_nonpos`, `stockDrift_zero_iff_equilibrium` | Exact ODE drift, inward boundaries, unique equilibrium when q>0 | **Verified (Phase C; conditional)** |
+| P3 | `stockEquilibrium_bounded` | Equilibrium in [0,1] when total rate positive | **Verified (Phase C; conditional)** |
+| P3 | `decayFactor_bounded` | Exponential factor in (0,1] for nonnegative elapsed time and rate | **Verified (Phase C; conditional)** |
+| P3 | `intervalStep_bounded` | Convex-combination invariant | **Verified (Phase C; conditional)** |
+| P3 | `stockTransition_zero_rate` / `stockTransition_bounded` | Exact update with q=0 branch preserves state and [0,1] | **Verified (Phase C; conditional)** |
+| P3 | `intervalStep_equilibrium` / `stockTransition_equilibrium` | Fixed equilibrium under constant inputs | **Verified (Phase C; conditional)** |
+| P3 | `intervalStep_contraction` | Absolute distance to equilibrium never increases | **Verified (Phase C; conditional)** |
+| P3 | `intervalStep_decreases_above` / `intervalStep_increases_below` | Directional evolution toward equilibrium for longer intervals | **Verified (Phase C; conditional)** |
+| P3 | `intervalStep_tendsto_equilibrium` / `stockTransition_tendsto_equilibrium` | Convergence as elapsed time tends to infinity when q>0 | **Verified (Phase C; conditional)** |
+| P4 | `intervalStep_semigroup` / `stockTransition_semigroup` | Exact cadence consistency with identical interval rates and inputs | **Verified (Phase C; conditional)** |
+| P6 complement | `envelope_after_transition_bounded` | CRPI envelope boundedness using verified P3 stock invariance | **Verified (Phase C; conditional)** |
 
 The definitions use exactly:
 
@@ -38,27 +38,21 @@ mathematically the same as `exp(-q * dt)` used in the manuscript. The cadence
 statement requires identical inputs on the adjacent intervals. A general
 time-varying ODE existence/uniqueness proof is deliberately out of scope.
 
-## Verification acceptance
+## Final acceptance
 
-1. All Lean source **and Phase B dependencies** compile with the pinned Lean
-   4.24.0/Mathlib4 versions.
-2. All **21 Phase C declarations** are checked and appear in
-   `lake env lean CRPI/AuditC.lean` without unexpected axioms.
-3. The theorem-to-manuscript review [is complete](PHASE_C_STATEMENT_REVIEW.md) for the intended candidate statements; verify that final compiler-accepted declarations retain those statements and assumptions.
-4. Commit exact-revision `verification/evidence/<commit>/` proof and axiom logs.
-5. The Phase B PR is merged and the source-to-paper review is complete.
-   Keep this PR draft until Phase C's exact-revision machine-check artifacts
-   are committed and independently accepted.
-6. Do not claim that any formal theorem empirically validates a cyber-risk
-   measurement or a particular calibration profile.
+1. **Source-to-paper correspondence:** PASS for Proposition 3's exact piecewise-constant stock dynamics, Proposition 4's same-input cadence semigroup, and the bounded-envelope continuation of Proposition 6; refer to [the statement review](PHASE_C_STATEMENT_REVIEW.md).
+2. **Machine check:** PASS for all 21 listed theorem declarations, with exact source revision and toolchain attested by the [archived evidence](../../verification/evidence/9dab18ba0e7045c28754746a0ba61a2cb1d2e592/phase-c-summary.json).
+3. **Source integrity:** GitHub comparison `9dab18ba...` to acceptance head shows only this proof documentation and the three archived logs, with no Lean theorem, dependency or toolchain changes.
+4. **Mathematical limitations:** The general time-varying ODE, dimensionally typed quantities, Proposition 6 envelope-switch nondifferentiability and Phase D Python-reference conformance are **not** proven by this phase. All stock invariant statements depend on bounded residual/mitigation and nonnegative rates and duration.
+5. **Decision:** Phase C is eligible for merge. Do not claim numerical implementation conformance or a blanket formal proof of the entire manuscript until the remaining protocol gates are satisfied.
 
-After the branch is checked out on a Windows workstation, run:
+### Reproduce the proof
 
-```powershell
-.\scripts\capture_phase_c.ps1
+From `formal/lean` in the pinned local toolchain:
+
+```bash
+lake build
+lake env lean CRPI/AuditC.lean
 ```
 
-The owner already ran the collector successfully for source `9dab18ba...`.
-**Next step:** commit and push the generated `verification/evidence/9dab18ba0e7045c28754746a0ba61a2cb1d2e592/` directory, then inspect `phase-c-summary.json`, `phase-c-lake-build.log` and `phase-c-axiom-audit.log` against the accepted statements, pinned toolchain and exact source SHA. No source changes are authorized just to remove Phase B's two harmless linter warnings.
-
-Only after the evidence gate passes should this ledger's conditional Phase C statements be promoted to **Verified** and PR #3 merged. The full manuscript is not thereby empirically validated.
+The PowerShell collector at repository root, `scripts/capture_phase_c.ps1`, captures exact-revision build and axiom evidence in `verification/evidence/<source-commit>/`.
