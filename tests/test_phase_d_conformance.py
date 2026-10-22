@@ -182,6 +182,16 @@ class PhaseDConformanceTests(unittest.TestCase):
             with self.subTest(invalid_geometric=(values, weights, eps)):
                 with self.assertRaises(ValueError):
                     regularized_geometric(values, weights, eps)
+        # The Python contract must not accept normalizations that can push
+        # a valid bounded aggregate beyond one by more than roundoff.
+        with self.assertRaises(ValueError):
+            weighted_sum([1.0], [1.0 + 5e-10])
+        with self.assertRaises(ValueError):
+            regularized_geometric([1.0], [1.0 + 5e-10], 0.05)
+        # Individually finite rates can overflow when their contributions
+        # are summed; rejecting them is safer than a false finite equilibrium.
+        with self.assertRaises(ValueError):
+            update_persistent_stock(.2, 1.0, 1.0, 1e308, 1e308, 1.0)
         for invalid in (-.001, 1.001, math.nan, math.inf):
             with self.assertRaises(ValueError):
                 update_persistent_stock(invalid, .3, .4, .3, .8, 1.0)
