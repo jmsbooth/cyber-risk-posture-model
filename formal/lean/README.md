@@ -1,6 +1,6 @@
-# CRPI Lean 4 formalization — Phase A
+# CRPI Lean 4 formalization — Phases A and B
 
-This is the bounded Phase A formalization of the CRPI elementary equations,
+This is the Lean 4 formalization of CRPI's Phase A elementary equations and Phase B regularized geometric aggregation/directional sensitivity,
 governed by [CRPI-FVP-001](../../docs/FORMAL_VERIFICATION_PROTOCOL.md).
 
 **Status: Phase A verified (11 conditional theorem statements).** A complete
@@ -10,6 +10,8 @@ toolchain attestation, and pinned dependency set. The
 [theorem-to-manuscript statement review](PHASE_A_STATEMENT_REVIEW.md)
 is complete. See [PROOF_STATUS.md](PROOF_STATUS.md) for the per-claim scope
 and outstanding work.
+
+**Status: Phase B verified (24 conditional theorem statements)** under Lean 4.24.0 and pinned Mathlib4. The [Phase B build, axiom audit and source attestation](../../verification/evidence/e457153dc5ac5b48b432b3a6fec57d492432b1bb/phase-b-summary.json) is archived. [Theorem correspondence](PHASE_B_STATEMENT_REVIEW.md) and [claim-level ledger](PHASE_B_STATUS.md) record the accepted scope. The 11 Phase A proofs remain verified. Phase C's persistence and cadence claims require separate evidence qualification.
 
 ## Frozen dependency versions
 
@@ -51,8 +53,7 @@ the exact source revision.
 All 11 listed Phase A theorem statements were machine-checked under their
 declared hypotheses. These proofs establish boundedness properties of the
 elementary equations and conditional envelope monotonicity/boundedness.
-Formal aggregation using the regularized geometric operator belongs to
-Phase B; exact stock-flow transition belongs to Phase C.
+Phase B formalizes the exact regularized weighted geometric operator and its bounds, endpoint and monotonicity behavior in `CRPI.Aggregation`, and the composed instantaneous residual's directional properties in `CRPI.Direction`. The derivative formulas in the paper were not separately checked. The exact stock-flow transition and time-dependent properties belong to Phase C.
 
 To reproduce or extend the evidence, execute
 `./scripts/capture_phase_a.ps1` from the repository root in PowerShell
@@ -61,6 +62,4 @@ generated `verification/evidence/<commit>/` artifacts.
 The accepted Phase A attestation uses source `b50dea4`; subsequent
 documentation/evidence-only revisions do not modify the checked Lean theorems.
 
-The formalization does **not** yet cover regularized geometric construction,
-the persistence update, or full end-to-end model properties. Do not describe the
-entire paper or CRPI as formally verified merely because Phase A compiled.
+The formalization now covers Phase A and B in their stated conditional scope; it does **not** yet establish a release-qualified full persistence/cadence proof, end-to-end numerical conformance, or empirical model validity. Do not describe the entire paper or CRPI as formally verified.

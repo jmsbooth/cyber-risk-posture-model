@@ -1,0 +1,59 @@
+{
+  "evidence_type": "local_machine_checked_lean_phase_b",
+  "protocol": "CRPI-FVP-001",
+  "source_commit": "e457153dc5ac5b48b432b3a6fec57d492432b1bb",
+  "captured_utc": "2026-10-22T16:37:25.9372199Z",
+  "platform": "Microsoft Windows NT 10.0.26200.0",
+  "lean_version": "Lean (version 4.24.0, x86_64-w64-windows-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)",
+  "lake_version": "Lake version 5.0.0-src+797c613 (Lean version 4.24.0)",
+  "declared_toolchain": "leanprover/lean4:v4.24.0",
+  "mathlib_commit": "f897ebcf72cd16f89ab4577d0c826cd14afaafc7",
+  "lake_manifest_sha256": "c3c1ac12354571388bf36c1532f77dfe9ffa7cac846f786b479b3c072d10e308",
+  "commands": [
+    "lake build",
+    "lake env lean CRPI/AuditB.lean"
+  ],
+  "exit_codes": {
+    "axiom_audit": 0,
+    "build": 0
+  },
+  "theorem_count": 24,
+  "theorem_names": [
+    "CRPI.regularizedBase_bounds",
+    "CRPI.regularizedProduct_bounds",
+    "CRPI.regularizedGeometric_bounded",
+    "CRPI.regularizedGeometric_zero",
+    "CRPI.regularizedGeometric_one",
+    "CRPI.regularizedProduct_zero_weight_irrelevance",
+    "CRPI.regularizedGeometric_zero_weight_irrelevance",
+    "CRPI.regularizedGeometric_mono",
+    "CRPI.regularizedGeometric_strictMono",
+    "CRPI.regularizedGeometric_pos_of_positive_component",
+    "CRPI.domainResilience_bounded",
+    "CRPI.effectiveConsequence_mono_domain",
+    "CRPI.effectiveConsequence_antitone_resilience",
+    "CRPI.hazard_mono_threat",
+    "CRPI.hazard_mono_consequence",
+    "CRPI.mitigation_mono_usom",
+    "CRPI.mitigation_mono_cm",
+    "CRPI.instantaneousResidual_mono_hazard",
+    "CRPI.instantaneousResidual_antitone_mitigation",
+    "CRPI.currentResidual_mono_threat",
+    "CRPI.currentResidual_mono_domain",
+    "CRPI.currentResidual_antitone_resilience",
+    "CRPI.currentResidual_antitone_usom",
+    "CRPI.currentResidual_antitone_cm"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+  ],
+  "observed_axioms": [
+    "Classical.choice",
+    "propext",
+    "Quot.sound"
+  ],
+  "manual_statement_review": "PENDING — new Phase B statements require independent manuscript comparison",
+  "status": "BUILD_AND_AXIOM_AUDIT_PASS_REVIEW_PENDING"
+}
