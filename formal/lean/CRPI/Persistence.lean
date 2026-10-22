@@ -43,6 +43,23 @@ theorem stockDrift_affine
   unfold stockDrift totalRate
   ring
 
+/-- The flow field points inward at the lower stock boundary. -/
+theorem stockDrift_lower_boundary_nonneg
+    {beta kappa residual mitigationValue : ℝ}
+    (hbeta : 0 ≤ beta) (hr : Bounded residual) :
+    0 ≤ stockDrift beta kappa residual mitigationValue 0 := by
+  simpa [stockDrift, accumulationRate] using
+    (mul_nonneg hbeta hr.1)
+
+/-- The flow field points inward at the upper stock boundary. -/
+theorem stockDrift_upper_boundary_nonpos
+    {beta kappa residual mitigationValue : ℝ}
+    (hkappa : 0 ≤ kappa) (hm : Bounded mitigationValue) :
+    stockDrift beta kappa residual mitigationValue 1 ≤ 0 := by
+  have h : 0 ≤ kappa * mitigationValue := mul_nonneg hkappa hm.1
+  unfold stockDrift dissipationRate
+  nlinarith
+
 /-- The q>0 equilibrium is the unique stock with zero ODE drift. -/
 theorem stockDrift_zero_iff_equilibrium
     {beta kappa residual mitigationValue stock : ℝ}
