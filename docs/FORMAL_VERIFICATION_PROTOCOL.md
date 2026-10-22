@@ -1,12 +1,14 @@
 # CRPI Formal Verification Protocol
 
 **Protocol ID:** CRPI-FVP-001  
-**Version:** 0.1  
-**Status:** Published review draft — guidance for the next implementation increment; no Lean proofs are claimed complete  
+**Version:** 0.1.1  
+**Status:** Active protocol — Phase A conditional theorems verified; full six-proposition milestone open  
 **Date:** 2026-10-21  
 **Repository:** [jmsbooth/cyber-risk-posture-model](https://github.com/jmsbooth/cyber-risk-posture-model)  
 **Source baseline:** `main` at `6752d3a32162848bcd73b6274a90b6e2442f163a` (manuscript and Python reference implementation)  
 **Owner:** Repository maintainer
+
+**Implementation status (2026-10-22):** [Phase A proof ledger](../formal/lean/PROOF_STATUS.md) identifies 11 machine-checked conditional theorem statements, supported by [pinned-toolchain verification evidence](../verification/evidence/b50dea4aaf40cad56c42cff436d450278459efbf/summary.json) and [statement-to-manuscript review](../formal/lean/PHASE_A_STATEMENT_REVIEW.md). Other proposition groups remain open. Version 0.1.1 updates the protocol's status references only; the proof trust model, bounded scope, and acceptance requirements are unchanged.
 
 ## 1. Purpose and verification boundary
 
@@ -49,6 +51,8 @@ The first formal-verification milestone covers the existing six analytical propo
 | P4 — cadence consistency | Exact transition semigroup for adjacent nonnegative durations **with unchanged inputs and rates** | C | Not started |
 | P5 — directional sensitivity | Non-decreasing response to `TE` and consequence; non-increasing response to applicable resilience, `CM`, and `USOM`, with other variables fixed | B | Not started |
 | P6 — CRPI envelope | Bounded `max(R_inst,S)` and monotonicity in its arguments | A | Not started |
+
+The **Initial status** column documents the original October 21 baseline. It is intentionally historical; the [current proof ledger](../formal/lean/PROOF_STATUS.md), not this table, governs live claim acceptance. Phase A now verifies P2's elementary boundedness properties and P6's boundedness/monotonicity **conditional on bounded stock**, while the remaining propositions are pending.
 
 ### Explicit mathematical conditions
 
