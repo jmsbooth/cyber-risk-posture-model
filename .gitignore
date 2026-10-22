@@ -22,3 +22,9 @@ venv/
 dist/
 build/
 *.egg-info/
+
+# Lean / Lake local dependency and compiler artifacts
+formal/lean/.lake/
+formal/lean/*.olean
+formal/lean/*.ilean
+formal/lean/*.c

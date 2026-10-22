@@ -1,0 +1,46 @@
+{
+  "evidence_type": "local_machine_checked_lean_phase_a",
+  "protocol": "CRPI-FVP-001",
+  "source_commit": "b50dea4aaf40cad56c42cff436d450278459efbf",
+  "captured_utc": "2026-10-22T15:15:32.9671096Z",
+  "platform": "Microsoft Windows NT 10.0.26200.0",
+  "lean_version": "Lean (version 4.24.0, x86_64-w64-windows-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)",
+  "lake_version": "Lake version 5.0.0-src+797c613 (Lean version 4.24.0)",
+  "declared_toolchain": "leanprover/lean4:v4.24.0",
+  "mathlib_commit": "f897ebcf72cd16f89ab4577d0c826cd14afaafc7",
+  "lake_manifest_sha256": "01fedc5e3f7a5a00f61be91cc85d673e43f355ef48672236eb13b1656f0ea575",
+  "commands": [
+    "lake build",
+    "lake env lean CRPI/Audit.lean"
+  ],
+  "exit_codes": {
+    "axiom_audit": 0,
+    "build": 0
+  },
+  "theorem_count": 11,
+  "theorem_names": [
+    "CRPI.bounded_complement",
+    "CRPI.bounded_mul",
+    "CRPI.weightedSum_bounded",
+    "CRPI.consequenceSeverity_bounded",
+    "CRPI.effectiveConsequence_bounded",
+    "CRPI.hazard_bounded",
+    "CRPI.mitigation_bounded",
+    "CRPI.instantaneousResidual_bounded",
+    "CRPI.envelope_bounded",
+    "CRPI.envelope_mono_residual",
+    "CRPI.envelope_mono_stock"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+  ],
+  "observed_axioms": [
+    "Classical.choice",
+    "propext",
+    "Quot.sound"
+  ],
+  "manual_statement_review": "PASS for Phase A conditional claims; see formal/lean/PHASE_A_STATEMENT_REVIEW.md",
+  "status": "BUILD_AXIOM_AND_PHASE_A_STATEMENT_REVIEW_PASS"
+}
