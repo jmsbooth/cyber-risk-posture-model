@@ -13,7 +13,7 @@ model. Calibration values belong in a versioned profile such as
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
-from math import exp, isfinite, log
+from math import exp, expm1, isfinite, log, log1p
 from typing import Iterable, Mapping, Sequence
 
 
@@ -78,11 +78,25 @@ def regularized_geometric(
     if not isfinite(epsilon) or not 0.0 < epsilon < 1.0:
         raise ValueError(f"epsilon must be finite and in (0, 1); got {epsilon!r}")
 
-    log_product = sum(
-        weight * log(epsilon + (1.0 - epsilon) * value)
-        for value, weight in zip(checked_values, checked_weights)
-    )
-    result = (exp(log_product) - epsilon) / (1.0 - epsilon)
+    if epsilon > 0.5:
+        # Identical real-valued equation, evaluated with a cancellation-safe
+        # identity near epsilon=1. Let delta=1-epsilon and L be the weighted
+        # log product. (exp(L)-epsilon)/delta = 1+expm1(L)/delta, with each
+        # log(epsilon+delta*x) = log1p(-delta*(1-x)).
+        delta = 1.0 - epsilon
+        log_product = sum(
+            weight * log1p(-delta * (1.0 - value))
+            for value, weight in zip(checked_values, checked_weights)
+        )
+        result = 1.0 + expm1(log_product) / delta
+    else:
+        # The direct log-product is stable for small epsilon, including
+        # zero-valued inputs where epsilon keeps the logarithm well-defined.
+        log_product = sum(
+            weight * log(epsilon + (1.0 - epsilon) * value)
+            for value, weight in zip(checked_values, checked_weights)
+        )
+        result = (exp(log_product) - epsilon) / (1.0 - epsilon)
     return _clamp_roundoff(result)
 
 
