@@ -2,8 +2,9 @@
 artifacts/*.csv
 artifacts/*.json
 
-# LaTeX build products
-paper/build/
+# LaTeX build products - track only the reviewed final manuscript PDF.
+paper/build/*
+!paper/build/CRM_revised.pdf
 paper/*.aux
 paper/*.fdb_latexmk
 paper/*.fls
