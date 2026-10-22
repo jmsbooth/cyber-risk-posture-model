@@ -12,7 +12,7 @@ The paper's [Governing Model](../paper/CRM_revised.tex) is the authority for all
 
 | Surface | Fixed vectors | Coverage |
 | --- | ---: | --- |
-| Finite regularized geometric operator and resilience projections | 9 | Manuscript TE example, both endpoints, nonabsorbing zero, zero weight, three components, small and large epsilon |
+| Finite regularized geometric operator and resilience projections | 10 | Manuscript TE example, both endpoints, nonabsorbing zero, zero weight, three components, small, large and near-one epsilon |
 | Fully decomposed manuscript example | 1 | TE, CS, domain-specific D_eff, H, M, R_inst, q, stock equilibrium, S_next, CRPI |
 | Exact stock-flow transition | 8 | Both ways to reach q=0, dt=0, approach from above/below, nominal update, stock at 1, long-interval accumulation |
 | Published synthetic scenarios | 5 | README's initial, peak, final CRPI and coverage qualification, compared as **rounded display values** |
@@ -29,12 +29,14 @@ The vectors are a declared **float-versus-real conformance test**, not an attemp
 
 ## Implementation boundary findings and repairs
 
-Phase D inspection found two numerical-contract defects, classified as **finite-precision implementation limitations**, not incorrect governing equations:
+Phase D inspection found three numerical-contract defects, classified as **finite-precision implementation limitations**, not incorrect governing equations:
 
 1. `models.crm_reference._validate_weights` previously tolerated weight sums deviating from one by as much as `1e-9`; this exceeded the implementation's `1e-12` bounded-output roundoff clamp and could allow aggregate values above 1. It now rejects weight sums deviating by more than `1e-12`, while preserving valid profile weights with machine-precision rounding.
 2. `models.crm_reference.update_persistent_stock` validated beta and kappa individually as finite, but their sum-of-products `q` could overflow to infinity, making `beta * residual / q` silently return an incorrect equilibrium. It now explicitly rejects a nonfinite `q` instead of returning a misleading state.
 
-The formulas for `G_epsilon`, `D_eff`, `H`, `M`, `R_inst`, the exact exponential update and `max` were **not changed**. Regression tests for these two errors have been added. No model recalibration, new construct, or semantic scope extension is introduced.
+3. `regularized_geometric` previously computed `(exp(L)-epsilon)/(1-epsilon)` directly for any `epsilon<1`. For `epsilon` extremely close to 1, subtractive cancellation could produce an incorrect value (for example, 1 instead of approximately 0.55). The implementation now uses the **exact real-arithmetic identity** `1 + expm1(L)/(1-epsilon)` for `epsilon>0.5`, calculating each log term as `log1p(-(1-epsilon)*(1-x_i))`; at smaller epsilon the existing log-product path is retained. A near-one epsilon fixed golden vector is included.
+
+The formulas for `G_epsilon`, `D_eff`, `H`, `M`, `R_inst`, the exact exponential update and `max` were **not changed**. Only float evaluation stability and input guards were adjusted. No model recalibration, new construct, or semantic scope extension is introduced.
 
 ## Reproducible execution
 
@@ -57,7 +59,7 @@ Run evidence capture **only with committed source changes**; no working-tree edi
 - [x] Independent Decimal oracle and fixed numerical vectors authored.
 - [x] Conformance, seeded and numerical-boundary regression tests authored.
 - [x] Local evidence collector authored (all three Lean phases included).
-- [x] Independent decimal generator self-check run in isolated authoring environment (43 expected fields), and new Python files syntactically compiled.
+- [x] Independent decimal generator self-check run in isolated authoring environment (44 expected fields), and new Python files syntactically compiled.
 - [ ] Python conformance/unit tests executed **against the repository's actual reference implementation** at the exact committed source revision.
 - [ ] Scenario, invariant, three-phase Lean build/axiom logs, toolchain and dependency attestations archived in Git and reviewed.
 - [ ] Manuscript PDF rebuilt and checked for technical publication where available. If not run, the manuscript build gate remains explicitly unqualified.
