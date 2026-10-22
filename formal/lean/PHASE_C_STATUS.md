@@ -3,7 +3,7 @@
 Protocol: [CRPI-FVP-001](../../docs/FORMAL_VERIFICATION_PROTOCOL.md)  
 This branch is stacked atop Phase B, whose proofs are also **pending** real
 machine-checking. The accepted Phase A proofs are unchanged.  
-**Status: STATEMENT REVIEW PASSED; LEAN BUILD/AXIOM AUDIT NOT YET RUN.** The [Phase C theorem-to-manuscript correspondence review](PHASE_C_STATEMENT_REVIEW.md) confirms the intended P3/P4 exact-transition semantics and conditional P6 envelope claim. Compilation and kernel proof checking remain open for all 21 Phase C declarations.
+**Status: STATEMENT REVIEW PASSED; FIRST LOCAL BUILD FAILED ON LIMIT-LEMMA COMPATIBILITY; CORRECTION AWAITING REBUILD.** The [Phase C theorem-to-manuscript correspondence review](PHASE_C_STATEMENT_REVIEW.md) confirms the intended P3/P4 exact-transition semantics and conditional P6 envelope claim. The owner reported a local Lean 4.24.0 build failure confined to `intervalStep_tendsto_equilibrium`: a `simpa`-driven type mismatch and two unsupported constant-tendsto combinators. Commit `1f59e8bd92d0c135f3cbaab1501a3932f943c8f6` replaced these with an explicitly typed exponential limit and continuity of an affine map. The corrected mathematical proof source **has not yet been recompiled**. Kernel acceptance and axiom audit remain open for all 21 Phase C declarations.
 
 ## Manuscript alignment and proof scope
 
