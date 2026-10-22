@@ -12,8 +12,7 @@ validation checks.
 ## Start here
 
 - [Read the manuscript source](paper/CRM_revised.tex)
-- Build the PDF with the command below, or open the locally generated
-  [PDF](paper/build/CRM_revised.pdf) after building it
+- [Manuscript PDF publication status](https://github.com/jmsbooth/cyber-risk-posture-model/issues/5) — the source can be built locally with Tectonic; a reviewed, tracked PDF will be linked here after publication QA
 - [Run the reference model](models/crm_reference.py)
 - [Inspect the calibration profile](config/calibration_baseline.json)
 - [Review the synthetic scenarios](data/examples/scenarios.csv)
