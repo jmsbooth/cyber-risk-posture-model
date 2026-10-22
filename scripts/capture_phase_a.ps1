@@ -149,8 +149,8 @@ $summary = [ordered]@{
     theorem_names = $required
     permitted_axioms = $allowedAxioms
     observed_axioms = $detectedAxioms
-    manual_statement_review = "PENDING - compare theorem types and assumptions to the manuscript"
-    status = "BUILD_AND_AXIOM_AUDIT_PASS_PENDING_STATEMENT_REVIEW"
+    manual_statement_review = "PASS for Phase A conditional claims; see formal/lean/PHASE_A_STATEMENT_REVIEW.md"
+    status = "BUILD_AXIOM_AND_PHASE_A_STATEMENT_REVIEW_PASS"
 }
 $summary | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $evidence "summary.json") -Encoding utf8
 
