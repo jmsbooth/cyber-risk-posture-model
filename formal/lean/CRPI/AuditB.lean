@@ -2,7 +2,7 @@ import CRPI
 
 /-!
 Run: lake env lean CRPI/AuditB.lean
-Phase B theorem-level axiom ledger. Passing the compiler and the audit is
+Phase B theorem-level dependency ledger. Passing the compiler and the audit is
 required before any candidate is labeled verified.
 -/
 
