@@ -1,0 +1,8 @@
+ΓÜá [7355/7358] Replayed CRPI.Aggregation
+warning: CRPI/Aggregation.lean:27:5: unused variable `h╬╡0`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: CRPI/Aggregation.lean:103:19: unused variable `h╬╡1`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+Build completed successfully (7358 jobs).
