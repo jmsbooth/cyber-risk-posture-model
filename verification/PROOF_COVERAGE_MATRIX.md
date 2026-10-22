@@ -4,7 +4,7 @@
 **Protocol:** [CRPI-FVP-001](../docs/FORMAL_VERIFICATION_PROTOCOL.md)  
 **Authority:** [Manuscript appendix](../paper/CRM_revised.tex), the exact Lean theorem statements and assumptions, and the archived source-revision evidence.
 
-**Decision:** All **six propositions have machine-checked counterparts for their *required* mathematical subclaims**, within the limits described below. The 56 accepted theorem declarations are supporting results, not 56 independent manuscript propositions. The optional analytic P6 non-differentiability claim, Python floating-point conformance (Phase D) and empirical model validity are distinct and have **not** yet been accepted as fully verified.
+**Decision:** All **six propositions have machine-checked counterparts for their *required* mathematical subclaims**, within the limits described below. The 56 accepted theorem declarations are supporting results, not 56 independent manuscript propositions. The optional analytic P6 non-differentiability claim is unformalized. **Phase D reference-implementation numerical conformance has been independently checked under the declared tolerances**, whereas empirical model validity remains an entirely separate open research question.
 
 | Proposition | Lean status | Verified declaration families | Source-matched evidence | Important boundary |
 | --- | --- | --- | --- | --- |
@@ -20,10 +20,13 @@
 - **Lean 4.24.0 / pinned Mathlib** was checked on the mathematical source revisions `b50dea4` (A), `e457153d` (B), `9dab18ba` (C).
 - **11 + 24 + 21 = 56** declarations were machine-checked. The theorem-by-theorem axiom audits found only standard permitted `propext`, `Classical.choice`, `Quot.sound`.
 - Full mathematical correspondence reviews: [A](../formal/lean/PHASE_A_STATEMENT_REVIEW.md), [B](../formal/lean/PHASE_B_STATEMENT_REVIEW.md), [C](../formal/lean/PHASE_C_STATEMENT_REVIEW.md).
-- Numerical vector testing is **not a proof about IEEE floating-point under all possible inputs**. It compares `models/crm_reference.py` to an independently generated high-precision Decimal oracle under explicit tolerance and data-contract policies.
+- [Phase D numerical conformance evidence](evidence/509c5ae448cddbcd062ad8c984c713d73c07c345/phase-d-summary.json) is **ACCEPTED**: Python 3.11.15, 19/19 unit tests, 44 Decimal expected values, 5/5 invariant checks, 25 scenario rows, and replayed 56/56 Lean theorem audits. Test source revision `509c5ae448cddbcd062ad8c984c713d73c07c345`; evidence committed at `f6f052eea91007a3ea312b082426bde0db490dd9`. The accepted exact-revision comparison shows only evidence files changed after testing.
+- Numerical testing is **not a proof about IEEE floating-point under all possible inputs**. It compares `models/crm_reference.py` against an independent 70-digit Decimal oracle using core `abs_tol=rel_tol=5e-11`, with `0.0015` absolute tolerance only for rounded manuscript/scenario presentation figures.
 
-## Remaining release conditions
+## Release disposition and remaining conditions
 
-1. Execute and archive the Phase D [conformance suite](PHASE_D_STATUS.md), reconcile any actual implementation discrepancies, and verify source SHA and test output.
-2. Document the manuscript PDF build result and preserve the accepted manuscript/README wording. If no TeX build is performed, do not call the manuscript's PDF release tested.
-3. Declare only **selected CRPI mathematical invariants formally verified under stated hypotheses**. Do not imply Lean has proved the cyber-risk measurement semantics, organizational data quality, model calibration, incident prediction, losses, or operational efficacy.
+**Bounded formal and reference-conformance milestone:** **COMPLETE** for all six propositions' **required** mathematical subclaims and the independent numerical acceptance corpus. All 56 Lean theorem declarations are source-matched and the Python suite passes at declared tolerances. This does not imply empirical validity.
+
+**Separate publication-artifact gate:** Manuscript PDF regeneration, visual inspection and repository linking are **NOT RUN/NOT ACCEPTED**. The Phase D log explicitly records `manuscript_pdf: not_run`. Do not publish a final PDF-ready claim until a PDF build is recorded, checked and linked.
+
+**Outside the model-verification scope:** calibration validity, organizational outcome prediction, general nonautonomous ODE correctness, data provenance, parameter accuracy, domain applicability to real systems, and optional Lean proof of the Proposition 6 nonsmooth-envelope claim. Keep the mandated public wording narrow: **“selected mathematical invariants of the CRPI governing equations have been machine-checked under stated assumptions; the reference Python implementation passed bounded numerical conformance tests.”**
