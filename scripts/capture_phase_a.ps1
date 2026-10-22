@@ -49,13 +49,20 @@ New-Item -ItemType Directory -Path $evidence -Force | Out-Null
 $buildLog = Join-Path $evidence "lake-build.log"
 $auditLog = Join-Path $evidence "axiom-audit.log"
 
-# The shell starts at the repository root. Elan may select a different global
-# Lean toolchain there, so gather and validate the *effective project toolchain*
-# only after entering formal/lean. The prior collector incorrectly reported
-# the root-selected toolchain instead of the compiler checking these proofs.
+# The root-level Elan toolchain may differ from the pinned project toolchain.
+# Capture root only as a diagnostic; assert the project toolchain for acceptance.
 $rootLeanVersion = (& lean --version | Out-String).Trim()
 $declaredToolchain = (Get-Content -LiteralPath (Join-Path $leanDir "lean-toolchain") -Raw).Trim()
-if ($declaredToolchain -notmatch '^leanprover/lean4:(v[0-9]+\.[0-9]+\.[0-9]+)
+if ($declaredToolchain -notmatch '^leanprover/lean4:(v[0-9]+\.[0-9]+\.[0-9]+)$') {
+    throw "Expected an explicit Lean version pin in formal/lean/lean-toolchain."
+}
+$expectedLeanVersion = $Matches[1].Substring(1)
+$lockHash = (Get-FileHash -LiteralPath $lockFile -Algorithm SHA256).Hash.ToLowerInvariant()
+$lock = Get-Content -LiteralPath $lockFile -Raw | ConvertFrom-Json
+$mathlibLock = @($lock.packages | Where-Object { $_.name -eq "mathlib" })
+if ($mathlibLock.Count -ne 1) {
+    throw "Expected one Mathlib dependency in lake-manifest.json."
+}
 $mathlibDir = Join-Path $leanDir ".lake/packages/mathlib"
 if (-not (Test-Path -LiteralPath $mathlibDir)) {
     throw "Mathlib is not installed. Run lake update and lake exe cache get."
@@ -90,7 +97,6 @@ try {
     if (-not $leanVersion.Contains("Lean (version $expectedLeanVersion,")) {
         throw "Effective project Lean is '$leanVersion', but the pinned toolchain requires $expectedLeanVersion."
     }
-
     & lake build *> $buildLog
     $buildExit = $LASTEXITCODE
     if ($buildExit -ne 0) {
@@ -151,100 +157,6 @@ $summary | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $eviden
 
 Write-Host "Phase A local machine check passed for source revision: $revision"
 Write-Host "Effective project toolchain: $leanVersion"
-Write-Host "Recorded $($required.Count) theorems and permitted foundational axioms."
-Write-Host "Evidence folder: $evidence"
-Write-Host "Next: inspect the artifacts, review statement correspondence, and commit the evidence under verification/evidence."
-) {
-    throw "Expected an explicit Lean version pin in formal/lean/lean-toolchain."
-}
-$expectedLeanVersion = $Matches[1].Substring(1)
-$lockHash = (Get-FileHash -LiteralPath $lockFile -Algorithm SHA256).Hash.ToLowerInvariant()
-$lock = Get-Content -LiteralPath $lockFile -Raw | ConvertFrom-Json
-$mathlibLock = @($lock.packages | Where-Object { $_.name -eq "mathlib" })
-if ($mathlibLock.Count -ne 1) {
-    throw "Expected one Mathlib dependency in lake-manifest.json."
-}
-$mathlibDir = Join-Path $leanDir ".lake/packages/mathlib"
-if (-not (Test-Path -LiteralPath $mathlibDir)) {
-    throw "Mathlib is not installed. Run lake update and lake exe cache get."
-}
-$mathlibRevision = (& git -C $mathlibDir rev-parse HEAD | Out-String).Trim()
-if ($LASTEXITCODE -ne 0) { throw "Cannot read the installed Mathlib revision." }
-
-$required = @(
-    "CRPI.bounded_complement",
-    "CRPI.bounded_mul",
-    "CRPI.weightedSum_bounded",
-    "CRPI.consequenceSeverity_bounded",
-    "CRPI.effectiveConsequence_bounded",
-    "CRPI.hazard_bounded",
-    "CRPI.mitigation_bounded",
-    "CRPI.instantaneousResidual_bounded",
-    "CRPI.envelope_bounded",
-    "CRPI.envelope_mono_residual",
-    "CRPI.envelope_mono_stock"
-)
-$buildExit = -1
-$auditExit = -1
-Push-Location -LiteralPath $leanDir
-try {
-    & lake build *> $buildLog
-    $buildExit = $LASTEXITCODE
-    if ($buildExit -ne 0) {
-        throw "lake build failed (exit $buildExit). See $buildLog"
-    }
-    & lake env lean CRPI/Audit.lean *> $auditLog
-    $auditExit = $LASTEXITCODE
-    if ($auditExit -ne 0) {
-        throw "Axiom audit failed (exit $auditExit). See $auditLog"
-    }
-}
-finally {
-    Pop-Location
-}
-
-$auditOutput = Get-Content -LiteralPath $auditLog -Raw
-$actual = [regex]::Matches(
-    $auditOutput,
-    "'(?<name>CRPI\.[^']+)' depends on axioms: \[(?<axioms>[^\]]*)\]"
-)
-$actualNames = @($actual | ForEach-Object { $_.Groups["name"].Value })
-$missing = @($required | Where-Object { $_ -notin $actualNames })
-if ($missing.Count -gt 0) {
-    throw "Axiom audit omitted required theorems: $($missing -join ', ')"
-}
-$allowedAxioms = @("propext", "Classical.choice", "Quot.sound")
-$detectedAxioms = @(
-    $actual | ForEach-Object { $_.Groups["axioms"].Value.Split(",") } |
-        ForEach-Object { $_.Trim() } | Where-Object { $_ } | Sort-Object -Unique
-)
-$unexpected = @($detectedAxioms | Where-Object { $_ -notin $allowedAxioms })
-if ($unexpected.Count -gt 0) {
-    throw "Unexpected axioms: $($unexpected -join ', ')"
-}
-
-$summary = [ordered]@{
-    evidence_type = "local_machine_checked_lean_phase_a"
-    protocol = "CRPI-FVP-001"
-    source_commit = $revision
-    captured_utc = [DateTime]::UtcNow.ToString("o")
-    platform = [Environment]::OSVersion.VersionString
-    lean_version = $leanVersion
-    lake_version = $lakeVersion
-    mathlib_commit = $mathlibRevision
-    lake_manifest_sha256 = $lockHash
-    commands = @("lake build", "lake env lean CRPI/Audit.lean")
-    exit_codes = @{ build = $buildExit; axiom_audit = $auditExit }
-    theorem_count = $required.Count
-    theorem_names = $required
-    permitted_axioms = $allowedAxioms
-    observed_axioms = $detectedAxioms
-    manual_statement_review = "PENDING - compare theorem types and assumptions to the manuscript"
-    status = "BUILD_AND_AXIOM_AUDIT_PASS_PENDING_STATEMENT_REVIEW"
-}
-$summary | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $evidence "summary.json") -Encoding utf8
-
-Write-Host "Phase A local machine check passed for source revision: $revision"
 Write-Host "Recorded $($required.Count) theorems and permitted foundational axioms."
 Write-Host "Evidence folder: $evidence"
 Write-Host "Next: inspect the artifacts, review statement correspondence, and commit the evidence under verification/evidence."
