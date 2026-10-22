@@ -49,14 +49,14 @@ New-Item -ItemType Directory -Path $evidence -Force | Out-Null
 $buildLog = Join-Path $evidence "lake-build.log"
 $auditLog = Join-Path $evidence "axiom-audit.log"
 
-# The root-level Elan toolchain may differ from the pinned project toolchain.
-# Capture root only as a diagnostic; assert the project toolchain for acceptance.
-$rootLeanVersion = (& lean --version | Out-String).Trim()
+# Elan may select a different compiler from the repository root.
+# Read the pinned project toolchain without triggering the root compiler.
 $declaredToolchain = (Get-Content -LiteralPath (Join-Path $leanDir "lean-toolchain") -Raw).Trim()
-if ($declaredToolchain -notmatch '^leanprover/lean4:(v[0-9]+\.[0-9]+\.[0-9]+)$') {
+$toolchainMatch = [regex]::Match($declaredToolchain, '^leanprover/lean4:(v[0-9]+\.[0-9]+\.[0-9]+)$')
+if (-not $toolchainMatch.Success) {
     throw "Expected an explicit Lean version pin in formal/lean/lean-toolchain."
 }
-$expectedLeanVersion = $Matches[1].Substring(1)
+$expectedLeanVersion = $toolchainMatch.Groups[1].Value.Substring(1)
 $lockHash = (Get-FileHash -LiteralPath $lockFile -Algorithm SHA256).Hash.ToLowerInvariant()
 $lock = Get-Content -LiteralPath $lockFile -Raw | ConvertFrom-Json
 $mathlibLock = @($lock.packages | Where-Object { $_.name -eq "mathlib" })
@@ -141,7 +141,6 @@ $summary = [ordered]@{
     lean_version = $leanVersion
     lake_version = $lakeVersion
     declared_toolchain = $declaredToolchain
-    root_selected_lean_version_diagnostic = $rootLeanVersion
     mathlib_commit = $mathlibRevision
     lake_manifest_sha256 = $lockHash
     commands = @("lake build", "lake env lean CRPI/Audit.lean")
