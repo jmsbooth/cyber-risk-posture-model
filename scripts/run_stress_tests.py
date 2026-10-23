@@ -15,15 +15,19 @@ import hashlib
 import json
 import math
 import random
+import sys
 from pathlib import Path
 from statistics import mean
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from models.crm_reference import (
     effective_consequence, instantaneous_residual, mitigation,
     regularized_geometric, resilience_projection, update_persistent_stock,
 )
 
-ROOT = Path(__file__).resolve().parents[1]
 PROFILE_PATH = ROOT / 'config/calibration_baseline.json'
 SEED = 20261023
 N = 12000
