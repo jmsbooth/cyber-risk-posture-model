@@ -2,6 +2,7 @@
 import copy
 import json
 import math
+import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -41,6 +42,24 @@ class StressTestVerification(unittest.TestCase):
         self.assertEqual(a['core']['boundedness_violations'],0)
         self.assertEqual(a['base_draws'],200)
         self.assertEqual(set(a['missingness']),{'mcar_10','mcar_20','risk_correlated'})
+
+    def test_calibration_hash_is_independent_of_checkout_line_endings(self):
+        # Git can check out JSON as LF on Linux and CRLF on Windows.
+        # The archived numerical evidence must not depend on that setting.
+        raw=st.PROFILE_PATH.read_text(encoding='utf-8')
+        with tempfile.TemporaryDirectory(prefix='crpi-profile-eol-') as folder:
+            lf=Path(folder)/'calibration_lf.json'
+            crlf=Path(folder)/'calibration_crlf.json'
+            lf.write_bytes(raw.encode('utf-8'))
+            crlf.write_bytes(raw.replace('\\r\\n','\\n').replace('\\n','\\r\\n').encode('utf-8'))
+            with patch.object(st,'N',100), patch.object(st,'PROFILE_PATH',lf):
+                unix=st.run()
+            with patch.object(st,'N',100), patch.object(st,'PROFILE_PATH',crlf):
+                windows=st.run()
+        self.assertEqual(unix,windows)
+        self.assertEqual(unix['profile_sha256'],
+                         json.loads((st.ROOT/'verification/stress_test_results.json')
+                                    .read_text(encoding='utf-8'))['profile_sha256'])
 
     def test_archived_evidence_reproduces(self):
         artifact=st.ROOT/'verification/stress_test_results.json'
