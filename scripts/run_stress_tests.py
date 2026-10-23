@@ -245,7 +245,10 @@ def fixed_stresses(profile:dict)->dict:
 
 
 def run() -> dict:
-    profile=json.loads(PROFILE_PATH.read_text(encoding='utf-8'))
+    # Read as text to normalize LF/CRLF. The archived digest describes the
+    # calibration contents, not platform-specific checkout line endings.
+    profile_text=PROFILE_PATH.read_text(encoding='utf-8')
+    profile=json.loads(profile_text)
     if profile['profile_id']!='illustrative-v0.1':
         raise ValueError('Never silently change calibration scenario profile')
     rng=random.Random(SEED)
@@ -259,7 +262,7 @@ def run() -> dict:
     assert all(0<=v<=1 for v in crpi)
     report={
       'schema':'crpi-synthetic-stress-v1', 'profile_id':profile['profile_id'],
-      'profile_sha256':hashlib.sha256(PROFILE_PATH.read_bytes()).hexdigest(),
+      'profile_sha256':hashlib.sha256(profile_text.encode('utf-8')).hexdigest(),
       'seed':SEED, 'base_draws':N,'raw_primitives':list(FIELDS),
       'synthetic_sampling': 'independent Beta(2,2) draws for normalized primitives; independent Uniform(0,1) initial stocks; not representative of organizations',
       'core':{
