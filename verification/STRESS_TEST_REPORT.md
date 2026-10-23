@@ -7,7 +7,7 @@
 **Reproduce:** `python scripts/run_stress_tests.py --check verification/stress_test_results.json` and `python -m unittest discover -v` from repository root. Run with `--output verification/stress_test_results.json` to regenerate fixed results. The source-to-number receipt is `verification/stress_test_results.json` with seed and profile SHA-256. The code uses `models.crm_reference` and Python standard library only; no R dependency or SciPy installation is required.
 
 
-**Local equation-harness receipt:** Python 3.13.5; script SHA-256 `af169dbb2d83bc816f818aea2b2e5f8e5f08eec33e6c3bdaeda9faaac07758de`, fixed output SHA-256 `bba484de1516fd2a4accace9bee839a55a3cceebfe33a6388813304858e229b3`, exact illustrative calibration profile SHA-256 `7a8230e405f7ea2dab262d19781ba23c6f035d945f97bb9c81ee18c0d4daa447`. Regeneration comparison PASS and 5/5 stress-specific local tests PASS. These hashes attest this experiment, not the prior Lean kernel checks or publication PDF.
+**Local equation-harness receipt:** Python 3.13.5; script SHA-256 `1069247cae9cad77ab8484937ad53edce6fd5e70d185823e2fd6d6cd312cfe6a`, fixed output SHA-256 `bba484de1516fd2a4accace9bee839a55a3cceebfe33a6388813304858e229b3`, exact illustrative calibration profile SHA-256 `7a8230e405f7ea2dab262d19781ba23c6f035d945f97bb9c81ee18c0d4daa447`. Regeneration comparison PASS and 5/5 stress-specific local tests PASS. These hashes attest this experiment, not the prior Lean kernel checks or publication PDF.
 
 ## Design and results
 
