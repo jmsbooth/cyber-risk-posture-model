@@ -51,7 +51,7 @@ class StressTestVerification(unittest.TestCase):
             lf=Path(folder)/'calibration_lf.json'
             crlf=Path(folder)/'calibration_crlf.json'
             lf.write_bytes(raw.encode('utf-8'))
-            crlf.write_bytes(raw.replace('\\r\\n','\\n').replace('\\n','\\r\\n').encode('utf-8'))
+            crlf.write_bytes(raw.replace(chr(10), chr(13)+chr(10)).encode('utf-8'))
             with patch.object(st,'N',100), patch.object(st,'PROFILE_PATH',lf):
                 unix=st.run()
             with patch.object(st,'N',100), patch.object(st,'PROFILE_PATH',crlf):
