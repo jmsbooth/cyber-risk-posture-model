@@ -5,7 +5,7 @@
 **Artifact under review:** Owner-uploaded Tectonic 0.17.0 PDF generated from local `main` at `971e3684a511e9d92a7e2e311a27ad5567c80bce`.  
 **Original PDF SHA-256:** `242e0276874e063bee1bf8dcc69cd25a22712b801fc7af926ff27290ca20b7d9`  
 **Original PDF size:** 224,553 bytes (39 US Letter pages).  
-**Status: CORRECTED PDF BUILT, SOURCE-MATCHED AND TRACKED; EXACT-FILE PAGE RENDER/FINAL VISUAL QA NOT YET APPROVED.**
+**Status: FINAL PUBLICATION PDF ACCEPTED — source-matched, clean Tectonic build, and 39/39 rendered-page visual QA passed.**
 
 ## Original PDF checks completed
 
@@ -55,12 +55,24 @@ On 2026-10-22 the repository owner rebuilt the publication branch at source revi
 | TeX overfull/undefined/missing-character diagnostics | **0 matching log entries** |
 | [Tracked GitHub PDF](../paper/build/CRM_revised.pdf) | **Present on publication branch**, hash independently recomputed from GitHub's exact base64 file bytes |
 | Direct README download link | **Added on the publication branch** |
-| Exact-binary full-page visual/geometry inspection | **Pending** — checksum and Tectonic warnings cannot substitute for visual rendering |
-| Page count, PDF accessibility tagging, bibliography and glyph verification of final binary | **Pending** exact-binary inspection; the 39-page count and embedded-font review above refer to the **older** artifact |
+| Exact-binary full-page visual/geometry inspection | **PASS**, all 39 pages rendered and reviewed, plus targeted high-resolution inspection of corrected equation/table pages |
+| Final PDF properties | **39 US Letter pages**, 30 numbered bibliography entries, four plotted figures, six appendix propositions, 70 link annotations; all fonts embedded, no replacement glyphs or unresolved `??` tokens; PDF/UA tagging absent (not required for this release) |
 
 **Binary provenance check:** The GitHub connector returned the entire committed PDF as base64. Independent SHA-256 computation over those decoded bytes exactly matched the Windows `Get-FileHash` result, and byte count matched the git commit. Therefore no local rebuild/re-upload is required unless the page-render review identifies a substantive defect. The earlier visual results for the pre-correction PDF are historical evidence, not verification of the corrected binary's pagination.
 
-**Current gate:** Keep PR #6 draft until the corrected tracked binary has been rendered and visually inspected page-by-page. Only then promote the PDF to release-approved, merge, and close Issue #5.
+**Final gate decision:** ACCEPTED. The corrected tracked binary passed all 39-page visual QA and technical preflight. PR #6 may be marked ready, merged into `main`, and Issue #5 closed after the direct tracked PDF link on `main` resolves.
+
+## Final exact-file render-based review — PASS
+
+The user attached the final `CRM_revised(1).pdf`; its SHA-256 matched the **GitHub-tracked** PDF exactly: `2897fe42fb4639851f703389ce575c96bec622a2d0b102cd6f803364319bcb2c`. The uploaded file was processed with PyMuPDF/Poppler from its actual bytes, **not** the original 39-page artifact or a filename-based inference.
+
+- **39/39 pages** rasterized and inspected using ten 2×2 page montages, plus enlarged page images for the original defect sites (especially PDF pages **8–9, 25–26 and 31**) and graphics/appendix sections. Every page contains readable content, including a short concluding reference page 39; no missing/blank pages.
+- Text-span geometry check on **all 39 pages**: no text bounding boxes beyond PDF page edges and **no text exceeding the normal 72–540 pt horizontal margins**. Equation **(21)** on page **9** remains intact and safely within margins; the earlier overhang is gone. The former overflow near the page **8** worked example is gone, with a minor line break within the inline `CRPI(t+1)` expression remaining legible (nonblocking typographic imperfection).
+- Tables **10** (page 25), **11** (page 26), and **13** (page 31) have readable ragged-right columns, consistent numerical alignment and no visible column collisions or clipping. Five additional corrected measurement tables also fit the text width.
+- Figures **1–4** (pages 18, 28 and 29) show visible chart data, axes, legends and captions. Figures use vector graphics rather than embedded bitmap images.
+- 30 numbered bibliography entries, Appendix Propositions **1–6**, 70 internal/external link annotations, all listed fonts embedded, no U+FFFD replacement characters, no unresolved `??` tokens, no PDF encryption, no blank pages. The PDF remains **untagged for PDF/UA**; tagging was not a requirement of this paper's publication milestone.
+- The Tectonic 0.17.0 log **independently supplied by the owner** reported compilation exit zero and **zero** `Overfull`, `Undefined`, or `Missing character` diagnostics. Nonfatal Windows Fontconfig default-configuration noise had no observable impact on the final rendered PDF.
+- **Visual QA outcome:** all material originally identified publication defects are resolved. No further TeX edits or rebuild are required for this milestone. Mathematical model correctness and empirical calibration remain separate from visual publication quality.
 
 ## Corrections prepared in this PR
 
@@ -68,14 +80,14 @@ On 2026-10-22 the repository owner rebuilt the publication branch at source revi
 - `.gitignore` revised so only `paper/build/CRM_revised.pdf` can be tracked within the TeX build directory; logs and auxiliary files remain ignored.
 - Targeted independent XeLaTeX layout probes of the table formatting passed compilation and rendered readable Tables 10, 11 and 13. A first probe exposed an unbreakable inline analytical-level list, which was corrected in source before opening this PR.
 
-**Critical distinction:** The standalone full-manuscript Tectonic compilation now passes and the corrected PDF is tracked and source-matched. The earlier isolated layout probes and clean Tectonic log do **not** establish exact-binary full-page visual QA. The original, pre-correction PDF remains rejected. This PR stays draft pending final page inspection.
+**Final decision:** The corrected, source-matched PDF has now passed independent rendered-page review, not just isolated test compilations. The earlier original and first revised artifacts remain rejected. All final acceptance criteria below are satisfied in the bounded publication scope; this does not assert empirical validation.
 
-## Required final acceptance
+## Final acceptance checklist
 
-1. Rebuild `paper/CRM_revised.tex` with Tectonic 0.17.0 from the publication branch. Review log output for actual `Overfull\hbox`, undefined references, missing fonts, and build errors; do not suppress warnings without inspecting them.
-2. Preserve exact commit SHA, source TeX SHA-256, PDF SHA-256, file length, Tectonic version, page count and build result.
-3. Upload the rebuilt `CRM_revised.pdf` for complete 100%-page rendering. Confirm margin bounds on formerly problematic pages and check for any pagination-induced new defects.
-4. Commit the accepted PDF to `paper/build/CRM_revised.pdf` on this PR. Confirm the binary SHA-256 matches the reviewed revision. Do not put earlier pre-correction artifact in `main`.
-5. Update README to link directly to the tracked PDF, confirm the URL resolves, then merge this PR and close Issue #5.
+1. **PASS:** Full Tectonic 0.17.0 PDF build on source revision `bb39680884a44503b4371aa9ccd140a26ba65a42`, zero publication-impacting LaTeX diagnostics.
+2. **PASS:** Final exact binary size 225,519 bytes and SHA-256 `2897fe42fb4639851f703389ce575c96bec622a2d0b102cd6f803364319bcb2c`, independently matched to the committed GitHub bytes from `dd74d58`.
+3. **PASS:** 39/39 rendered-page visual and layout inspection, source-matched and margin-checked, with corrected figures, tables, appendix and bibliography.
+4. **PASS:** Published tracked artifact at `paper/build/CRM_revised.pdf` and README-relative direct PDF link in this PR.
+5. **RELEASE DECISION:** Ready to merge PR #6 with retained file/content provenance. Verify the README link on `main` after merge, and close Issue #5. No empirical validation or all-purpose model proof is implied.
 
 **Out of scope:** Re-running previous source-matched Lean/Python mathematical verification solely for typographic edits; empirical calibration; creating a scientific-release tag. The underlying governing equations, their labels, table numeric values, and the 56 previously accepted Lean theorem statements are unchanged.
