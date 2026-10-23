@@ -295,7 +295,11 @@ def main():
     else:
         saved=args.check.read_text(encoding='utf-8')
         if saved!=rendered:
-            raise SystemExit('Reproducibility FAIL: stored JSON does not match rerun')
+            archived=json.loads(saved)
+            differing=[key for key in sorted(set(archived) | set(result))
+                       if archived.get(key) != result.get(key)]
+            detail=', '.join(differing) if differing else 'JSON formatting only'
+            raise SystemExit(f'Reproducibility FAIL: differing top-level fields: {detail}')
         print('Reproducibility PASS:',args.check)
     print(json.dumps({'draws':N,'summary':result['core'],'missingness':result['missingness'],'weight_variation':result['weight_variation'],'temporal':result['fixed']['time_order_and_cadence']},indent=2))
 
