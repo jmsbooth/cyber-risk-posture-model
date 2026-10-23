@@ -16,6 +16,8 @@ validation checks.
 - [Run the reference model](models/crm_reference.py)
 - [Inspect the calibration profile](config/calibration_baseline.json)
 - [Review the synthetic scenarios](data/examples/scenarios.csv)
+- [Minimum operational inputs and calculation lineage](docs/CRPI_OPERATIONAL_INPUT_CONTRACT.md), with a [15-field provisional input dictionary](config/operational_input_contract_v1.json)
+- [Executed CRPI pressure-test findings](verification/STRESS_TEST_REPORT.md), [fixed output data](verification/stress_test_results.json), and [reproduction script](scripts/run_stress_tests.py)
 
 ## Why this repository exists
 
@@ -118,6 +120,21 @@ against this source. The build may emit ordinary first-pass cross-reference warn
 while Tectonic resolves references; the final PDF is produced at
 `paper/build/CRM_revised.pdf`. A full TeX Live installation is not required for this
 source.
+
+## Synthetic stress testing and operational input readiness
+
+The reference runner evaluates **15 already normalized primitive inputs**, not unprocessed vulnerability, business-impact or security-operation records. The new [operational input contract](docs/CRPI_OPERATIONAL_INPUT_CONTRACT.md) distinguishes the algebraically minimal residual calculation from a decomposed, evidence-qualified organizational assessment. Raw metric denominators, normalization bounds, measurement owners, and organizational calibration remain open implementation work.
+
+An additional [fixed-seed, 12,000-draw stress experiment](verification/STRESS_TEST_REPORT.md) tested missingness, risk-correlated omitted evidence, profile-dependent rankings, nonabsorbing zero behavior, time-order aliasing, cold start and output masking under the illustrative profile. The results are **synthetic diagnostics of mathematical semantics**, not field validation or validated decision thresholds.
+
+To regenerate and inspect those findings from the repository root:
+
+```bash
+python3 scripts/run_stress_tests.py --check verification/stress_test_results.json
+python3 -m unittest discover -v
+```
+
+The research branch updates the LaTeX manuscript with these findings. Its tracked PDF remains the previously approved publication edition **until the revised TeX is rebuilt and independently page-checked**; do not treat that existing PDF as containing the new analysis before a source-matched rebuild.
 
 ## Synthetic use cases
 
