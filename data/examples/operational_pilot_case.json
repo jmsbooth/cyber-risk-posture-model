@@ -14,7 +14,8 @@
       "owner": "exposure_management",
       "verified": true,
       "numerator": 5,
-      "denominator": 20
+      "denominator": 20,
+      "scope_id": "FICTIONAL-demo-service-01"
     },
     "TE_internal": {
       "observed_at": "2026-10-22T12:00:00Z",
@@ -23,7 +24,8 @@
       "owner": "identity_architecture",
       "verified": true,
       "numerator": 2,
-      "denominator": 10
+      "denominator": 10,
+      "scope_id": "FICTIONAL-demo-service-01"
     },
     "CS_confidentiality": {
       "observed_at": "2026-10-22T12:00:00Z",
@@ -31,7 +33,8 @@
       "evidence_id": "SYNTH-ONLY-CS_confidentiality",
       "owner": "data_governance",
       "verified": true,
-      "level": 3
+      "level": 3,
+      "scope_id": "FICTIONAL-demo-service-01"
     },
     "CS_integrity": {
       "observed_at": "2026-10-22T12:00:00Z",
@@ -39,7 +42,8 @@
       "evidence_id": "SYNTH-ONLY-CS_integrity",
       "owner": "business_impact_owner",
       "verified": true,
-      "level": 4
+      "level": 4,
+      "scope_id": "FICTIONAL-demo-service-01"
     },
     "CS_availability": {
       "observed_at": "2026-10-22T12:00:00Z",
@@ -47,7 +51,8 @@
       "evidence_id": "SYNTH-ONLY-CS_availability",
       "owner": "service_owner",
       "verified": true,
-      "level": 2
+      "level": 2,
+      "scope_id": "FICTIONAL-demo-service-01"
     },
     "CM_coverage": {
       "observed_at": "2026-10-22T12:00:00Z",
@@ -56,7 +61,8 @@
       "owner": "observability",
       "verified": true,
       "numerator": 88,
-      "denominator": 100
+      "denominator": 100,
+      "scope_id": "FICTIONAL-demo-service-01"
     },
     "CM_freshness": {
       "observed_at": "2026-10-22T12:00:00Z",
@@ -65,7 +71,8 @@
       "owner": "observability",
       "verified": true,
       "hours": 6.0,
-      "sample_size": 120
+      "sample_size": 120,
+      "scope_id": "FICTIONAL-demo-service-01"
     },
     "CM_integrity": {
       "observed_at": "2026-10-22T12:00:00Z",
@@ -74,7 +81,8 @@
       "owner": "detection_engineering",
       "verified": true,
       "numerator": 12,
-      "denominator": 15
+      "denominator": 15,
+      "scope_id": "FICTIONAL-demo-service-01"
     },
     "CM_verification": {
       "observed_at": "2026-10-22T12:00:00Z",
@@ -83,7 +91,8 @@
       "owner": "control_assurance",
       "verified": true,
       "numerator": 36,
-      "denominator": 40
+      "denominator": 40,
+      "scope_id": "FICTIONAL-demo-service-01"
     },
     "USOM_detection": {
       "observed_at": "2026-10-22T12:00:00Z",
@@ -92,7 +101,8 @@
       "owner": "soc",
       "verified": true,
       "numerator": 8,
-      "denominator": 10
+      "denominator": 10,
+      "scope_id": "FICTIONAL-demo-service-01"
     },
     "USOM_velocity": {
       "observed_at": "2026-10-22T12:00:00Z",
@@ -101,7 +111,8 @@
       "owner": "incident_response",
       "verified": true,
       "hours": 18.0,
-      "sample_size": 22
+      "sample_size": 22,
+      "scope_id": "FICTIONAL-demo-service-01"
     },
     "USOM_change_safety": {
       "observed_at": "2026-10-22T12:00:00Z",
@@ -110,7 +121,8 @@
       "owner": "engineering",
       "verified": true,
       "numerator": 26,
-      "denominator": 30
+      "denominator": 30,
+      "scope_id": "FICTIONAL-demo-service-01"
     },
     "USOM_learning": {
       "observed_at": "2026-10-22T12:00:00Z",
@@ -119,7 +131,8 @@
       "owner": "operations",
       "verified": true,
       "numerator": 4,
-      "denominator": 6
+      "denominator": 6,
+      "scope_id": "FICTIONAL-demo-service-01"
     },
     "RRAS_internal": {
       "observed_at": "2026-10-22T12:00:00Z",
@@ -128,7 +141,8 @@
       "owner": "continuity",
       "verified": true,
       "numerator": 7,
-      "denominator": 10
+      "denominator": 10,
+      "scope_id": "FICTIONAL-demo-service-01"
     },
     "RRAS_dependency": {
       "observed_at": "2026-10-22T12:00:00Z",
@@ -137,7 +151,8 @@
       "owner": "third_party_risk",
       "verified": true,
       "numerator": 9,
-      "denominator": 12
+      "denominator": 12,
+      "scope_id": "FICTIONAL-demo-service-01"
     }
   },
   "disclaimer": "Every numerator, denominator, rank, timestamp and stock is fictional. No organization was evaluated."
