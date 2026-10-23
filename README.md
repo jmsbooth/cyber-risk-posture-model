@@ -12,7 +12,7 @@ validation checks.
 ## Start here
 
 - [Read the manuscript source](paper/CRM_revised.tex)
-- [Open the rebuilt research-revision CRPI manuscript (PDF)](paper/build/CRM_revised.pdf) — updated synthetic-stress analysis; 236,974-byte binary and SHA-256 verified; **new full-page visual QA pending**. The [previous 39-page approved edition](https://github.com/jmsbooth/cyber-risk-posture-model/blob/main/paper/build/CRM_revised.pdf) remains published on `main` until this PR is accepted.
+- [Download the CRPI manuscript (PDF, 41 pages)](paper/build/CRM_revised.pdf) — updated operational-input and synthetic-stress research edition; Tectonic 0.17.0 build, 41/41 rendered-page QA, and SHA-256 verified. [Revised PDF quality record](verification/PUBLICATION_PDF_QA_PR7.md).
 - [Run the reference model](models/crm_reference.py)
 - [Inspect the calibration profile](config/calibration_baseline.json)
 - [Review the synthetic scenarios](data/examples/scenarios.csv)
@@ -77,7 +77,7 @@ The [CRPI Formal Verification Protocol](docs/FORMAL_VERIFICATION_PROTOCOL.md) go
 
 **Phase D — Numerical conformance accepted (2026-10-22):** [Exact-revision evidence](verification/evidence/509c5ae448cddbcd062ad8c984c713d73c07c345/phase-d-summary.json) records 19/19 Python tests, 44 high-precision Decimal oracle fields, five invariants, 25 scenario rows and 56/56 repeated theorem axiom audits under pinned Lean 4.24.0. The [conformance ledger](verification/PHASE_D_STATUS.md) and [P1–P6 proof-coverage matrix](verification/PROOF_COVERAGE_MATRIX.md) distinguish supported mathematical claims from the paper's unformalized optional P6 derivative statement and broader empirical questions.
 
-**Release boundary:** The required mathematical subclaims of Propositions 1–6 are machine-checked under documented hypotheses, and the Python implementation passed independently sourced numerical vectors. This is **not** a claim of empirically calibrated risk, breach probability, financial-loss prediction or universal floating-point correctness. Phase D's evidence collector did **not** run its optional PDF check. Separately, the [published 39-page manuscript](paper/build/CRM_revised.pdf) has passed Tectonic 0.17.0 compilation, source-and-hash reconciliation, and [complete visual publication QA](verification/PUBLICATION_PDF_QA.md). This publication qualification is independent of mathematical proof and numerical conformance.
+**Release boundary:** The required mathematical subclaims of Propositions 1–6 are machine-checked under documented hypotheses, and the Python implementation passed independently sourced numerical vectors. This is **not** a claim of empirically calibrated risk, breach probability, financial-loss prediction or universal floating-point correctness. Phase D's evidence collector did **not** run its optional PDF check. Separately, the new [41-page CRPI manuscript](paper/build/CRM_revised.pdf) has passed Tectonic 0.17.0 compilation, source-and-hash reconciliation, and [full-page visual publication QA](verification/PUBLICATION_PDF_QA_PR7.md). The previously published 39-page edition has its own [historical QA record](verification/PUBLICATION_PDF_QA.md). These publication qualifications are independent of mathematical proof and numerical conformance.
 
 To reproduce the machine-checked mathematical proofs (with Lean 4.24.0 and pinned Mathlib):
 
@@ -134,7 +134,7 @@ python3 scripts/run_stress_tests.py --check verification/stress_test_results.jso
 python3 -m unittest discover -v
 ```
 
-This research branch now includes the **rebuilt** manuscript PDF containing the added operational-input and stress-test sections. The owner's Tectonic 0.17.0 build passed the overflow/reference/glyph diagnostic check, and the committed PDF hash matches the Windows output. **Only final visual inspection of the revised binary remains**; the previous edition's 39-page QA does not transfer to this revised file. See the [Windows replay and PDF provenance record](verification/STRESS_WINDOWS_REPLAY.md).
+The [revised research manuscript](paper/build/CRM_revised.pdf) includes the accepted operational-input and stress-test sections. Tectonic 0.17.0 compilation, the exact Windows/GitHub/uploaded binary SHA-256 comparison and **41/41-page visual inspection** all passed; the [PDF QA record](verification/PUBLICATION_PDF_QA_PR7.md) and [Windows stress-test replay record](verification/STRESS_WINDOWS_REPLAY.md) preserve their separate acceptance evidence. The earlier 39-page PDF was a distinct manuscript version.
 
 ## Synthetic use cases
 
