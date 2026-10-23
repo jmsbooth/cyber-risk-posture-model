@@ -92,6 +92,12 @@ class OperationalPilotTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'integer'):
             self.evaluate(data)
 
+    def test_evidence_cannot_be_mixed_across_scopes(self):
+        data=copy.deepcopy(self.fixture)
+        data['observations']['CM_coverage']['scope_id']='other-business-system'
+        with self.assertRaisesRegex(ValueError,'scope_id'):
+            self.evaluate(data)
+
     def test_missing_sources_invalid_schema_rejected(self):
         data=copy.deepcopy(self.fixture)
         data['observations']['RRAS_internal']['source_ref']=''
