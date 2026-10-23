@@ -1,0 +1,216 @@
+{
+  "coverage": {
+    "fractions": {
+      "CM": 1.0,
+      "CS": 1.0,
+      "D_availability": 1.0,
+      "D_confidentiality": 1.0,
+      "D_integrity": 1.0,
+      "RRAS": 1.0,
+      "R_availability": 1.0,
+      "R_confidentiality": 1.0,
+      "R_integrity": 1.0,
+      "TE": 1.0,
+      "USOM": 1.0
+    },
+    "governing_path_min": 1.0,
+    "interpretation": "self_attested_completeness_not_statistical_confidence",
+    "mean_tier2": 1.0,
+    "min_tier2": 1.0,
+    "passes_provisional_gates": true
+  },
+  "evidence": {
+    "CM_coverage": {
+      "age_days": 1.0,
+      "evidence_id": "SYNTH-ONLY-CM_coverage",
+      "normalized_when_usable": 0.88,
+      "owner": "observability",
+      "reason": "self_attested",
+      "source_ref": "synthetic://pilot-evidence/CM_coverage",
+      "usable": true
+    },
+    "CM_freshness": {
+      "age_days": 1.0,
+      "evidence_id": "SYNTH-ONLY-CM_freshness",
+      "normalized_when_usable": 0.75,
+      "owner": "observability",
+      "reason": "self_attested",
+      "source_ref": "synthetic://pilot-evidence/CM_freshness",
+      "usable": true
+    },
+    "CM_integrity": {
+      "age_days": 1.0,
+      "evidence_id": "SYNTH-ONLY-CM_integrity",
+      "normalized_when_usable": 0.8,
+      "owner": "detection_engineering",
+      "reason": "self_attested",
+      "source_ref": "synthetic://pilot-evidence/CM_integrity",
+      "usable": true
+    },
+    "CM_verification": {
+      "age_days": 1.0,
+      "evidence_id": "SYNTH-ONLY-CM_verification",
+      "normalized_when_usable": 0.9,
+      "owner": "control_assurance",
+      "reason": "self_attested",
+      "source_ref": "synthetic://pilot-evidence/CM_verification",
+      "usable": true
+    },
+    "CS_availability": {
+      "age_days": 1.0,
+      "evidence_id": "SYNTH-ONLY-CS_availability",
+      "normalized_when_usable": 0.5,
+      "owner": "service_owner",
+      "reason": "self_attested",
+      "source_ref": "synthetic://pilot-evidence/CS_availability",
+      "usable": true
+    },
+    "CS_confidentiality": {
+      "age_days": 1.0,
+      "evidence_id": "SYNTH-ONLY-CS_confidentiality",
+      "normalized_when_usable": 0.75,
+      "owner": "data_governance",
+      "reason": "self_attested",
+      "source_ref": "synthetic://pilot-evidence/CS_confidentiality",
+      "usable": true
+    },
+    "CS_integrity": {
+      "age_days": 1.0,
+      "evidence_id": "SYNTH-ONLY-CS_integrity",
+      "normalized_when_usable": 1.0,
+      "owner": "business_impact_owner",
+      "reason": "self_attested",
+      "source_ref": "synthetic://pilot-evidence/CS_integrity",
+      "usable": true
+    },
+    "RRAS_dependency": {
+      "age_days": 1.0,
+      "evidence_id": "SYNTH-ONLY-RRAS_dependency",
+      "normalized_when_usable": 0.75,
+      "owner": "third_party_risk",
+      "reason": "self_attested",
+      "source_ref": "synthetic://pilot-evidence/RRAS_dependency",
+      "usable": true
+    },
+    "RRAS_internal": {
+      "age_days": 1.0,
+      "evidence_id": "SYNTH-ONLY-RRAS_internal",
+      "normalized_when_usable": 0.7,
+      "owner": "continuity",
+      "reason": "self_attested",
+      "source_ref": "synthetic://pilot-evidence/RRAS_internal",
+      "usable": true
+    },
+    "TE_external": {
+      "age_days": 1.0,
+      "evidence_id": "SYNTH-ONLY-TE_external",
+      "normalized_when_usable": 0.25,
+      "owner": "exposure_management",
+      "reason": "self_attested",
+      "source_ref": "synthetic://pilot-evidence/TE_external",
+      "usable": true
+    },
+    "TE_internal": {
+      "age_days": 1.0,
+      "evidence_id": "SYNTH-ONLY-TE_internal",
+      "normalized_when_usable": 0.2,
+      "owner": "identity_architecture",
+      "reason": "self_attested",
+      "source_ref": "synthetic://pilot-evidence/TE_internal",
+      "usable": true
+    },
+    "USOM_change_safety": {
+      "age_days": 1.0,
+      "evidence_id": "SYNTH-ONLY-USOM_change_safety",
+      "normalized_when_usable": 0.8666666666666667,
+      "owner": "engineering",
+      "reason": "self_attested",
+      "source_ref": "synthetic://pilot-evidence/USOM_change_safety",
+      "usable": true
+    },
+    "USOM_detection": {
+      "age_days": 1.0,
+      "evidence_id": "SYNTH-ONLY-USOM_detection",
+      "normalized_when_usable": 0.8,
+      "owner": "soc",
+      "reason": "self_attested",
+      "source_ref": "synthetic://pilot-evidence/USOM_detection",
+      "usable": true
+    },
+    "USOM_learning": {
+      "age_days": 1.0,
+      "evidence_id": "SYNTH-ONLY-USOM_learning",
+      "normalized_when_usable": 0.6666666666666666,
+      "owner": "operations",
+      "reason": "self_attested",
+      "source_ref": "synthetic://pilot-evidence/USOM_learning",
+      "usable": true
+    },
+    "USOM_velocity": {
+      "age_days": 1.0,
+      "evidence_id": "SYNTH-ONLY-USOM_velocity",
+      "normalized_when_usable": 0.75,
+      "owner": "incident_response",
+      "reason": "self_attested",
+      "source_ref": "synthetic://pilot-evidence/USOM_velocity",
+      "usable": true
+    }
+  },
+  "lineage": {
+    "as_of": "2026-10-23T12:00:00+00:00",
+    "data_class": "synthetic_demo",
+    "measurement_profile_id": "crpi-pilot-measurement-profile-v0.1",
+    "model_profile_id": "illustrative-v0.1",
+    "scope_id": "FICTIONAL-demo-service-01"
+  },
+  "missing_required": [],
+  "normalized_inputs": {
+    "CM_coverage": 0.88,
+    "CM_freshness": 0.75,
+    "CM_integrity": 0.8,
+    "CM_verification": 0.9,
+    "CS_availability": 0.5,
+    "CS_confidentiality": 0.75,
+    "CS_integrity": 1.0,
+    "RRAS_dependency": 0.75,
+    "RRAS_internal": 0.7,
+    "TE_external": 0.25,
+    "TE_internal": 0.2,
+    "USOM_change_safety": 0.8666666666666667,
+    "USOM_detection": 0.8,
+    "USOM_learning": 0.6666666666666666,
+    "USOM_velocity": 0.75
+  },
+  "point": {
+    "CM": 0.8325,
+    "CRPI": 0.23972394314498544,
+    "CS": 0.75,
+    "D_by_domain": {
+      "availability": 0.5,
+      "confidentiality": 0.75,
+      "integrity": 1.0
+    },
+    "D_eff": 0.5476584498492331,
+    "H": 0.12260545631929785,
+    "M": 0.6739973958333334,
+    "RRAS_reporting": 0.7245980348580869,
+    "R_by_domain": {
+      "availability": 0.7048565255757018,
+      "confidentiality": 0.7448540435582442,
+      "integrity": 0.7245980348580869
+    },
+    "R_inst": 0.03996969804513359,
+    "S_next": 0.23972394314498544,
+    "TE": 0.22387211655923572,
+    "USOM": 0.7708333333333334,
+    "envelope_branch": "persistent",
+    "history_mode": "supplied_prior_stock"
+  },
+  "residual_possible_interval": null,
+  "reused_evidence_ids": {},
+  "status": "synthetic_only",
+  "warnings": [
+    "Calibration and raw measurement cutoffs are illustrative, not empirically validated.",
+    "Asserted source verification is not independently checked by this program."
+  ]
+}
