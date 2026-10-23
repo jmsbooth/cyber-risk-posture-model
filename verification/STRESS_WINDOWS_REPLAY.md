@@ -3,7 +3,7 @@
 **Date:** 2026-10-23  
 **Repository:** `jmsbooth/cyber-risk-posture-model`  
 **PR:** [#7 — Minimum operational inputs and synthetic failure-mode analysis](https://github.com/jmsbooth/cyber-risk-posture-model/pull/7)  
-**Result:** **PASS — numerical/reproducibility acceptance**, with separate revised-PDF visual publication QA pending.
+**Result:** **PASS — numerical/reproducibility acceptance and independently completed revised-PDF visual publication QA**.
 
 ## Owner-local acceptance evidence
 
@@ -43,10 +43,10 @@ The owner also built `paper/CRM_revised.tex` with **Tectonic 0.17.0**, and searc
 
 `b7ff8043aa2f043b371c48f98520c45cf776c2f797ea7271455eccac507afe54`.
 
-**Not yet accepted:** Render-based inspection of every page of the new manuscript PDF. The earlier approved 39-page publication artifact is a different binary and cannot be used to sign off the revised research PDF. Until the new binary has been visually checked, PR #7 remains draft. Review the exact current PDF, record its page count, bibliography/figure/appendix integrity and text bounds, then finish this release.
+**Separate revised-PDF visual QA accepted (2026-10-23):** The user uploaded the exact revised 236,974-byte binary, and its SHA-256 again matched GitHub and the Windows build. All **41/41 pages** were rasterized and inspected, including high-resolution review of the new Sections 8.4 and 11.3 (PDF pages 25, 32–33), mathematical appendix, Figures 1–4 and end matter. No text left nominal 72–540pt horizontal margins, no blank pages or missing images were found, and all listed fonts are embedded. The complete [current-revision publication QA record](PUBLICATION_PDF_QA_PR7.md) documents the checks, distinct from the old 39-page approval.
 
 ## Mathematical interpretation and release gate
 
 The core CRPI equations and previously verified 56 conditional Lean declarations are unchanged. The operational input dictionary remains **provisional**, with uncalibrated raw-telemetry-to-score normalization and other explicitly documented organizational-data limits. Stress percentages and a selected threshold are synthetic and carry no empirical predictive-performance claim.
 
-**Decision:** Stress-test source/archived-results acceptance **PASS**. PDF compilation/byte provenance **PASS**. Complete PDF visual QA **PENDING**. Do not merge as a publication-ready new paper revision until that separate gate passes.
+**Decision:** Stress-test source/archived-results acceptance **PASS** (all **25/25 tests**). PDF compilation, SHA-256 byte provenance and **41-page visual QA PASS**. PR #7 is publication-merge eligible within these documented mathematical and synthetic-research bounds. No empirical risk-model validation is implied.
