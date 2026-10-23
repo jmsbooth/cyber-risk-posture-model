@@ -2,7 +2,12 @@
 
 **Execution:** Deterministic Python standard-library model evaluation matching the published CRPI equations. Fixed seed `20261023`, `N=12,000` independently sampled 15-value input configurations, with parameter settings from `config/calibration_baseline.json` (`illustrative-v0.1`). These are **mathematical/semantic tests**; they are not samples from actual organizations, incident outcome data, measured breach probabilities or a fit-for-use assessment.
 
+**Execution provenance:** The initial 12,000-draw run and five regression checks were executed in an isolated Python 3.13.5 environment using a **source-faithful extracted copy of the published core formula functions**, with the complete `illustrative-v0.1` JSON calibration profile verified byte-for-byte against `main`. This environment could not clone GitHub because DNS/network access was unavailable. The committed reproduction script imports the **actual** `models.crm_reference` when run from the repository. Its exact-source replay on the owner's checkout is a separate **open acceptance gate**, not a pass inferred from mathematical similarity.
+
 **Reproduce:** `python scripts/run_stress_tests.py --check verification/stress_test_results.json` and `python -m unittest discover -v` from repository root. Run with `--output verification/stress_test_results.json` to regenerate fixed results. The source-to-number receipt is `verification/stress_test_results.json` with seed and profile SHA-256. The code uses `models.crm_reference` and Python standard library only; no R dependency or SciPy installation is required.
+
+
+**Local equation-harness receipt:** Python 3.13.5; script SHA-256 `af169dbb2d83bc816f818aea2b2e5f8e5f08eec33e6c3bdaeda9faaac07758de`, fixed output SHA-256 `bba484de1516fd2a4accace9bee839a55a3cceebfe33a6388813304858e229b3`, exact illustrative calibration profile SHA-256 `7a8230e405f7ea2dab262d19781ba23c6f035d945f97bb9c81ee18c0d4daa447`. Regeneration comparison PASS and 5/5 stress-specific local tests PASS. These hashes attest this experiment, not the prior Lean kernel checks or publication PDF.
 
 ## Design and results
 
