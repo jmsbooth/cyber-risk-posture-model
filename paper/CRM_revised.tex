@@ -15,7 +15,10 @@
 \newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
 \hbadness=10000
 \vbadness=10000
-\hfuzz=1000pt
+\hfuzz=2pt
+% Permit limited additional line-breaking flexibility instead of accepting
+% paragraphs that intrude into the 1-inch body-text margins.
+\emergencystretch=2em
 \vfuzz=30pt
 
 \geometry{margin=1in}
@@ -426,7 +429,7 @@ and directly decomposable.
 
 \subsubsection{Calculation walkthrough}
 For the illustrative values above, $R_{\mathrm{inst}}\approx0.182$ and
-$S(t+1)\approx0.174$, so $CRPI(t+1)=\max(0.182,0.174)=0.182$. If the persistent stock
+$S(t+1)\approx0.174$, so the envelope is $CRPI(t+1)=0.182$. If the persistent stock
 were $0.300$ instead, the same current condition would produce $CRPI=0.300$ and make
 the unresolved history the controlling explanation. The maximum is therefore not an
 executive-only display choice: it is the defined objective output of the state model,
@@ -441,11 +444,11 @@ construct its bounded Tier~2 values, calculate its domain-specific $D_{\mathrm{e
 then $H$, $M$, $R_{\mathrm{inst}}$, $S$, and $CRPI$. The scope changes the evidence and
 the meaning of the result, not the equation form.
 
-For a scoped entity $u$ at analytical level $\ell$, the final output can therefore be
-written explicitly as
+For a scoped entity $u$, let $\ell$ denote its analytical level: component,
+sub-system, system, network, domain, or enterprise. The final output is
 \begin{equation}
-  CRPI_{u,\ell}(t)=\max\!\left(R_{\mathrm{inst},u,\ell}(t),S_{u,\ell}(t)\right),
-  \qquad \ell\in\{\text{component, sub-system, system, network, domain, enterprise}\}.
+  CRPI_{u,\ell}(t)=
+    \max\!\left(R_{\mathrm{inst},u,\ell}(t),S_{u,\ell}(t)\right).
   \label{eq:scoped-crpi}
 \end{equation}
 The component equations for $TE$, $CS$, $USOM$, $RRAS$, $D_{\mathrm{eff}}$, $H$, $M$,
@@ -636,7 +639,7 @@ Representative data sources include authoritative asset inventories, telemetry
 presence and last-seen indicators, policy and configuration repositories, and audit or
 review artifacts. The recommended discrete inputs are:
 
-\begin{longtable}{p{0.19\textwidth} p{0.37\textwidth} p{0.19\textwidth} p{0.17\textwidth}}
+\begin{longtable}{P{0.18\textwidth} P{0.35\textwidth} P{0.18\textwidth} P{0.17\textwidth}}
   \caption{Recommended discrete inputs for Continuous Monitoring}\\
   \toprule
   Discrete input & Recommended evidence or input & Normalization & Cadence \\
@@ -700,7 +703,7 @@ Representative sources include data inventories and catalogs, classification and
 labeling artifacts, business impact analyses, lineage graphs, mission dependency
 models, and access/usage metadata. The recommended discrete inputs are:
 
-\begin{longtable}{p{0.19\textwidth} p{0.37\textwidth} p{0.19\textwidth} p{0.17\textwidth}}
+\begin{longtable}{P{0.18\textwidth} P{0.35\textwidth} P{0.18\textwidth} P{0.17\textwidth}}
   \caption{Recommended discrete inputs for Consequence Severity}\\
   \toprule
   Discrete input & Recommended evidence or input & Primary domain & Normalization \\
@@ -771,7 +774,7 @@ Representative sources include exposure inventories, vulnerability and exploitab
 signals, threat-intelligence artifacts, identity and privilege data, and architecture
 characteristics. The recommended discrete inputs are:
 
-\begin{longtable}{p{0.19\textwidth} p{0.37\textwidth} p{0.19\textwidth} p{0.17\textwidth}}
+\begin{longtable}{P{0.18\textwidth} P{0.35\textwidth} P{0.18\textwidth} P{0.17\textwidth}}
   \caption{Recommended discrete inputs for Threat Exposure}\\
   \toprule
   Discrete input & Recommended evidence or input & Normalization & Cadence \\
@@ -988,7 +991,7 @@ Representative sources include incident and case-management systems, vulnerabili
 patch-management systems, CI/CD and deployment logs, engineering quality artifacts, and
 supply-chain transparency artifacts. The recommended discrete inputs are:
 
-\begin{longtable}{p{0.19\textwidth} p{0.37\textwidth} p{0.19\textwidth} p{0.17\textwidth}}
+\begin{longtable}{P{0.18\textwidth} P{0.35\textwidth} P{0.18\textwidth} P{0.17\textwidth}}
   \caption{Recommended discrete inputs for Unified Security Operations}\\
   \toprule
   Discrete input & Recommended evidence or input & Normalization & Cadence \\
@@ -1071,7 +1074,7 @@ Representative sources include architecture and dependency inventories, recovery
 continuity artifacts, supply-chain and dependency assurance artifacts, and governance
 records. The recommended discrete inputs are:
 
-\begin{longtable}{p{0.19\textwidth} p{0.37\textwidth} p{0.19\textwidth} p{0.17\textwidth}}
+\begin{longtable}{P{0.18\textwidth} P{0.35\textwidth} P{0.18\textwidth} P{0.17\textwidth}}
   \caption{Recommended discrete inputs for Resilience and Risk Assurance}\\
   \toprule
   Discrete input & Recommended evidence or input & Primary capability & Cadence \\
@@ -1223,11 +1226,10 @@ Table~\ref{tab:tier2summary} provides a compact summary of the Tier~2 metrics an
 measurement roles.
 
 \begingroup
-\setlength{\tabcolsep}{3pt}
-\begingroup
 \small
-\setlength{\tabcolsep}{3pt}
-\begin{longtable}{p{0.115\textwidth} p{0.175\textwidth} p{0.195\textwidth} p{0.155\textwidth} p{0.22\textwidth}}
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{longtable}{P{0.09\textwidth} P{0.17\textwidth} P{0.27\textwidth} P{0.16\textwidth} P{0.19\textwidth}}
   \caption{Tier~2 metric summary}
   \label{tab:tier2summary}\\
   \toprule
@@ -1245,7 +1247,6 @@ measurement roles.
   RRAS & Ability to survive & recoverability, redundancy, diversity, provenance, trustworthiness & scalar regularized geometric plus domain projections & slow-moving, structural updates \\
   \bottomrule
 \end{longtable}
-\endgroup
 \endgroup
 
 \section{Temporal Behavior and Calibration}
@@ -1290,7 +1291,11 @@ At a minimum:
     series or recompute a clearly labeled comparable historical series.
 \end{itemize}
 
-\begin{longtable}{p{0.20\textwidth} p{0.25\textwidth} p{0.43\textwidth}}
+\begingroup
+\small
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{longtable}{P{0.18\textwidth} P{0.27\textwidth} P{0.45\textwidth}}
   \caption{Implementation-oriented calibration guidance}
   \label{tab:calibration-guidance}\\
   \toprule
@@ -1312,6 +1317,7 @@ At a minimum:
   AI-era review & Quarterly or after material threat shift & Shorten review windows when evidence shows discovery-to-exploitation dynamics have changed. \\
   \bottomrule
 \end{longtable}
+\endgroup
 
 \section{Worked Example}
 This section exercises the intended behavior of the revised governing equations under a
@@ -1529,7 +1535,11 @@ $R_{\mathrm{inst}}=0.274$. Table~\ref{tab:sensitivity-check} perturbs selected i
 This verifies direction only; it is not evidence that the parameter magnitudes are
 empirically calibrated.
 
-\begin{longtable}{p{0.30\textwidth} c c c c}
+\begingroup
+\small
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{longtable}{P{0.47\textwidth} c c c c}
   \caption{One-step sensitivity check for directional correctness}
   \label{tab:sensitivity-check}\\
   \toprule
@@ -1550,6 +1560,7 @@ empirically calibrated.
   Domain resilience improvement: $R_j=0.65$ (special-case $RRAS=0.65$) & 0.488 & 0.293 & 0.250 & 0.220 \\
   \bottomrule
 \end{longtable}
+\endgroup
 
 \subsection{Empirical Backtesting}
 Where historical data is available, CRPI outputs should be compared with outcomes such
@@ -1885,8 +1896,8 @@ The baseline supplementary table set should contain the following construct and 
   \item \textbf{CS}: consequence-domain mappings for confidentiality/sensitivity,
   integrity/mission, and availability/continuity, including direct and derived
   sensitivity and business criticality.
-  \item \textbf{TE}: attack-surface exposure, exploitability signal,
-  privilege/identity exposure, threat-intelligence relevance, and control-bypass
+  \item \textbf{TE}: attack-surface exposure and exploitability signal;
+  privilege/identity exposure; threat-intelligence relevance; and control-bypass
   potential.
   \item \textbf{USOM}: MTTD, MTTR, MTTP, change failure rate, deployment regularity,
   preventive quality coverage, and supply-chain execution assurance.
