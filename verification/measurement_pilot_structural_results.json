@@ -1,0 +1,70 @@
+{
+  "claim_limits": [
+    "All raw evidence and simulated pairs are synthetic; there are no organization-level outcomes.",
+    "The additive index aggregates adverse constructs and is not the same physical risk quantity as CRPI.",
+    "Rank disagreement is not prediction accuracy, statistical significance or model superiority.",
+    "Normalized input cutoffs, governance policies and priors are illustrative, not empirically calibrated."
+  ],
+  "pilot_raw_evidence_sensitivity": {
+    "base_coverage_governing": 1.0,
+    "base_crpi": 0.239723943,
+    "base_residual": 0.039969698,
+    "missing_external_governing_coverage": 0.5,
+    "missing_external_point_is_null": true,
+    "missing_external_residual_interval": [
+      0.011190487,
+      0.082672143
+    ],
+    "reduced_external_denominator_crpi": 0.242496513,
+    "reduced_external_denominator_residual": 0.057313503,
+    "shorter_containment_time_normalization_crpi": 0.263346481,
+    "shorter_containment_time_normalization_residual": 0.053370091,
+    "stale_detection_point_is_null": true,
+    "stale_detection_reason": "stale"
+  },
+  "provenance": {
+    "comparison_pairs": 5000,
+    "measurement_profile": "crpi-pilot-measurement-profile-v0.1",
+    "prior_stock": "independent Beta(2,2) synthetic history",
+    "scoring_profile": "illustrative-v0.1",
+    "seed": 20261023,
+    "simulated_scopes": 600,
+    "synthetic_inputs": "independent Beta(2,2) normalized primitives"
+  },
+  "schema": "crpi-operational-measurement-baseline-structural-v0.1",
+  "structural_baselines": {
+    "arithmetic_te_ablation": {
+      "evaluated_pairs": 5000,
+      "excluded_ties": 0,
+      "mean": 0.412225984,
+      "median": 0.398528026,
+      "p05": 0.145122059,
+      "p95": 0.703498694,
+      "rank_reversal_fraction": 0.0028
+    },
+    "crpi": {
+      "mean": 0.411039452,
+      "median": 0.397777218,
+      "p05": 0.14269977,
+      "p95": 0.703268546
+    },
+    "instantaneous_residual": {
+      "evaluated_pairs": 5000,
+      "excluded_ties": 0,
+      "mean": 0.128964492,
+      "median": 0.118788597,
+      "p05": 0.036519256,
+      "p95": 0.256385692,
+      "rank_reversal_fraction": 0.447
+    },
+    "simple_additive": {
+      "evaluated_pairs": 5000,
+      "excluded_ties": 0,
+      "mean": 0.517764267,
+      "median": 0.51718169,
+      "p05": 0.386698259,
+      "p95": 0.644630951,
+      "rank_reversal_fraction": 0.4392
+    }
+  }
+}
