@@ -12,7 +12,7 @@ The measurement-design and governance methodology is consistent with NIST [SP 80
 
 ```
 Scoped inventory / telemetry / exercise and business-impact observations
-  -> evidence entry: source_ref, unique evidence_id, owner, observed_at, asserted verified
+  -> evidence entry: source_ref, unique evidence_id, scope_id, owner, observed_at, asserted verified
   -> governed pilot normalizer: fraction, ordinal 0..4, or bounded elapsed hours
   -> one normalized [0,1] primitive per eligible observation
   -> core CRPI model, unchanged: 5 Tier 2 constructs, D_j, R_j, D_eff, H, M, R_inst, S, CRPI
@@ -43,7 +43,7 @@ The above ratio proxies are proposed operational *candidates*, not validated mea
 
 ## Evidence eligibility and sparse evidence
 
-Every supplied field is checked for time-zone-aware `observed_at`, non-empty `source_ref`, `evidence_id`, and `owner`, caller-asserted `verified: true`, bounded raw values, no future timestamps, and profile-defined freshness windows. Missing, stale, unverified or undersampled observations are **ineligible** to produce a complete point score. A program can only check the declaration that a source was verified; it cannot independently authenticate a source or attest organizational inventory completeness.
+Every supplied field is checked for matching `scope_id` and time-zone-aware `observed_at`, non-empty `source_ref`, `evidence_id`, and `owner`, caller-asserted `verified: true`, bounded raw values, no future timestamps, and profile-defined freshness windows. Missing, stale, unverified or undersampled observations are **ineligible** to produce a complete point score. A program can only check the declaration that a source was verified; it cannot independently authenticate a source or attest organizational inventory completeness.
 
 The application produces **11 evidence-coverage paths**: five Tier 2 coverage fractions plus three consequence domain and three resilience-projection coverage fractions. These are derived from *usable primitive slots*, not the caller's arbitrary “coverage confidence” declaration. It then checks the reference profile's provisional aggregate/minimum/governing-path thresholds. Neither observed-score quality nor coverage is a probability of correctness.
 
