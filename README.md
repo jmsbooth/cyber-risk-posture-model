@@ -12,7 +12,7 @@ validation checks.
 ## Start here
 
 - [Read the manuscript source](paper/CRM_revised.tex)
-- [Manuscript PDF publication status](https://github.com/jmsbooth/cyber-risk-posture-model/issues/5) — the source can be built locally with Tectonic; a reviewed, tracked PDF will be linked here after publication QA
+- [Download the compiled CRPI manuscript (PDF)](paper/build/CRM_revised.pdf) — tracked Tectonic 0.17.0 build, SHA-256 verified; [final visual publication QA](https://github.com/jmsbooth/cyber-risk-posture-model/issues/5) remains open
 - [Run the reference model](models/crm_reference.py)
 - [Inspect the calibration profile](config/calibration_baseline.json)
 - [Review the synthetic scenarios](data/examples/scenarios.csv)
@@ -75,7 +75,7 @@ The [CRPI Formal Verification Protocol](docs/FORMAL_VERIFICATION_PROTOCOL.md) go
 
 **Phase D — Numerical conformance accepted (2026-10-22):** [Exact-revision evidence](verification/evidence/509c5ae448cddbcd062ad8c984c713d73c07c345/phase-d-summary.json) records 19/19 Python tests, 44 high-precision Decimal oracle fields, five invariants, 25 scenario rows and 56/56 repeated theorem axiom audits under pinned Lean 4.24.0. The [conformance ledger](verification/PHASE_D_STATUS.md) and [P1–P6 proof-coverage matrix](verification/PROOF_COVERAGE_MATRIX.md) distinguish supported mathematical claims from the paper's unformalized optional P6 derivative statement and broader empirical questions.
 
-**Release boundary:** The required mathematical subclaims of Propositions 1–6 are machine-checked under documented hypotheses, and the Python implementation passed independently sourced numerical vectors. This is **not** a claim of empirically calibrated risk, breach probability, financial-loss prediction or universal floating-point correctness. The final manuscript **PDF build and visual publication check have not been run** under Phase D and remain separate.
+**Release boundary:** The required mathematical subclaims of Propositions 1–6 are machine-checked under documented hypotheses, and the Python implementation passed independently sourced numerical vectors. This is **not** a claim of empirically calibrated risk, breach probability, financial-loss prediction or universal floating-point correctness. Phase D's evidence collector did **not** run its optional PDF check. A separate Tectonic 0.17.0 compilation has since succeeded with zero TeX overfull/undefined/missing-character diagnostics, and the compiled artifact is tracked in the publication PR. [Full-page visual publication QA](https://github.com/jmsbooth/cyber-risk-posture-model/issues/5) is still a separate release gate.
 
 To reproduce the machine-checked mathematical proofs (with Lean 4.24.0 and pinned Mathlib):
 
