@@ -12,10 +12,12 @@ validation checks.
 ## Start here
 
 - [Read the manuscript source](paper/CRM_revised.tex)
-- [Download the CRPI manuscript (PDF, 39 pages)](paper/build/CRM_revised.pdf) — Tectonic 0.17.0 build, 39/39-page visual publication QA accepted, SHA-256 verified
+- [Download the CRPI manuscript (PDF, 41 pages)](paper/build/CRM_revised.pdf) — updated operational-input and synthetic-stress research edition; Tectonic 0.17.0 build, 41/41 rendered-page QA, and SHA-256 verified. [Revised PDF quality record](verification/PUBLICATION_PDF_QA_PR7.md).
 - [Run the reference model](models/crm_reference.py)
 - [Inspect the calibration profile](config/calibration_baseline.json)
 - [Review the synthetic scenarios](data/examples/scenarios.csv)
+- [Minimum operational inputs and calculation lineage](docs/CRPI_OPERATIONAL_INPUT_CONTRACT.md), with a [15-field provisional input dictionary](config/operational_input_contract_v1.json)
+- [Executed CRPI pressure-test findings](verification/STRESS_TEST_REPORT.md), [fixed output data](verification/stress_test_results.json), and [reproduction script](scripts/run_stress_tests.py)
 
 ## Why this repository exists
 
@@ -75,7 +77,7 @@ The [CRPI Formal Verification Protocol](docs/FORMAL_VERIFICATION_PROTOCOL.md) go
 
 **Phase D — Numerical conformance accepted (2026-10-22):** [Exact-revision evidence](verification/evidence/509c5ae448cddbcd062ad8c984c713d73c07c345/phase-d-summary.json) records 19/19 Python tests, 44 high-precision Decimal oracle fields, five invariants, 25 scenario rows and 56/56 repeated theorem axiom audits under pinned Lean 4.24.0. The [conformance ledger](verification/PHASE_D_STATUS.md) and [P1–P6 proof-coverage matrix](verification/PROOF_COVERAGE_MATRIX.md) distinguish supported mathematical claims from the paper's unformalized optional P6 derivative statement and broader empirical questions.
 
-**Release boundary:** The required mathematical subclaims of Propositions 1–6 are machine-checked under documented hypotheses, and the Python implementation passed independently sourced numerical vectors. This is **not** a claim of empirically calibrated risk, breach probability, financial-loss prediction or universal floating-point correctness. Phase D's evidence collector did **not** run its optional PDF check. Separately, the [published 39-page manuscript](paper/build/CRM_revised.pdf) has passed Tectonic 0.17.0 compilation, source-and-hash reconciliation, and [complete visual publication QA](verification/PUBLICATION_PDF_QA.md). This publication qualification is independent of mathematical proof and numerical conformance.
+**Release boundary:** The required mathematical subclaims of Propositions 1–6 are machine-checked under documented hypotheses, and the Python implementation passed independently sourced numerical vectors. This is **not** a claim of empirically calibrated risk, breach probability, financial-loss prediction or universal floating-point correctness. Phase D's evidence collector did **not** run its optional PDF check. Separately, the new [41-page CRPI manuscript](paper/build/CRM_revised.pdf) has passed Tectonic 0.17.0 compilation, source-and-hash reconciliation, and [full-page visual publication QA](verification/PUBLICATION_PDF_QA_PR7.md). The previously published 39-page edition has its own [historical QA record](verification/PUBLICATION_PDF_QA.md). These publication qualifications are independent of mathematical proof and numerical conformance.
 
 To reproduce the machine-checked mathematical proofs (with Lean 4.24.0 and pinned Mathlib):
 
@@ -118,6 +120,21 @@ against this source. The build may emit ordinary first-pass cross-reference warn
 while Tectonic resolves references; the final PDF is produced at
 `paper/build/CRM_revised.pdf`. A full TeX Live installation is not required for this
 source.
+
+## Synthetic stress testing and operational input readiness
+
+The reference runner evaluates **15 already normalized primitive inputs**, not unprocessed vulnerability, business-impact or security-operation records. The new [operational input contract](docs/CRPI_OPERATIONAL_INPUT_CONTRACT.md) distinguishes the algebraically minimal residual calculation from a decomposed, evidence-qualified organizational assessment. Raw metric denominators, normalization bounds, measurement owners, and organizational calibration remain open implementation work.
+
+An additional [fixed-seed, 12,000-draw stress experiment](verification/STRESS_TEST_REPORT.md) tested missingness, risk-correlated omitted evidence, profile-dependent rankings, nonabsorbing zero behavior, time-order aliasing, cold start and output masking under the illustrative profile. The results are **synthetic diagnostics of mathematical semantics**, not field validation or validated decision thresholds.
+
+To regenerate and inspect those findings from the repository root:
+
+```bash
+python3 scripts/run_stress_tests.py --check verification/stress_test_results.json
+python3 -m unittest discover -v
+```
+
+The [revised research manuscript](paper/build/CRM_revised.pdf) includes the accepted operational-input and stress-test sections. Tectonic 0.17.0 compilation, the exact Windows/GitHub/uploaded binary SHA-256 comparison and **41/41-page visual inspection** all passed; the [PDF QA record](verification/PUBLICATION_PDF_QA_PR7.md) and [Windows stress-test replay record](verification/STRESS_WINDOWS_REPLAY.md) preserve their separate acceptance evidence. The earlier 39-page PDF was a distinct manuscript version.
 
 ## Synthetic use cases
 

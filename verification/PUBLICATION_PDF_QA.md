@@ -7,6 +7,8 @@
 **Original PDF size:** 224,553 bytes (39 US Letter pages).  
 **Status: FINAL PUBLICATION PDF ACCEPTED — source-matched, clean Tectonic build, and 39/39 rendered-page visual QA passed.**
 
+**Revision boundary (2026-10-23):** This QA approval belongs **only** to the previously published PDF with SHA-256 `2897fe42fb4639851f703389ce575c96bec622a2d0b102cd6f803364319bcb2c` (225,519 bytes; 39 pages) and its PR #6 LaTeX source. Research PR #7 now contains a different **236,974-byte** PDF, SHA-256 `b7ff8043aa2f043b371c48f98520c45cf776c2f797ea7271455eccac507afe54`, with added operational-input and synthetic-stress sections. Its source compile and binary checksum are accepted, but **this historical 39-page render signoff cannot be transferred to the revised artifact**. The new PDF's page-by-page rendered inspection is pending; see [PR #7 stress/rebuild acceptance](STRESS_WINDOWS_REPLAY.md).
+
 ## Original PDF checks completed
 
 The exact uploaded binary matches the owner's reported SHA-256. PDFium/Poppler rendered every page without errors. Pages 1–39 were reviewed by montage, with pages 8, 9, 25, 26, 31, and 36 individually inspected at higher resolution. All referenced fonts are embedded, the PDF has extractable/selectable text, and no page is blank. Text extraction found 30 bibliography entries, six appendix propositions, and no `??` unresolved-reference tokens or replacement glyphs. The extracted PDF contains 70 link annotations.

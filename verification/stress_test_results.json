@@ -1,0 +1,169 @@
+{
+  "base_draws": 12000,
+  "core": {
+    "boundedness_violations": 0,
+    "envelope_median": 0.402203325,
+    "envelope_p90": 0.707474576,
+    "residual_median": 0.119813353,
+    "residual_p90": 0.215378635,
+    "stock_dominates_one_step_fraction": 0.870333333
+  },
+  "fixed": {
+    "envelope_branch_masking": {
+      "residual_0.1": {
+        "crpi": 0.563946281,
+        "next_stock": 0.563946281
+      },
+      "residual_0.3": {
+        "crpi": 0.577574141,
+        "next_stock": 0.577574141
+      }
+    },
+    "nonidentifiable_residual_example": {
+      "high_hazard_high_mitigation": {
+        "hazard": 0.8,
+        "mitigation": 0.75,
+        "next_stock_from_point_three": 0.198978006,
+        "residual": 0.2
+      },
+      "low_hazard_low_mitigation": {
+        "hazard": 0.4,
+        "mitigation": 0.5,
+        "next_stock_from_point_three": 0.237478531,
+        "residual": 0.2
+      }
+    },
+    "regularizer_weak_link": {
+      "0.001": 0.027315122,
+      "0.05": 0.15920644,
+      "0.25": 0.281302964,
+      "0.9": 0.391485505,
+      "0.9999999999999999": 0.4
+    },
+    "time_order_and_cadence": {
+      "coarse_max_absolute_error": 0.241106495,
+      "day_count": 7,
+      "final_stock_coarse_weekly_means": 0.138302755,
+      "final_stock_high_then_recovery": 0.030237968,
+      "final_stock_recovery_then_high": 0.37940925,
+      "initial_stock": 0.3,
+      "input_sequence": {
+        "high": [
+          0.8,
+          0.05
+        ],
+        "low": [
+          0.02,
+          0.8
+        ],
+        "n_high": 2,
+        "n_low": 5
+      },
+      "order_spread": 0.349171282,
+      "static_input_semigroup_difference": 0.0
+    },
+    "unknown_stock_initialization": {
+      "day0_crpi_assumed": 0.05,
+      "day0_crpi_history": 0.85,
+      "day1_crpi_assumed": 0.055733678,
+      "day1_crpi_history": 0.727299294,
+      "day7_crpi_assumed": 0.075222939,
+      "day7_crpi_history": 0.3102291,
+      "prior_stock_assumed": 0.05,
+      "prior_stock_history": 0.85
+    }
+  },
+  "inference_bound_note": "For missing normalized primitive scores, lower/upper residual bounds substitute 0/1 in the direction implied by monotonicity. These are feasible worst-case mathematical envelopes under independent [0,1] ranges, not confidence intervals or fitted probabilities.",
+  "missingness": {
+    "mcar_10": {
+      "false_alarm_fraction_all_rows": 0.03525,
+      "false_reassurance_fraction_all_rows": 0.03475,
+      "false_reassurance_fraction_true_above_threshold": 0.108171206,
+      "full_input_fraction": 0.204666667,
+      "illustrative_threshold": 0.15,
+      "interval_crosses_threshold_fraction": 0.37,
+      "interval_width_median": 0.048736848,
+      "interval_width_p90": 0.210076997,
+      "mechanism": "mcar_10",
+      "n": 12000,
+      "neutral_imputation_mae": 0.011571433,
+      "neutral_imputation_signed_bias": 0.000548909,
+      "observed_fraction_mean": 0.900716667,
+      "raw_fraction_at_least_11_of_15": 0.98925,
+      "true_above_threshold_fraction": 0.32125
+    },
+    "mcar_20": {
+      "false_alarm_fraction_all_rows": 0.0635,
+      "false_reassurance_fraction_all_rows": 0.059333333,
+      "false_reassurance_fraction_true_above_threshold": 0.184695201,
+      "full_input_fraction": 0.031833333,
+      "illustrative_threshold": 0.15,
+      "interval_crosses_threshold_fraction": 0.6395,
+      "interval_width_median": 0.138673033,
+      "interval_width_p90": 0.342895033,
+      "mechanism": "mcar_20",
+      "n": 12000,
+      "neutral_imputation_mae": 0.019149147,
+      "neutral_imputation_signed_bias": 0.000895779,
+      "observed_fraction_mean": 0.800094444,
+      "raw_fraction_at_least_11_of_15": 0.84225,
+      "true_above_threshold_fraction": 0.32125
+    },
+    "risk_correlated": {
+      "false_alarm_fraction_all_rows": 0.012083333,
+      "false_reassurance_fraction_all_rows": 0.067583333,
+      "false_reassurance_fraction_true_above_threshold": 0.210376135,
+      "full_input_fraction": 0.3405,
+      "illustrative_threshold": 0.15,
+      "interval_crosses_threshold_fraction": 0.296833333,
+      "interval_width_median": 0.028912807,
+      "interval_width_p90": 0.194556291,
+      "mechanism": "risk_correlated",
+      "n": 12000,
+      "neutral_imputation_mae": 0.013259357,
+      "neutral_imputation_signed_bias": -0.009016511,
+      "observed_fraction_mean": 0.931438889,
+      "raw_fraction_at_least_11_of_15": 0.998333333,
+      "true_above_threshold_fraction": 0.32125
+    }
+  },
+  "profile_id": "illustrative-v0.1",
+  "profile_sha256": "7a8230e405f7ea2dab262d19781ba23c6f035d945f97bb9c81ee18c0d4daa447",
+  "raw_primitives": [
+    "TE_external",
+    "TE_internal",
+    "CS_confidentiality",
+    "CS_integrity",
+    "CS_availability",
+    "CM_coverage",
+    "CM_freshness",
+    "CM_integrity",
+    "CM_verification",
+    "USOM_detection",
+    "USOM_velocity",
+    "USOM_change_safety",
+    "USOM_learning",
+    "RRAS_internal",
+    "RRAS_dependency"
+  ],
+  "schema": "crpi-synthetic-stress-v1",
+  "scope": "Uncalibrated synthetic stress tests; outputs characterize formula and missingness-policy behavior only; no predictions or real-world incident labels.",
+  "seed": 20261023,
+  "synthetic_sampling": "independent Beta(2,2) draws for normalized primitives; independent Uniform(0,1) initial stocks; not representative of organizations",
+  "weight_variation": {
+    "alternative_weights": {
+      "availability": 0.2,
+      "confidentiality": 0.6,
+      "integrity": 0.2
+    },
+    "baseline_weights": {
+      "availability": 0.333333333,
+      "confidentiality": 0.333333333,
+      "integrity": 0.333333333
+    },
+    "individual_absolute_change_median": 0.016699204,
+    "individual_absolute_change_p90": 0.047355726,
+    "pair_count": 6000,
+    "ranking_flip_fraction": 0.104833333
+  }
+}
