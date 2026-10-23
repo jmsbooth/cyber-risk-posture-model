@@ -160,6 +160,8 @@ def evaluate(document: Mapping[str, Any], measurement_profile: Mapping[str, Any]
         age = (as_of - _time(row.get('observed_at'), field + '.observed_at')).total_seconds() / 86400.0
         if age < 0:
             raise ValueError(f'{field}: future-dated evidence is not allowed')
+        if row.get('scope_id') != scope:
+            raise ValueError(f'{field}: evidence scope_id does not match assessment scope')
         source = row.get('source_ref')
         evidence_id = row.get('evidence_id')
         owner = row.get('owner')
@@ -223,7 +225,10 @@ def evaluate(document: Mapping[str, Any], measurement_profile: Mapping[str, Any]
     if unknown:
         min_case, max_case = dict(values), dict(values)
         for key in unknown:
-            is_adverse = measurement_profile['fields'][key]['polarity'] == 'risk'
+            polarity = measurement_profile['fields'][key]['polarity']
+            if polarity not in ('risk', 'capacity'):
+                raise ValueError(f'{key}: invalid risk/capacity polarity')
+            is_adverse = polarity == 'risk'
             min_case[key] = 0.0 if is_adverse else 1.0
             max_case[key] = 1.0 if is_adverse else 0.0
         lo = _score(min_case, model_profile)['R_inst']
