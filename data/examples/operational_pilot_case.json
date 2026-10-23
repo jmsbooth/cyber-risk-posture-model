@@ -1,0 +1,144 @@
+{
+  "schema": "crpi-operational-pilot-case-v0.1",
+  "data_class": "synthetic_demo",
+  "scope_id": "FICTIONAL-demo-service-01",
+  "as_of": "2026-10-23T12:00:00Z",
+  "measurement_profile_id": "crpi-pilot-measurement-profile-v0.1",
+  "prior_stock": 0.4,
+  "dt_days": 1.0,
+  "observations": {
+    "TE_external": {
+      "observed_at": "2026-10-22T12:00:00Z",
+      "source_ref": "synthetic://pilot-evidence/TE_external",
+      "evidence_id": "SYNTH-ONLY-TE_external",
+      "owner": "exposure_management",
+      "verified": true,
+      "numerator": 5,
+      "denominator": 20
+    },
+    "TE_internal": {
+      "observed_at": "2026-10-22T12:00:00Z",
+      "source_ref": "synthetic://pilot-evidence/TE_internal",
+      "evidence_id": "SYNTH-ONLY-TE_internal",
+      "owner": "identity_architecture",
+      "verified": true,
+      "numerator": 2,
+      "denominator": 10
+    },
+    "CS_confidentiality": {
+      "observed_at": "2026-10-22T12:00:00Z",
+      "source_ref": "synthetic://pilot-evidence/CS_confidentiality",
+      "evidence_id": "SYNTH-ONLY-CS_confidentiality",
+      "owner": "data_governance",
+      "verified": true,
+      "level": 3
+    },
+    "CS_integrity": {
+      "observed_at": "2026-10-22T12:00:00Z",
+      "source_ref": "synthetic://pilot-evidence/CS_integrity",
+      "evidence_id": "SYNTH-ONLY-CS_integrity",
+      "owner": "business_impact_owner",
+      "verified": true,
+      "level": 4
+    },
+    "CS_availability": {
+      "observed_at": "2026-10-22T12:00:00Z",
+      "source_ref": "synthetic://pilot-evidence/CS_availability",
+      "evidence_id": "SYNTH-ONLY-CS_availability",
+      "owner": "service_owner",
+      "verified": true,
+      "level": 2
+    },
+    "CM_coverage": {
+      "observed_at": "2026-10-22T12:00:00Z",
+      "source_ref": "synthetic://pilot-evidence/CM_coverage",
+      "evidence_id": "SYNTH-ONLY-CM_coverage",
+      "owner": "observability",
+      "verified": true,
+      "numerator": 88,
+      "denominator": 100
+    },
+    "CM_freshness": {
+      "observed_at": "2026-10-22T12:00:00Z",
+      "source_ref": "synthetic://pilot-evidence/CM_freshness",
+      "evidence_id": "SYNTH-ONLY-CM_freshness",
+      "owner": "observability",
+      "verified": true,
+      "hours": 6.0,
+      "sample_size": 120
+    },
+    "CM_integrity": {
+      "observed_at": "2026-10-22T12:00:00Z",
+      "source_ref": "synthetic://pilot-evidence/CM_integrity",
+      "evidence_id": "SYNTH-ONLY-CM_integrity",
+      "owner": "detection_engineering",
+      "verified": true,
+      "numerator": 12,
+      "denominator": 15
+    },
+    "CM_verification": {
+      "observed_at": "2026-10-22T12:00:00Z",
+      "source_ref": "synthetic://pilot-evidence/CM_verification",
+      "evidence_id": "SYNTH-ONLY-CM_verification",
+      "owner": "control_assurance",
+      "verified": true,
+      "numerator": 36,
+      "denominator": 40
+    },
+    "USOM_detection": {
+      "observed_at": "2026-10-22T12:00:00Z",
+      "source_ref": "synthetic://pilot-evidence/USOM_detection",
+      "evidence_id": "SYNTH-ONLY-USOM_detection",
+      "owner": "soc",
+      "verified": true,
+      "numerator": 8,
+      "denominator": 10
+    },
+    "USOM_velocity": {
+      "observed_at": "2026-10-22T12:00:00Z",
+      "source_ref": "synthetic://pilot-evidence/USOM_velocity",
+      "evidence_id": "SYNTH-ONLY-USOM_velocity",
+      "owner": "incident_response",
+      "verified": true,
+      "hours": 18.0,
+      "sample_size": 22
+    },
+    "USOM_change_safety": {
+      "observed_at": "2026-10-22T12:00:00Z",
+      "source_ref": "synthetic://pilot-evidence/USOM_change_safety",
+      "evidence_id": "SYNTH-ONLY-USOM_change_safety",
+      "owner": "engineering",
+      "verified": true,
+      "numerator": 26,
+      "denominator": 30
+    },
+    "USOM_learning": {
+      "observed_at": "2026-10-22T12:00:00Z",
+      "source_ref": "synthetic://pilot-evidence/USOM_learning",
+      "evidence_id": "SYNTH-ONLY-USOM_learning",
+      "owner": "operations",
+      "verified": true,
+      "numerator": 4,
+      "denominator": 6
+    },
+    "RRAS_internal": {
+      "observed_at": "2026-10-22T12:00:00Z",
+      "source_ref": "synthetic://pilot-evidence/RRAS_internal",
+      "evidence_id": "SYNTH-ONLY-RRAS_internal",
+      "owner": "continuity",
+      "verified": true,
+      "numerator": 7,
+      "denominator": 10
+    },
+    "RRAS_dependency": {
+      "observed_at": "2026-10-22T12:00:00Z",
+      "source_ref": "synthetic://pilot-evidence/RRAS_dependency",
+      "evidence_id": "SYNTH-ONLY-RRAS_dependency",
+      "owner": "third_party_risk",
+      "verified": true,
+      "numerator": 9,
+      "denominator": 12
+    }
+  },
+  "disclaimer": "Every numerator, denominator, rank, timestamp and stock is fictional. No organization was evaluated."
+}
