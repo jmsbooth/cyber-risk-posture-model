@@ -8,7 +8,7 @@
 
 ## Executed local methodology check
 
-The implementation was exercised with Python **3.13.5** in an isolated container mirroring the relevant six core CRPI functions from `models.crm_reference`. The cloned functions implement the original formulas; because this workspace has no DNS access to GitHub, this is **not yet a test against the exact checked-out full repository module**. The 11 new pilot tests passed, including comparison of the raw-evidence adapter's instantaneous residual with the existing stress-runner's score for the same 15 normalized primitives. The user workstation must run the full suite against the actual repository before merge. Reproduction files are versioned; their contents are **synthetic**.
+The implementation was exercised with Python **3.13.5** in an isolated container mirroring the relevant six core CRPI functions from `models.crm_reference`. The cloned functions implement the original formulas; because this workspace has no DNS access to GitHub, this is **not yet a test against the exact checked-out full repository module**. The 12 new pilot tests passed, including comparison of the raw-evidence adapter's instantaneous residual with the existing stress-runner's score for the same 15 normalized primitives. The user workstation must run the full suite against the actual repository before merge. Reproduction files are versioned; their contents are **synthetic**.
 
 ## Fictional assessment and normalization stress
 
@@ -50,7 +50,7 @@ The large stateless/additive rank differences partly follow from the **synthetic
 - [x] Missing/stale/unverified/undersampled evidence returns no point CRPI and a bounded feasible residual interval.
 - [x] Temporal cold start explicitly labeled rather than inferred; `S` and active output branch retained in decomposition.
 - [x] Synthetic pilot data, normalizer/denominator stress and three structural baselines are executable and repeatable locally.
-- [x] Eleven targeted local pilot tests passed (Python 3.13.5, isolated source-faithful core functions).
+- [x] Twelve targeted local pilot tests passed (Python 3.13.5, isolated source-faithful core functions).
 - [ ] **Run full repository tests and archive output from the user's source-matched checkout**, including existing numerical/formal-boundary checks.
 - [ ] Independent adversarial review of proxy-to-construct mappings, denominator gaming, double-counting, floor/ceiling choice and sensitivity to rare incidents.
 - [ ] Ingest consenting organizational evidence, predeclare measurement definitions/observed outcomes, assess reviewer agreement, calibrate on training data and assess holdout utility. This is the actual *empirical validation* phase.
