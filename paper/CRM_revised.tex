@@ -1242,9 +1242,9 @@ primitives and domain-specific weights; scalar RRAS is reported separately,
 not multiplied into the hazard calculation. A full temporal CRPI additionally
 requires prior state (or an explicitly declared cold-start assumption), elapsed
 time, and the two rate parameters in matching time units. The repository's
-\texttt{docs/CRPI\_OPERATIONAL\_INPUT\_CONTRACT.md} records the input-to-output
+\path{docs/CRPI_OPERATIONAL_INPUT_CONTRACT.md} records the input-to-output
 lineage and evidence examples; its machine-readable provisional dictionary is
-\texttt{config/operational\_input\_contract\_v1.json}. Neither artifact
+\path{config/operational_input_contract_v1.json}. Neither artifact
 asserts that raw-to-normalized evidence bounds or organizational calibration
 have been empirically established.
 
@@ -1569,7 +1569,7 @@ exist.
 \label{sec:executed-stress}
 
 A deterministic study evaluated the existing CRPI equations under the
-illustrative \texttt{illustrative-v0.1} profile. Using seed 20261023,
+illustrative version 0.1 profile, using seed 20261023.
 $12{,}000$ complete 15-primitive configurations were independently sampled
 from $\operatorname{Beta}(2,2)$ on $[0,1]$. This is an analyst-selected broad
 input distribution, not a sample of organizations or security incidents.
@@ -1618,8 +1618,9 @@ An incomplete operational assessment must therefore remain explicitly
 qualified rather than become a falsely precise fully observed score.
 
 \paragraph{Profile and temporal stress.}
-Changing consequence weights from $(1/3,1/3,1/3)$ to $(0.6,0.2,0.2)$ reversed
-10.5\% of $6{,}000$ synthetic pairwise residual rankings. For a weak-link
+Changing consequence weights reversed 10.5\% of $6{,}000$ synthetic
+pairwise residual rankings. The reference weights are equal thirds;
+the alternative weights are $(0.6,0.2,0.2)$. For a weak-link
 geometric example $(x_1,x_2)=(0,0.8)$ with equal weights, the aggregate changed
 from $0.0273$ with $\varepsilon=0.001$ to $0.1592$ with $\varepsilon=0.05$,
 and to $0.3915$ with $\varepsilon=0.9$. Profile version and construct
@@ -1645,9 +1646,9 @@ $H$, $M$, $R_{\mathrm{inst}}$, $S$, their domain-level inputs, and
 the evidence qualification separately.
 
 The executable methodology and deterministic results are archived in
-\texttt{scripts/run\_stress\_tests.py},
-\texttt{verification/stress\_test\_results.json}, and
-\texttt{verification/STRESS\_TEST\_REPORT.md}. These experiments describe
+\path{scripts/run_stress_tests.py},
+\path{verification/stress_test_results.json}, and
+\path{verification/STRESS_TEST_REPORT.md}. These experiments describe
 formula sensitivity under invented measurements. They do not establish
 parameter validity, operational prediction, or empirical superiority.
 
