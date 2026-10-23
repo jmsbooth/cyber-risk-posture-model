@@ -1221,6 +1221,43 @@ output posture “look right.”
 
 
 
+\subsection{Minimum Operational Inputs and Partial Evidence}
+\label{sec:minimal-operational-inputs}
+
+The algebraic instantaneous residual needs only governed $TE$, $D_{\mathrm{eff}}$,
+and $M$, since $R_{\mathrm{inst}}=TE\,D_{\mathrm{eff}}(1-M)$. These three
+numbers do not, however, provide operational traceability to measured
+exposures, consequence domains, resilience, or control execution. A decomposed
+evaluation requires $TE$, each $D_j$, each $R_j$ for which $\rho_j>0$,
+$CM$, and $USOM$, plus governed weights, $\rho_j$, and $m_0$. Under the
+illustrative three-domain profile, $\rho_{\mathrm{confidentiality}}=0$,
+so eight normalized construct/domain scores suffice for the instantaneous
+residual. Nine would be required if all three $\rho_j$ were nonzero.
+These are already normalized and governed scores, not eight raw counters.
+
+The executable reference runner obtains these constructs from 15 normalized
+primitive fields: two TE, three consequence, four CM, four USOM, and two
+resilience inputs. Domain resilience projections $R_j$ use the two resilience
+primitives and domain-specific weights; scalar RRAS is reported separately,
+not multiplied into the hazard calculation. A full temporal CRPI additionally
+requires prior state (or an explicitly declared cold-start assumption), elapsed
+time, and the two rate parameters in matching time units. The repository's
+\texttt{docs/CRPI\_OPERATIONAL\_INPUT\_CONTRACT.md} records the input-to-output
+lineage and evidence examples; its machine-readable provisional dictionary is
+\texttt{config/operational\_input\_contract\_v1.json}. Neither artifact
+asserts that raw-to-normalized evidence bounds or organizational calibration
+have been empirically established.
+
+Evidence incompleteness must be distinguished from low observed security scores.
+The present executable policy rejects missing required normalized inputs.
+Last-observation, neutral, and risk-averse imputation discussed above are
+possible \emph{governed alternative} policies, not actions the current runner
+performs silently. Partial outputs and mathematically admissible
+possible-value intervals can be reported with explicit assumptions, but should
+not be relabeled as a fully measured CRPI or as statistical confidence
+intervals. Every output also needs scope, profile version, component lineage,
+evidence qualification, and a cold-start history indicator where applicable.
+
 \subsection{Tier~2 Measurement Summary}
 Table~\ref{tab:tier2summary} provides a compact summary of the Tier~2 metrics and their
 measurement roles.
@@ -1528,6 +1565,92 @@ $\alpha$, composition weights, normalization bounds, and reporting cadence. Mont
 methods may propagate input uncertainty where defensible input distributions or ranges
 exist.
 
+\subsection{Executed Synthetic Stress Experiments}
+\label{sec:executed-stress}
+
+A deterministic study evaluated the existing CRPI equations under the
+illustrative \texttt{illustrative-v0.1} profile. Using seed 20261023,
+$12{,}000$ complete 15-primitive configurations were independently sampled
+from $\operatorname{Beta}(2,2)$ on $[0,1]$. This is an analyst-selected broad
+input distribution, not a sample of organizations or security incidents.
+All sampled outputs remained bounded. The median instantaneous residual was
+$0.1198$ and its 90th percentile $0.2154$; these synthetic values are not
+calibrated risk-action thresholds.
+
+\paragraph{Partial observability.}
+The experiments removed observed primitive scores under 10\% and 20\%
+missing-completely-at-random mechanisms and a separate risk-correlated
+omission mechanism. Counterfactual neutral estimates replaced unknown values
+with $0.5$. Independently, the model's monotonic directions supplied
+mathematically feasible lower and upper residual bounds when unknown input
+scores were allowed anywhere in $[0,1]$. The original complete-input result
+fell within the corresponding bound in every case. These are possible-value
+ranges, \emph{not} confidence or probability intervals. Table~\ref{tab:stress-missing}
+summarizes the experiments.
+
+\begin{table}[htbp]
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\caption{Synthetic residual stress test with $12{,}000$ configurations per mechanism}
+\label{tab:stress-missing}
+\begin{tabular}{lrrrr}
+\toprule
+Missingness & \shortstack{Observed\\inputs} & \shortstack{Median bound\\width} & \shortstack{Bound crosses\\0.15} & \shortstack{Missed\\positive cases}\\
+\midrule
+10\% random & 90.1\% & 0.0487 & 37.0\% & 10.8\%\\
+20\% random & 80.0\% & 0.1387 & 64.0\% & 18.5\%\\
+Risk-correlated & 93.1\% & 0.0289 & 29.7\% & 21.0\%\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The $R_{\mathrm{inst}}=0.15$ cutoff is an \emph{illustrative classification
+boundary}, not a validated control/action threshold. ``Missed positives''
+refers to complete synthetic rows above this boundary for which a neutral
+fill yielded a value below it. Risk-correlated omissions deliberately
+favored high external threat, high availability consequence, and weak detection
+capability. They produced a signed neutral-imputation bias of $-0.0090$,
+showing that relatively high input availability need not prevent systematic
+understatement when the missingness mechanism is informative. At 20\%
+per-field random omission, only 3.18\% of rows retained all 15 fields.
+An incomplete operational assessment must therefore remain explicitly
+qualified rather than become a falsely precise fully observed score.
+
+\paragraph{Profile and temporal stress.}
+Changing consequence weights from $(1/3,1/3,1/3)$ to $(0.6,0.2,0.2)$ reversed
+10.5\% of $6{,}000$ synthetic pairwise residual rankings. For a weak-link
+geometric example $(x_1,x_2)=(0,0.8)$ with equal weights, the aggregate changed
+from $0.0273$ with $\varepsilon=0.001$ to $0.1592$ with $\varepsilon=0.05$,
+and to $0.3915$ with $\varepsilon=0.9$. Profile version and construct
+calibration materially affect comparability.
+
+For unchanged residual and mitigation, seven one-day exact stock updates
+agreed with one seven-day update to machine precision. The same statement
+does \emph{not} justify replacing variable daily inputs with weekly means.
+In a deliberately extreme sequence containing two days of
+$(R_{\mathrm{inst}},M)=(0.8,0.05)$ and five days of $(0.02,0.8)$, final
+stock was $0.0302$ with the high-exposure days first and $0.3794$ when
+those days occurred last. Updating once from the common weekly averages
+yielded $0.1383$ in both cases. The difference reflects lost event order,
+not a failure of the fixed-input cadence theorem. With observed residual
+$0.05$ and mitigation $0.20$, a neutral cold start $S_0=0.05$ generated
+a day-one envelope of $0.0557$, while unobserved inherited stock $S_0=0.85$
+yielded $0.7273$. Cold-start status must accompany temporal reporting.
+
+Finally, $(H,M)=(0.4,0.5)$ and $(0.8,0.75)$ both produce
+$R_{\mathrm{inst}}=0.2$ but different subsequent stocks for equal prior
+states. A lone CRPI scalar cannot explain this distinction. Report
+$H$, $M$, $R_{\mathrm{inst}}$, $S$, their domain-level inputs, and
+the evidence qualification separately.
+
+The executable methodology and deterministic results are archived in
+\texttt{scripts/run\_stress\_tests.py},
+\texttt{verification/stress\_test\_results.json}, and
+\texttt{verification/STRESS\_TEST\_REPORT.md}. These experiments describe
+formula sensitivity under invented measurements. They do not establish
+parameter validity, operational prediction, or empirical superiority.
+
 \subsection{Illustrative One-Step Sensitivity Check}
 Using the $t_0$ worked-example profile with $\bar\rho=0.60$ and $m_0=0.25$, the baseline
 is $D_{\mathrm{eff}}=0.608$, $H=0.365$, $M=0.250$, and
@@ -1735,7 +1858,7 @@ or other rapid environmental changes shorten the useful life of historical calib
 assumptions \cite{nist-ai-rmf,verizon-dbir}.
 
 \section{Reproducibility and Artifact Availability}
-The accompanying repository contains the manuscript source, an executable dependency-light
+The accompanying repository now additionally supplies a provisional 15-field operational input contract and reproducible synthetic missingness, calibration-profile and temporal-order stress experiments.\nThe accompanying repository contains the manuscript source, an executable dependency-light
 reference implementation of the governing equations, a versioned illustrative calibration
 profile, synthetic non-sensitive scenario data, unit and invariant tests, reference
 calculations, and scripts that reproduce the scenario tables and decomposed outputs. The
