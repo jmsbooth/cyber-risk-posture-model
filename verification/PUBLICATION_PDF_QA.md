@@ -5,7 +5,7 @@
 **Artifact under review:** Owner-uploaded Tectonic 0.17.0 PDF generated from local `main` at `971e3684a511e9d92a7e2e311a27ad5567c80bce`.  
 **Original PDF SHA-256:** `242e0276874e063bee1bf8dcc69cd25a22712b801fc7af926ff27290ca20b7d9`  
 **Original PDF size:** 224,553 bytes (39 US Letter pages).  
-**Status: PDF COMPILATION PASS; ORIGINAL VISUAL QA NOT APPROVED; TYPOGRAPHIC REMEDIATION STAGED; REBUILD AND RE-INSPECTION REQUIRED.**
+**Status: CORRECTED PDF BUILT, SOURCE-MATCHED AND TRACKED; EXACT-FILE PAGE RENDER/FINAL VISUAL QA NOT YET APPROVED.**
 
 ## Original PDF checks completed
 
@@ -33,11 +33,34 @@ On 2026-10-22, the owner built the first typographically revised branch with **T
 
 - Fifteen identical **10.4187pt** overfull alignment warnings came from the header and repeated headers of five four-column submetric measurement `longtable` environments: source lines 639–657, 703–720, 774–791, 991–1010 and 1074–1091. The five tables used column fractions summing to `0.92\\textwidth`, which **plus eight default tabcolsep paddings** exceeded the text block width. The column fractions now sum to **0.88\\textwidth** with ragged-right `P{}` cells.
 - Three paragraph warnings occurred at source lines 40–55 (**16.74695pt**, abstract), 1685–1695 (**3.25648pt**, model risk) and 1840–1842 (**5.739pt**, directional sensitivity proposition). A restrained `\\emergencystretch=2em` was added to allow less severe line-spacing/break adjustments without suppressing margin diagnostics.
-- The owner also received an ignored-parent-directory error when adding `paper/build/CRM_revised.pdf`. This can arise if a user/global `build/` exclusion matches the directory before the repository's negated PDF filename rule can apply. The repository `.gitignore` now explicitly unignores **both** `paper/build/` and `paper/build/CRM_revised.pdf`; the workaround `git add -f` is not needed when the updated rules are effective. The precise source of the owner's ignore rule can be checked with `git check-ignore -v paper/build/CRM_revised.pdf`.
+- The owner also received an ignored-parent-directory error when adding `paper/build/CRM_revised.pdf`. This can arise if a user/global `build/` exclusion matches the directory before the repository's negated PDF filename rule can apply. The repository `.gitignore` now explicitly unignores **both** `paper/build/` and `paper/build/CRM_revised.pdf`; the owner ultimately needed `git add -f -- paper/build/CRM_revised.pdf` on this workstation because the normal add still considered the parent directory ignored; only the intended binary was staged. The precise source of the owner's ignore rule can be checked with `git check-ignore -v paper/build/CRM_revised.pdf`.
 
 **Independent targeted test (not full-manuscript acceptance):** A native XeLaTeX document exercising the exact abstract, representative four-column table, and the two affected proof/model-risk paragraphs compiled without `Overfull` warnings; table text remained inside the normal text margins and was visually checked. This isolated test cannot substitute for a full Tectonic build or inspection of the regenerated final PDF.
 
-**Current action:** Rebuild from the latest publication branch and inspect the new log. The earlier `b85f...` PDF **must not** be committed as final; source now has further changes. The draft PR remains unmerged pending a warning-free full build and page-by-page PDF inspection.
+**Resolution:** A later full-manuscript Tectonic 0.17.0 build passed with zero `Overfull`, `Undefined` and `Missing character` log matches. The earlier `b85f...` artifact remains rejected. See the final-artifact record below. The draft PR remains unmerged pending exact-binary page-by-page visual review.
+
+## Corrected artifact committed to PR #6 — technical acceptance
+
+On 2026-10-22 the repository owner rebuilt the publication branch at source revision `bb39680884a44503b4371aa9ccd140a26ba65a42` using **Tectonic 0.17.0**. The engine completed TeX, reran cross-references, and wrote the PDF with exit code zero. A search of the full retained `CRM_revised.log` returned **zero occurrences** of `Overfull`, `Undefined`, and `Missing character`. A nonfatal Fontconfig default-configuration message appeared in stderr; the build was successful.
+
+| Artifact property | Result |
+| --- | --- |
+| Path | `paper/build/CRM_revised.pdf` |
+| Build source revision | `bb39680884a44503b4371aa9ccd140a26ba65a42` (no LaTeX edits subsequently) |
+| Binary committed to branch | `dd74d58` |
+| Size | **225,519 bytes** |
+| SHA-256 | **`2897fe42fb4639851f703389ce575c96bec622a2d0b102cd6f803364319bcb2c`** |
+| GitHub blob SHA-1 | `24747ec6aca8c21d64505db2c51dfcb9810b8620` |
+| PDF header | `%PDF-1.5` |
+| TeX overfull/undefined/missing-character diagnostics | **0 matching log entries** |
+| [Tracked GitHub PDF](../paper/build/CRM_revised.pdf) | **Present on publication branch**, hash independently recomputed from GitHub's exact base64 file bytes |
+| Direct README download link | **Added on the publication branch** |
+| Exact-binary full-page visual/geometry inspection | **Pending** — checksum and Tectonic warnings cannot substitute for visual rendering |
+| Page count, PDF accessibility tagging, bibliography and glyph verification of final binary | **Pending** exact-binary inspection; the 39-page count and embedded-font review above refer to the **older** artifact |
+
+**Binary provenance check:** The GitHub connector returned the entire committed PDF as base64. Independent SHA-256 computation over those decoded bytes exactly matched the Windows `Get-FileHash` result, and byte count matched the git commit. Therefore no local rebuild/re-upload is required unless the page-render review identifies a substantive defect. The earlier visual results for the pre-correction PDF are historical evidence, not verification of the corrected binary's pagination.
+
+**Current gate:** Keep PR #6 draft until the corrected tracked binary has been rendered and visually inspected page-by-page. Only then promote the PDF to release-approved, merge, and close Issue #5.
 
 ## Corrections prepared in this PR
 
@@ -45,7 +68,7 @@ On 2026-10-22, the owner built the first typographically revised branch with **T
 - `.gitignore` revised so only `paper/build/CRM_revised.pdf` can be tracked within the TeX build directory; logs and auxiliary files remain ignored.
 - Targeted independent XeLaTeX layout probes of the table formatting passed compilation and rendered readable Tables 10, 11 and 13. A first probe exposed an unbreakable inline analytical-level list, which was corrected in source before opening this PR.
 
-**Critical distinction:** Targeted isolated layout probes do **not** establish that the full revised 39-page manuscript has passed Tectonic or the complete page-by-page visual QA. The uploaded, pre-correction PDF is **not** the releasable artifact. This PR is **draft** until the rebuilt PDF is supplied and accepted.
+**Critical distinction:** The standalone full-manuscript Tectonic compilation now passes and the corrected PDF is tracked and source-matched. The earlier isolated layout probes and clean Tectonic log do **not** establish exact-binary full-page visual QA. The original, pre-correction PDF remains rejected. This PR stays draft pending final page inspection.
 
 ## Required final acceptance
 
