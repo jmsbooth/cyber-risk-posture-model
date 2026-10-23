@@ -7,7 +7,20 @@
 **Reproduce:** `python scripts/run_stress_tests.py --check verification/stress_test_results.json` and `python -m unittest discover -v` from repository root. Run with `--output verification/stress_test_results.json` to regenerate fixed results. The source-to-number receipt is `verification/stress_test_results.json` with seed and profile SHA-256. The code uses `models.crm_reference` and Python standard library only; no R dependency or SciPy installation is required.
 
 
-**Local equation-harness receipt:** Python 3.13.5; script SHA-256 `1069247cae9cad77ab8484937ad53edce6fd5e70d185823e2fd6d6cd312cfe6a`, fixed output SHA-256 `bba484de1516fd2a4accace9bee839a55a3cceebfe33a6388813304858e229b3`, exact illustrative calibration profile SHA-256 `7a8230e405f7ea2dab262d19781ba23c6f035d945f97bb9c81ee18c0d4daa447`. Regeneration comparison PASS and 5/5 stress-specific local tests PASS. These hashes attest this experiment, not the prior Lean kernel checks or publication PDF.
+**Original isolated equation-harness receipt (before the cross-platform hash repair):** Python 3.13.5; script SHA-256 `1069247cae9cad77ab8484937ad53edce6fd5e70d185823e2fd6d6cd312cfe6a`, fixed output SHA-256 `bba484de1516fd2a4accace9bee839a55a3cceebfe33a6388813304858e229b3`, exact illustrative calibration profile SHA-256 `7a8230e405f7ea2dab262d19781ba23c6f035d945f97bb9c81ee18c0d4daa447`. Regeneration comparison PASS and 5/5 stress-specific local tests PASS. These hashes attest this experiment, not the prior Lean kernel checks or publication PDF.
+
+## Cross-platform reproducibility correction (2026-10-23)
+
+The owner executed PR #7 on Windows with **Python 3.11.15**. The original `python -m unittest discover -v` run passed 23/24 tests; its sole failure was the exact JSON archive equality check, and `--check` reported a mismatch. The original stress runner computed `profile_sha256` from raw `calibration_baseline.json` file bytes, even though Git checkouts can contain either LF or CRLF line endings. The archived output was generated with Linux LF content.
+
+This platform dependence was independently reproduced by copying the identical 2,777-byte calibration content into a CRLF version. Under identical synthetic draws and mathematical functions, the complete generated reports agreed except for **one metadata field**:
+
+- LF profile hash: `7a8230e405f7ea2dab262d19781ba23c6f035d945f97bb9c81ee18c0d4daa447` (matches the archive).
+- CRLF profile hash: `de85cd87d5d571412b41a6b40c0f4c54be1126c70f6e1647d3e962305078d995`.
+
+The runner now loads the JSON profile in universal-newline text mode and hashes its normalized UTF-8 content. The input values, random generator, equations, archived statistical results and comparison tolerances are **unchanged**. A new test `test_calibration_hash_is_independent_of_checkout_line_endings` writes both LF and CRLF profile files and verifies equivalent results and equal hashes. The exact `--check` remains strict; if it still fails, it now identifies the differing top-level JSON fields instead of issuing an opaque message.
+
+**Revalidation:** An isolated Python 3.13.5 reproduction using the source-faithful core formula copy reproduced all archived 12,000-draw data and passed **6/6 stress tests**, including the two-line-ending regression. The user's exact Windows checkout has **not yet been rerun after this fix**. Do not mark cross-platform acceptance complete until that run succeeds. The previously reported mathematical findings are unchanged by this platform metadata repair.
 
 ## Design and results
 
