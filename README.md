@@ -12,7 +12,7 @@ validation checks.
 ## Start here
 
 - [Read the manuscript source](paper/CRM_revised.tex)
-- [Download the CRPI manuscript (PDF, 39 pages)](paper/build/CRM_revised.pdf) — Tectonic 0.17.0 build, 39/39-page visual publication QA accepted, SHA-256 verified
+- [Open the rebuilt research-revision CRPI manuscript (PDF)](paper/build/CRM_revised.pdf) — updated synthetic-stress analysis; 236,974-byte binary and SHA-256 verified; **new full-page visual QA pending**. The [previous 39-page approved edition](https://github.com/jmsbooth/cyber-risk-posture-model/blob/main/paper/build/CRM_revised.pdf) remains published on `main` until this PR is accepted.
 - [Run the reference model](models/crm_reference.py)
 - [Inspect the calibration profile](config/calibration_baseline.json)
 - [Review the synthetic scenarios](data/examples/scenarios.csv)
@@ -134,7 +134,7 @@ python3 scripts/run_stress_tests.py --check verification/stress_test_results.jso
 python3 -m unittest discover -v
 ```
 
-The research branch updates the LaTeX manuscript with these findings. Its tracked PDF remains the previously approved publication edition **until the revised TeX is rebuilt and independently page-checked**; do not treat that existing PDF as containing the new analysis before a source-matched rebuild.
+This research branch now includes the **rebuilt** manuscript PDF containing the added operational-input and stress-test sections. The owner's Tectonic 0.17.0 build passed the overflow/reference/glyph diagnostic check, and the committed PDF hash matches the Windows output. **Only final visual inspection of the revised binary remains**; the previous edition's 39-page QA does not transfer to this revised file. See the [Windows replay and PDF provenance record](verification/STRESS_WINDOWS_REPLAY.md).
 
 ## Synthetic use cases
 
