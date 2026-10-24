@@ -7,7 +7,7 @@
 1. A strictly metadata-only preregistration manifest template, `config/prospective_pilot_registration.example.json`. The example intentionally has **pending** consent, data-use, ethics, population, calibration, outcome and registration gates; it is **not** a registered study.
 2. A reproducible preflight, `scripts/check_pilot_readiness.py`, which checks evidence of a prospective design and returns `structurally_valid`, `documentary_gates_complete`, explicit unmet requirements and a canonical SHA-256 over the manifest's JSON content. The latter is a reproducible fingerprint, **not an approved signature, timestamp or registry record**.
 3. A conservative policy: synthetic and public documentation only in this repository; data-use agreements, real measurement records, inventories, security tickets, identifiers and outcome labels must remain in a **separate approved private environment**. A `.gitignore` rule is a safeguard against accidental commits, not an access-control boundary.
-4. Ten standard-library regression tests for manifest structure, synthetic readiness, no public raw data, strict fields, blinded adjudication and temporal leakage checks.
+4. Eleven standard-library regression tests for manifest structure, synthetic readiness, no public raw data, strict fields, blinded adjudication and temporal leakage checks.
 
 ## Execute the research preflight
 
