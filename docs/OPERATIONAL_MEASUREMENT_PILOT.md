@@ -39,7 +39,7 @@ The configuration at [`config/measurement_pilot_v0.1.json`](../config/measuremen
 
 For `fraction` inputs, `numerator` and `denominator` **must be integers with `0 <= n <= d` and `d > 0`**. For five-level ordinal inputs, only integer levels `0..4` are allowed. For `inverse_bounded_hours`, the normalized score is `1 - clip((hours-L)/(U-L),0,1)` with illustrative `L,U` and a minimum scenario sample size. The profile is not a claim that an hourly lag of 24 hours or 72 hours is a universally meaningful security boundary.
 
-The above ratio proxies are proposed operational *candidates*, not validated measures or standards-driven definitions. They are not necessarily exhaustive or mutually independent. Reusing the same evidence ID across multiple constructs is recorded as a warning; reviewers must justify transformations that avoid counting the same control effect twice.
+The above ratio proxies are proposed operational *candidates*, not validated measures or standards-driven definitions. They are not necessarily exhaustive or mutually independent. Reusing the same evidence ID across multiple constructs is **reported in `reused_evidence_ids`**, but is **not** automatically rejected and does not append a separate warning. Reviewers must inspect the reported duplicates and justify transformations that avoid counting the same control effect twice; this demo does not provide independent source de-duplication.
 
 ## Evidence eligibility and sparse evidence
 
@@ -74,4 +74,4 @@ The fixture contains invented counts, ordinal judgments, times, attestation flag
 5. **Evaluate external utility:** prospective matched-scope time series, simple additive and stateless baselines, withheld outcomes, effect-size uncertainty, negative controls, and reporting of failure as well as success.
 6. **Govern scale:** a system-level model is not an average of component CRPI values; derive the parent's consequence, exposure, dependency and evidence boundaries separately.
 
-A preregistration-grade plan for step 5 is in [EMPIRICAL_VALIDATION_STUDY_PROTOCOL.md](EMPIRICAL_VALIDATION_STUDY_PROTOCOL.md). This repo **contains no private organizational records or incident labels** and therefore cannot yet claim any demonstrated empirical validity.
+A preregistration-grade plan for step 5 is in [EMPIRICAL_VALIDATION_STUDY_PROTOCOL.md](EMPIRICAL_VALIDATION_STUDY_PROTOCOL.md). The [Windows 37-test acceptance and reviewer caveats](../verification/MEASUREMENT_PILOT_WINDOWS_ACCEPTANCE.md) qualify the provisional implementation. This repo **contains no private organizational records or incident labels** and therefore cannot yet claim any demonstrated empirical validity.
