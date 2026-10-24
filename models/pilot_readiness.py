@@ -5,7 +5,7 @@ A self-attested manifest can never substitute for consent, ethics or data-use ap
 """
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from hashlib import sha256
 from typing import Any, Mapping
 import json
@@ -184,6 +184,8 @@ def assess_registration(plan: Mapping[str, Any]) -> dict[str, Any]:
         pending.append("study preregistration not locked before source/outcome inspection")
     if not _iso(prereg.get("locked_at")):
         pending.append("timezone-aware preregistration lock time missing")
+    elif datetime.fromisoformat(prereg["locked_at"].replace("Z", "+00:00")) > datetime.now(timezone.utc):
+        pending.append("preregistration lock timestamp cannot be in the future")
     if not _reference(prereg.get("registry_ref")):
         pending.append("immutable preregistration registry/receipt reference missing")
     if not _reference(prereg.get("independent_signoff_ref")):
