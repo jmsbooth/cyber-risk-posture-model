@@ -21,6 +21,7 @@ validation checks.
 - [Provisional raw-evidence measurement pilot](docs/OPERATIONAL_MEASUREMENT_PILOT.md), [15-input pilot profile](config/measurement_pilot_v0.1.json), [fictional fixture](data/examples/operational_pilot_case.json), and [synthetic baseline comparison](verification/MEASUREMENT_PILOT_REPORT.md)
 - [Prospective external validation protocol](docs/EMPIRICAL_VALIDATION_STUDY_PROTOCOL.md) — study design only; no real organization data or outcome labels have been collected
 - [Operational pilot Windows verification and semantic limits](verification/MEASUREMENT_PILOT_WINDOWS_ACCEPTANCE.md) — 37/37 tests, with external measurement validity still open
+- [Prospective organizational study readiness pack](docs/PROSPECTIVE_PILOT_STARTER_PACK.md), [metadata-only registration example](config/prospective_pilot_registration.example.json), and [preflight validator](scripts/check_pilot_readiness.py) — all participant and data-use approvals remain **unobtained**
 
 ## Why this repository exists
 
@@ -135,6 +136,17 @@ python3 -m unittest discover -v
 ```
 
 The [initial structural baseline experiment](verification/MEASUREMENT_PILOT_REPORT.md) compares 600 invented normalized configurations and 5,000 synthetic score pairs against stateless instantaneous residual, a simple additive proxy, and geometric-TE ablation. **Rank reversals are not accuracy, predictive superiority or empirical validation.** Organizational calibration and prospectively observed security outcomes remain future research under the [study protocol](docs/EMPIRICAL_VALIDATION_STUDY_PROTOCOL.md). The pilot now has **owner-local Windows acceptance**: [37/37 Python tests](verification/MEASUREMENT_PILOT_WINDOWS_ACCEPTANCE.md), exact fictional fixture output and archived 600-scope baseline reproduction. The [measurement report](verification/MEASUREMENT_PILOT_REPORT.md) records the findings and constraints. This is provisional synthetic research—not independent verification of organizational source data—and is not a new manuscript revision; the existing 41-page PDF remains the accepted publication artifact.
+
+## Prospective validation: study preflight, not data collection
+
+[Issue #9](https://github.com/jmsbooth/cyber-risk-posture-model/issues/9) tracks the open **organizational measurement-validity** study. The [readiness pack](docs/PROSPECTIVE_PILOT_STARTER_PACK.md) adds a privacy-conscious preregistration template and standard-library validator. The example deliberately **fails** mandatory intake-readiness gates; no participant approvals, real source records, or independent outcomes exist in this repository.
+
+```bash
+python scripts/check_pilot_readiness.py config/prospective_pilot_registration.example.json
+python scripts/check_pilot_readiness.py config/prospective_pilot_registration.example.json --require-ready
+```
+
+The first command returns a structurally valid **draft**; the second exits **2** because research approvals, prespecified outcomes and prospective holdout requirements are missing. An eventual `documentary_gates_complete: true` value would describe **self-attested manifest completeness**, never human/legal authorization or scientific validation. Existing synthetic pilot and the accepted manuscript are unchanged.
 
 ## Synthetic stress testing and operational input readiness
 

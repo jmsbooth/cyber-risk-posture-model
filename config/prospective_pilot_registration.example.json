@@ -1,0 +1,60 @@
+{
+  "schema": "crpi-prospective-pilot-registration-v0.1",
+  "study_id": "SYNTHETIC-PLANNING-EXAMPLE-NOT-AN-ENROLLED-STUDY",
+  "data_class": "study_metadata_only",
+  "stage": "draft",
+  "unit_of_analysis": "service_window",
+  "governance": {
+    "participant_consent_status": "pending",
+    "consent_receipt_ref": null,
+    "organizational_data_use_status": "pending",
+    "data_use_receipt_ref": null,
+    "ethics_status": "pending",
+    "ethics_receipt_ref": null,
+    "private_storage_attested": false,
+    "private_storage_policy_ref": null,
+    "public_repository_contains_raw_data": false
+  },
+  "population": {
+    "scope_freeze_status": "draft",
+    "inventory_boundary_ref": null,
+    "sampling_plan_ref": null,
+    "dependency_cluster_policy_ref": null
+  },
+  "measurement": {
+    "measurement_profile_id": "crpi-pilot-measurement-profile-v0.1",
+    "model_profile_id": "illustrative-v0.1",
+    "definitions_frozen": false,
+    "two_blinded_impact_reviewers": false,
+    "independent_source_audit": false,
+    "freeze_receipt_ref": null
+  },
+  "outcome": {
+    "primary_outcome": "independently_adjudicated_control_failure",
+    "forward_horizon_days": 28,
+    "adjudicator_blinded_to_scores": false,
+    "independently_sourced": false,
+    "definition_ref": null,
+    "adjudication_ref": null
+  },
+  "holdout": {
+    "group_by_service_and_dependency": true,
+    "forward_only": true,
+    "embargo_days": 28,
+    "fixed_before_outcome_review": false,
+    "split_protocol_ref": null
+  },
+  "analysis": {
+    "predeclared_comparators": ["crpi", "instantaneous_residual", "simple_additive", "arithmetic_te_ablation", "evidence_only"],
+    "sample_size_rationale_ref": null,
+    "metric_selection_ref": null,
+    "missingness_analysis_ref": null,
+    "multiple_testing_ref": null
+  },
+  "preregistration": {
+    "status": "draft",
+    "locked_at": null,
+    "registry_ref": null,
+    "independent_signoff_ref": null
+  }
+}

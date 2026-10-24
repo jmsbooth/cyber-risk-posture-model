@@ -31,3 +31,10 @@ formal/lean/.lake/
 formal/lean/*.olean
 formal/lean/*.ilean
 formal/lean/*.c
+
+# Private prospective CRPI study data and approvals must never be committed.
+# These patterns are an accidental-commit safeguard, not a substitute for access controls.
+/data/private/
+/data/field_private/
+/study_private/
+/artifacts/pilot_private/
