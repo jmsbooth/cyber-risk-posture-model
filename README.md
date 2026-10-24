@@ -18,6 +18,9 @@ validation checks.
 - [Review the synthetic scenarios](data/examples/scenarios.csv)
 - [Minimum operational inputs and calculation lineage](docs/CRPI_OPERATIONAL_INPUT_CONTRACT.md), with a [15-field provisional input dictionary](config/operational_input_contract_v1.json)
 - [Executed CRPI pressure-test findings](verification/STRESS_TEST_REPORT.md), [fixed output data](verification/stress_test_results.json), and [reproduction script](scripts/run_stress_tests.py)
+- [Provisional raw-evidence measurement pilot](docs/OPERATIONAL_MEASUREMENT_PILOT.md), [15-input pilot profile](config/measurement_pilot_v0.1.json), [fictional fixture](data/examples/operational_pilot_case.json), and [synthetic baseline comparison](verification/MEASUREMENT_PILOT_REPORT.md)
+- [Prospective external validation protocol](docs/EMPIRICAL_VALIDATION_STUDY_PROTOCOL.md) — study design only; no real organization data or outcome labels have been collected
+- [Operational pilot Windows verification and semantic limits](verification/MEASUREMENT_PILOT_WINDOWS_ACCEPTANCE.md) — 37/37 tests, with external measurement validity still open
 
 ## Why this repository exists
 
@@ -120,6 +123,18 @@ against this source. The build may emit ordinary first-pass cross-reference warn
 while Tectonic resolves references; the final PDF is produced at
 `paper/build/CRM_revised.pdf`. A full TeX Live installation is not required for this
 source.
+
+## Raw-evidence pilot and baseline structure (research increment)
+
+The additional [operational measurement pilot](docs/OPERATIONAL_MEASUREMENT_PILOT.md) translates 15 **fictional scoped raw-evidence** counts, time quantiles and ordinal consequence levels into normalized inputs under a **versioned, intentionally uncalibrated** profile. Each record includes an owner, evidence ID, source reference, observation timestamp and verification assertion. The adapter computes the unchanged CRPI decomposition and declared prior-stock transition; if any required evidence is missing, stale, unverified or undersampled, it returns **a feasible residual interval but no point-valued CRPI**. Coverage is scored separately from modeled posture and must not be treated as confidence.
+
+```bash
+python3 scripts/run_operational_pilot.py --input data/examples/operational_pilot_case.json
+python3 scripts/compare_operational_baselines.py --check verification/measurement_pilot_structural_results.json
+python3 -m unittest discover -v
+```
+
+The [initial structural baseline experiment](verification/MEASUREMENT_PILOT_REPORT.md) compares 600 invented normalized configurations and 5,000 synthetic score pairs against stateless instantaneous residual, a simple additive proxy, and geometric-TE ablation. **Rank reversals are not accuracy, predictive superiority or empirical validation.** Organizational calibration and prospectively observed security outcomes remain future research under the [study protocol](docs/EMPIRICAL_VALIDATION_STUDY_PROTOCOL.md). The pilot now has **owner-local Windows acceptance**: [37/37 Python tests](verification/MEASUREMENT_PILOT_WINDOWS_ACCEPTANCE.md), exact fictional fixture output and archived 600-scope baseline reproduction. The [measurement report](verification/MEASUREMENT_PILOT_REPORT.md) records the findings and constraints. This is provisional synthetic research—not independent verification of organizational source data—and is not a new manuscript revision; the existing 41-page PDF remains the accepted publication artifact.
 
 ## Synthetic stress testing and operational input readiness
 
