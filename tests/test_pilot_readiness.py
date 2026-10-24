@@ -1,6 +1,5 @@
 """Guardrails for the CRPI prospective study metadata/preflight (no real data)."""
 from __future__ import annotations
-import copy
 import json
 import unittest
 from pathlib import Path
@@ -30,7 +29,7 @@ def synthetic_complete():
     p["holdout"].update(fixed_before_outcome_review=True, split_protocol_ref="PRIVATE-SPLIT-PLAN")
     p["analysis"].update(sample_size_rationale_ref="PRIVATE-POWER", metric_selection_ref="PRIVATE-METHODS",
                           missingness_analysis_ref="PRIVATE-MISSINGNESS", multiple_testing_ref="PRIVATE-CORRECTION")
-    p["preregistration"].update(status="locked", locked_at="2027-01-01T00:00:00Z",
+    p["preregistration"].update(status="locked", locked_at="2020-01-01T00:00:00Z",
                                 registry_ref="PRIVATE-REGISTRY-RECEIPT", independent_signoff_ref="PRIVATE-REVIEWER-RECEIPT")
     return p
 
@@ -72,6 +71,13 @@ class PilotReadinessTests(unittest.TestCase):
         r = assess_registration(p)
         self.assertFalse(r["documentary_gates_complete"])
         self.assertTrue(any("embargo" in s for s in r["outstanding_gates"]))
+
+    def test_future_preregistration_lock_is_not_accepted(self):
+        p = synthetic_complete()
+        p["preregistration"]["locked_at"] = "2099-01-01T00:00:00Z"
+        r = assess_registration(p)
+        self.assertFalse(r["documentary_gates_complete"])
+        self.assertTrue(any("in the future" in x for x in r["outstanding_gates"]))
 
     def test_reject_invalid_outcome_and_bad_days(self):
         p = template(); p["outcome"].update(primary_outcome="breach_probability", forward_horizon_days=0)
