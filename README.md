@@ -22,6 +22,7 @@ validation checks.
 - [Prospective external validation protocol](docs/EMPIRICAL_VALIDATION_STUDY_PROTOCOL.md) — study design only; no real organization data or outcome labels have been collected
 - [Operational pilot Windows verification and semantic limits](verification/MEASUREMENT_PILOT_WINDOWS_ACCEPTANCE.md) — 37/37 tests, with external measurement validity still open
 - [Prospective organizational study readiness pack](docs/PROSPECTIVE_PILOT_STARTER_PACK.md), [metadata-only registration example](config/prospective_pilot_registration.example.json), and [preflight validator](scripts/check_pilot_readiness.py) — all participant and data-use approvals remain **unobtained**
+- [Prospective pilot participant brief](docs/PILOT_PARTICIPATION_BRIEF.md), [non-sensitive partner screening](docs/PILOT_PARTNER_FEASIBILITY_SCREENING.md), [independent 15-input source audit](docs/PILOT_15_INPUT_FIELD_AUDIT.md), [outcome feasibility decision](docs/PILOT_OUTCOME_FEASIBILITY_DECISION.md), and [private-data authorization requirements](docs/PILOT_PRIVATE_WORKSPACE_AND_AUTHORIZATION.md) — **no organization enrolled or records collected**
 
 ## Why this repository exists
 
@@ -136,6 +137,12 @@ python3 -m unittest discover -v
 ```
 
 The [initial structural baseline experiment](verification/MEASUREMENT_PILOT_REPORT.md) compares 600 invented normalized configurations and 5,000 synthetic score pairs against stateless instantaneous residual, a simple additive proxy, and geometric-TE ablation. **Rank reversals are not accuracy, predictive superiority or empirical validation.** Organizational calibration and prospectively observed security outcomes remain future research under the [study protocol](docs/EMPIRICAL_VALIDATION_STUDY_PROTOCOL.md). The pilot now has **owner-local Windows acceptance**: [37/37 Python tests](verification/MEASUREMENT_PILOT_WINDOWS_ACCEPTANCE.md), exact fictional fixture output and archived 600-scope baseline reproduction. The [measurement report](verification/MEASUREMENT_PILOT_REPORT.md) records the findings and constraints. This is provisional synthetic research—not independent verification of organizational source data—and is not a new manuscript revision; the existing 41-page PDF remains the accepted publication artifact.
+
+## Organizational pilot partner qualification (pre-data collection)
+
+The [participant brief](docs/PILOT_PARTICIPATION_BRIEF.md) and [partner screening worksheet](docs/PILOT_PARTNER_FEASIBILITY_SCREENING.md) are **public, non-sensitive, unsent** research outreach materials. Before collecting any operational evidence, the [15-input measurement review charter](docs/PILOT_15_INPUT_FIELD_AUDIT.md) requires independent numerator/denominator and construct-validity review, the [outcome decision record](docs/PILOT_OUTCOME_FEASIBILITY_DECISION.md) requires an independently adjudicated prospectively defined endpoint, and the [private governance/authorization pack](docs/PILOT_PRIVATE_WORKSPACE_AND_AUTHORIZATION.md) requires an organization-approved workspace and human/contractual approvals. These are **decision aids**, not signed agreements, an IRB determination or an active study.
+
+The preregistration template remains deliberately **not ready** (`--require-ready` should exit `2`). Issue #9 stays **OPEN** until a participant with authority is selected, an appropriate private study environment exists, the data-use/ethics determination is obtained, and the measurement/outcome/holdout design is frozen under independent review. No current CRPI score is claimed as empirically validated.
 
 ## Prospective validation: study preflight, not data collection
 
