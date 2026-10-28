@@ -1685,29 +1685,74 @@ immediately forget the recent period of elevated unresolved exposure.
 By $t_3$ and $t_4$, threat exposure moderates and resilience improves. Instantaneous
 posture continues to fall while the persistent channel dissipates more gradually.
 
+
 \subsection{Expanded Time-Series View}
+The two tables separate the measured or assumed Tier~2 inputs from
+the derived state and output. Each input is a bounded illustrative
+score; none is a direct probability. The signed rows below each
+new time step show changes from the preceding step, so that a
+reader can identify which input moved before interpreting the
+response in hazard, mitigation, or persistence.
+
 \begingroup
 \small
-\setlength{\tabcolsep}{3pt}
-\begin{longtable}{c c c c c c c c c c c c}
-  \caption{Worked example over time using the revised governing model}
-  \label{tab:worked-timeseries}\\
-  \toprule
-  $t$ & $TE$ & $CS$ & $RRAS$ & $CM$ & $SOE$ & $D_{\mathrm{eff}}$ & $H$ & $M$ & $R_{\mathrm{inst}}$ & $S$ & $CRPI$ \\
-  \midrule
-  \endfirsthead
-  \toprule
-  $t$ & $TE$ & $CS$ & $RRAS$ & $CM$ & $SOE$ & $D_{\mathrm{eff}}$ & $H$ & $M$ & $R_{\mathrm{inst}}$ & $S$ & $CRPI$ \\
-  \midrule
-  \endhead
-  $t_0$ & 0.600 & 0.800 & 0.400 & 0.500 & 0.400 & 0.608 & 0.365 & 0.250 & 0.274 & 0.274 & 0.274 \\
-  $t_1$ & 0.800 & 0.800 & 0.400 & 0.500 & 0.400 & 0.608 & 0.486 & 0.250 & 0.365 & 0.295 & 0.365 \\
-  $t_2$ & 0.750 & 0.800 & 0.450 & 0.750 & 0.700 & 0.584 & 0.438 & 0.569 & 0.189 & 0.221 & 0.221 \\
-  $t_3$ & 0.650 & 0.780 & 0.550 & 0.820 & 0.780 & 0.523 & 0.340 & 0.675 & 0.111 & 0.150 & 0.150 \\
-  $t_4$ & 0.550 & 0.750 & 0.650 & 0.880 & 0.840 & 0.458 & 0.252 & 0.764 & 0.059 & 0.093 & 0.093 \\
-  \bottomrule
+\setlength{\tabcolsep}{6pt}
+\renewcommand{\arraystretch}{1.10}
+\begin{longtable}{c r r r r r}
+\caption{Illustrative Tier~2 input values and changes relative to the preceding observation}
+\label{tab:worked-inputs}\\
+\toprule
+Time & $TE$ & $CS$ & $RRAS$ & $CM$ & $SOE$ \\
+\midrule
+\endfirsthead
+\toprule
+Time & $TE$ & $CS$ & $RRAS$ & $CM$ & $SOE$ \\
+\midrule
+\endhead
+$t_0$ & 0.600 & 0.800 & 0.400 & 0.500 & 0.400 \\
+$t_1$ & 0.800 & 0.800 & 0.400 & 0.500 & 0.400 \\
+$\Delta t_1$ & $+0.200$ & $0.000$ & $0.000$ & $0.000$ & $0.000$ \\
+$t_2$ & 0.750 & 0.800 & 0.450 & 0.750 & 0.700 \\
+$\Delta t_2$ & $-0.050$ & $0.000$ & $+0.050$ & $+0.250$ & $+0.300$ \\
+$t_3$ & 0.650 & 0.780 & 0.550 & 0.820 & 0.780 \\
+$\Delta t_3$ & $-0.100$ & $-0.020$ & $+0.100$ & $+0.070$ & $+0.080$ \\
+$t_4$ & 0.550 & 0.750 & 0.650 & 0.880 & 0.840 \\
+$\Delta t_4$ & $-0.100$ & $-0.030$ & $+0.100$ & $+0.060$ & $+0.060$ \\
+\bottomrule
 \end{longtable}
 \endgroup
+
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.10}
+\begin{longtable}{c r r r r r r r}
+\caption{Derived consequence, hazard, mitigation, persistent state and CRPI; all values rounded to three decimals}
+\label{tab:worked-timeseries}\\
+\toprule
+Time & $D_{\mathrm{eff}}$ & $H$ & $M$ & $R_{\mathrm{inst}}$ & $S$ & $CRPI$ & $\Delta CRPI$ \\
+\midrule
+\endfirsthead
+\toprule
+Time & $D_{\mathrm{eff}}$ & $H$ & $M$ & $R_{\mathrm{inst}}$ & $S$ & $CRPI$ & $\Delta CRPI$ \\
+\midrule
+\endhead
+$t_0$ & 0.608 & 0.365 & 0.250 & 0.274 & 0.274 & 0.274 & -- \\
+$t_1$ & 0.608 & 0.486 & 0.250 & 0.365 & 0.295 & 0.365 & $+0.091$ \\
+$t_2$ & 0.584 & 0.438 & 0.569 & 0.189 & 0.221 & 0.221 & $-0.144$ \\
+$t_3$ & 0.523 & 0.340 & 0.675 & 0.111 & 0.150 & 0.150 & $-0.071$ \\
+$t_4$ & 0.458 & 0.252 & 0.764 & 0.059 & 0.093 & 0.093 & $-0.057$ \\
+\bottomrule
+\end{longtable}
+\endgroup
+
+Changes are arithmetic differences between displayed rounded values,
+not percentages. A positive increase in TE indicates more modeled
+exposure, while a positive change in CM or SOE indicates stronger
+modeled defensive capability. This is why the input deltas are not
+assigned a universal favorable/unfavorable color. At $t_2$, current
+residual posture falls below persistent exposure, and the persistent
+state becomes the controlling branch of the reported index.
 
 \subsection{Interpretation of Model Behavior}
 Four behaviors are visible. First, higher TE immediately increases $H$ and
@@ -1724,7 +1769,7 @@ zero. If both are zero, the stock remains unchanged. These are the intended sema
 of unresolved exposure accumulation and remediation.
 
 \subsection{Figures}
-Figure~\ref{fig:tier2-trajectories} shows the Tier~2 input trajectories. Figure~\ref{fig:state-trajectories}
+Figure~\ref{fig:tier2-trajectories} shows distinct Tier~2 input trajectories using both color and marker/line style. Figure~\ref{fig:state-trajectories}
 shows hazard, effective mitigation, and persistent stock. Figure~\ref{fig:residual-trajectories}
 shows instantaneous residual posture, persistent exposure, and the posture envelope.
 
@@ -1737,16 +1782,16 @@ shows instantaneous residual posture, persistent exposure, and the posture envel
         xlabel={Time step $t$}, ylabel={Tier~2 score},
         xmin=0, xmax=4, ymin=0, ymax=1,
         xtick={0,1,2,3,4}, grid=major,
-        legend style={font=\small, at={(0.5,-0.2)}, anchor=north, legend columns=5}
+        legend style={font=\scriptsize, at={(0.5,-0.22)}, anchor=north, legend columns=3}
       ]
-      \addplot+[mark=*] coordinates {(0,0.600) (1,0.800) (2,0.750) (3,0.650) (4,0.550)}; \addlegendentry{$TE$}
-      \addplot+[mark=square*] coordinates {(0,0.800) (1,0.800) (2,0.800) (3,0.780) (4,0.750)}; \addlegendentry{$CS$}
-      \addplot+[mark=triangle*] coordinates {(0,0.400) (1,0.400) (2,0.450) (3,0.550) (4,0.650)}; \addlegendentry{$RRAS$}
-      \addplot+[mark=diamond*] coordinates {(0,0.500) (1,0.500) (2,0.750) (3,0.820) (4,0.880)}; \addlegendentry{$CM$}
-      \addplot+[mark=otimes*] coordinates {(0,0.400) (1,0.400) (2,0.700) (3,0.780) (4,0.840)}; \addlegendentry{$SOE$}
+      \addplot+[color=blue!75!black,mark=*,thick,solid] coordinates {(0,0.600) (1,0.800) (2,0.750) (3,0.650) (4,0.550)}; \addlegendentry{$TE$}
+      \addplot+[color=black,mark=square*,thick,dashed] coordinates {(0,0.800) (1,0.800) (2,0.800) (3,0.780) (4,0.750)}; \addlegendentry{$CS$}
+      \addplot+[color=orange!80!black,mark=triangle*,thick,dotted] coordinates {(0,0.400) (1,0.400) (2,0.450) (3,0.550) (4,0.650)}; \addlegendentry{$RRAS$}
+      \addplot+[color=teal!70!black,mark=diamond*,thick,dashdotted] coordinates {(0,0.500) (1,0.500) (2,0.750) (3,0.820) (4,0.880)}; \addlegendentry{$CM$}
+      \addplot+[color=purple!80!black,mark=x,thick,solid] coordinates {(0,0.400) (1,0.400) (2,0.700) (3,0.780) (4,0.840)}; \addlegendentry{$SOE$}
     \end{axis}
   \end{tikzpicture}
-  \caption{Tier~2 input trajectories in the revised worked example.}
+  \caption{Five normalized Tier~2 trajectories in the synthetic worked example. Independent colors, line styles, and marker shapes distinguish the series even when reproduced in grayscale.}
   \label{fig:tier2-trajectories}
 \end{figure}
 
@@ -1761,12 +1806,12 @@ shows instantaneous residual posture, persistent exposure, and the posture envel
         xtick={0,1,2,3,4}, grid=major,
         legend style={font=\small, at={(0.5,-0.2)}, anchor=north, legend columns=3}
       ]
-      \addplot+[mark=*] coordinates {(0,0.365) (1,0.486) (2,0.438) (3,0.340) (4,0.252)}; \addlegendentry{$H(t)$}
-      \addplot+[mark=square*] coordinates {(0,0.250) (1,0.250) (2,0.569) (3,0.675) (4,0.764)}; \addlegendentry{$M(t)$}
-      \addplot+[mark=triangle*] coordinates {(0,0.274) (1,0.295) (2,0.221) (3,0.150) (4,0.093)}; \addlegendentry{$S(t)$}
+      \addplot+[color=blue!75!black,mark=*,thick,solid] coordinates {(0,0.365) (1,0.486) (2,0.438) (3,0.340) (4,0.252)}; \addlegendentry{$H(t)$}
+      \addplot+[color=teal!70!black,mark=square*,thick,dashed] coordinates {(0,0.250) (1,0.250) (2,0.569) (3,0.675) (4,0.764)}; \addlegendentry{$M(t)$}
+      \addplot+[color=black,mark=triangle*,very thick,solid] coordinates {(0,0.274) (1,0.295) (2,0.221) (3,0.150) (4,0.093)}; \addlegendentry{$S(t)$}
     \end{axis}
   \end{tikzpicture}
-  \caption{Hazard pressure, effective mitigation, and persistent unresolved exposure.}
+  \caption{Distinct mechanisms in the worked example: hazard pressure $H$, effective mitigation $M$, and persistent unresolved exposure $S$. The increase in mitigation at $t_2$ accompanies the decline in subsequent unresolved exposure.}
   \label{fig:state-trajectories}
 \end{figure}
 
@@ -1781,12 +1826,12 @@ shows instantaneous residual posture, persistent exposure, and the posture envel
         xtick={0,1,2,3,4}, grid=major,
         legend style={font=\small, at={(0.5,-0.2)}, anchor=north, legend columns=3}
       ]
-      \addplot+[mark=*] coordinates {(0,0.274) (1,0.365) (2,0.189) (3,0.111) (4,0.059)}; \addlegendentry{$R_{\mathrm{inst}}(t)$}
-      \addplot+[mark=square*] coordinates {(0,0.274) (1,0.295) (2,0.221) (3,0.150) (4,0.093)}; \addlegendentry{$S(t)$}
+      \addplot+[color=blue!75!black,mark=*,thick,dashed] coordinates {(0,0.274) (1,0.365) (2,0.189) (3,0.111) (4,0.059)}; \addlegendentry{$R_{\mathrm{inst}}(t)$}
+      \addplot+[color=orange!80!black,mark=square*,thick,dashdotted] coordinates {(0,0.274) (1,0.295) (2,0.221) (3,0.150) (4,0.093)}; \addlegendentry{$S(t)$}
       \addplot+[mark=triangle*] coordinates {(0,0.274) (1,0.365) (2,0.221) (3,0.150) (4,0.093)}; \addlegendentry{$CRPI(t)$}
     \end{axis}
   \end{tikzpicture}
-  \caption{Instantaneous residual posture, persistent exposure, and the CRPI envelope.}
+  \caption{The conservative CRPI envelope (black solid) follows instantaneous residual posture at $t_1$ and persistent unresolved exposure from $t_2$ onward. Overlap is intentional and identifies the controlling branch of the maximum.}
   \label{fig:residual-trajectories}
 \end{figure}
 
