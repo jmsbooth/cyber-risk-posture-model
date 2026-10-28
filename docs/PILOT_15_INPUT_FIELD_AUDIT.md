@@ -1,6 +1,6 @@
 # CRPI field pilot — 15-input evidence and construct review charter (DRAFT)
 
-**Status:** Field-review specification for **independent human review**. The 15 existing inputs and `config/measurement_pilot_v0.1.json` are **provisional**. This document proposes how to assess their actual semantic validity; it does not freeze calibration values, establish independent source integrity or change any CRPI equation.
+**Status:** Field-review specification for **independent human review**. The 15 existing inputs and `config/measurement_pilot_soe_v0.2.json` are **provisional**. This document proposes how to assess their actual semantic validity; it does not freeze calibration values, establish independent source integrity or change any CRPI equation.
 
 **Unit of evidence:** a bounded `service_token × observation_window_end` with declared service/dependency scope, inventory snapshot and profile/version. Do not mix a corporation-wide ratio with a system-specific consequence rating without an explicit, reviewed translation. Original records and filled reviewer workpapers belong **only** in an approved private study workspace.
 
@@ -19,10 +19,10 @@
 | `CM_freshness` | capacity, inverse p90 hours; **L=0,U=24**, 7d, min **10** | Event/evidence pipeline timestamps with start/end clock definitions, clock skew and censoring flags | Small p90 sample/censoring, stale source snapshots and cap saturation |
 | `CM_integrity` | capacity, `n/d`; 7d | Required evidence-stream inventory, independently reproducible provenance/integrity tests | Self-attestation of stream validity is not independent stream verification |
 | `CM_verification` | capacity, `n/d`; 30d | Critical control inventory and objective control-state assessment artifacts | Same control test can be reused as monitoring and security-operation evidence |
-| `USOM_detection` | capacity, `n/d`; 90d | Controlled detection exercise roster with attempted, missed and successfully triaged cases | Easy exercise selection and exclusions bias results; field incidents and rehearsals differ |
-| `USOM_velocity` | capacity, inverse p90 hours; **L=0,U=72**, 90d, min **10** | Incident/exercise timelines with independently verified containment and event-start clocks | Inconsistent clock origin, unresolved cases, long-tail censoring and rehearsal bias |
-| `USOM_change_safety` | capacity, `n/d`; 30d | In-scope change log with declared follow-up period, rollback and security regression evidence | Late adverse outcomes or changes lacking follow-up can be misclassified as safe |
-| `USOM_learning` | capacity, `n/d`; 90d | Corrective-action ledger, due date baseline and independent effectiveness checks | Backlog aging, due-date manipulation and superficial closure |
+| `SOE_detection` | capacity, `n/d`; 90d | Controlled detection exercise roster with attempted, missed and successfully triaged cases | Easy exercise selection and exclusions bias results; field incidents and rehearsals differ |
+| `SOE_velocity` | capacity, inverse p90 hours; **L=0,U=72**, 90d, min **10** | Incident/exercise timelines with independently verified containment and event-start clocks | Inconsistent clock origin, unresolved cases, long-tail censoring and rehearsal bias |
+| `SOE_change_safety` | capacity, `n/d`; 30d | In-scope change log with declared follow-up period, rollback and security regression evidence | Late adverse outcomes or changes lacking follow-up can be misclassified as safe |
+| `SOE_learning` | capacity, `n/d`; 90d | Corrective-action ledger, due date baseline and independent effectiveness checks | Backlog aging, due-date manipulation and superficial closure |
 | `RRAS_internal` | capacity, `n/d`; 180d | Recovery exercise plans, attempted objectives and independently observed outcomes | Exercise difficulty/coverage selection and same-case leakage to an outcome label |
 | `RRAS_dependency` | capacity, `n/d`; 180d | Critical dependency inventory and independently reviewed assurance evidence | Documentary assurance is not demonstrated third-party operational resilience |
 
@@ -48,7 +48,7 @@ Create one private record *per field, service and measurement window*. Keep the 
 
 1. **Source authority:** Independent audit can reconstruct the numerator from authorized primary events and the denominator from a dated authoritative inventory. A named owner or `verified: true` alone fails this requirement.
 2. **Scope/time equivalence:** The numerator, denominator, reviewer and asset/service boundary refer to the same `scope_token` and observation interval. No post-outcome leakage from future records into the earlier score.
-3. **Directionality:** Higher TE/CS means greater risk; higher CM/USOM/RRAS means stronger monitoring/mitigation/resilience capacity. Reverse directions must not be silently reinterpreted.
+3. **Directionality:** Higher TE/CS means greater risk; higher CM/SOE/RRAS means stronger monitoring/mitigation/resilience capacity. Reverse directions must not be silently reinterpreted.
 4. **Censored and no-event distinction:** No eligible events for a p90 metric is **not zero hours**, and a zero denominator is **not perfect coverage**. Unresolved incidents remain eligible for separate censoring policy.
 5. **Count validity:** Distinct identities/paths, stable enumeration, numerator subset of denominator, no hidden exclusion for failed or negative trials.
 6. **Reviewer reliability:** Two *blinded* consequence ratings retained with source anchor; compare ordinal agreement (e.g., weighted kappa with a prespecified weighting) and report per-class confusion, prevalence and disagreements. Kappa does not prove the five levels have equal numeric spacing.
@@ -73,4 +73,4 @@ A reviewer may approve *source availability* but reject *construct validity*. Th
 - [NIST SP 800-55 Vol. 2: Developing an Information Security Measurement Program](https://csrc.nist.gov/pubs/sp/800/55/v2/final), December 2024.
 - [NIST SP 800-53A Rev. 5: Security and Privacy Control Assessment Procedures](https://csrc.nist.gov/pubs/sp/800/53/a/r5/final). These materials inform audit design, **not** empirical acceptance of CRPI's 15 proxies.
 
-See [pilot measurement profile](../config/measurement_pilot_v0.1.json), [current input contract](CRPI_OPERATIONAL_INPUT_CONTRACT.md) and [Issue #9](https://github.com/jmsbooth/cyber-risk-posture-model/issues/9).
+See [pilot measurement profile](../config/measurement_pilot_soe_v0.2.json), [current input contract](CRPI_OPERATIONAL_INPUT_CONTRACT.md) and [Issue #9](https://github.com/jmsbooth/cyber-risk-posture-model/issues/9).

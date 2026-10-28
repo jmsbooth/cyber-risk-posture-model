@@ -9,16 +9,20 @@ validation checks.
 > empirically validated. CRPI is an operational posture index, not a breach probability,
 > financial-loss estimate, or security guarantee.
 
+## Publication revision in progress
+
+The active manuscript source includes a major explanatory restructuring and the SOE rename. The PDF in `paper/build/CRM_revised.pdf` remains the previously accepted 41-page edition until a fresh exact-source TeX build, all-page render QA and publication approval. Historical v0.1 profiles and verification receipts are intentionally immutable. The new canonical example inputs and configuration are suffixed `_soe` / `v0.2`; see [SOE migration notes](docs/SOE_MIGRATION_V02.md).
+
 ## Start here
 
 - [Read the manuscript source](paper/CRM_revised.tex)
-- [Download the CRPI manuscript (PDF, 41 pages)](paper/build/CRM_revised.pdf) — updated operational-input and synthetic-stress research edition; Tectonic 0.17.0 build, 41/41 rendered-page QA, and SHA-256 verified. [Revised PDF quality record](verification/PUBLICATION_PDF_QA_PR7.md).
+- [Download the previously accepted manuscript (PDF, 41 pages)](paper/build/CRM_revised.pdf) — updated operational-input and synthetic-stress research edition; Tectonic 0.17.0 build, 41/41 rendered-page QA, and SHA-256 verified. [Revised PDF quality record](verification/PUBLICATION_PDF_QA_PR7.md).
 - [Run the reference model](models/crm_reference.py)
-- [Inspect the calibration profile](config/calibration_baseline.json)
-- [Review the synthetic scenarios](data/examples/scenarios.csv)
-- [Minimum operational inputs and calculation lineage](docs/CRPI_OPERATIONAL_INPUT_CONTRACT.md), with a [15-field provisional input dictionary](config/operational_input_contract_v1.json)
+- [Inspect the calibration profile](config/calibration_soe_v0.2.json)
+- [Review the synthetic scenarios](data/examples/scenarios_soe.csv)
+- [Minimum operational inputs and calculation lineage](docs/CRPI_OPERATIONAL_INPUT_CONTRACT.md), with a [15-field provisional input dictionary](config/operational_input_contract_soe_v0.2.json)
 - [Executed CRPI pressure-test findings](verification/STRESS_TEST_REPORT.md), [fixed output data](verification/stress_test_results.json), and [reproduction script](scripts/run_stress_tests.py)
-- [Provisional raw-evidence measurement pilot](docs/OPERATIONAL_MEASUREMENT_PILOT.md), [15-input pilot profile](config/measurement_pilot_v0.1.json), [fictional fixture](data/examples/operational_pilot_case.json), and [synthetic baseline comparison](verification/MEASUREMENT_PILOT_REPORT.md)
+- [Provisional raw-evidence measurement pilot](docs/OPERATIONAL_MEASUREMENT_PILOT.md), [15-input pilot profile](config/measurement_pilot_soe_v0.2.json), [fictional fixture](data/examples/operational_pilot_case_soe.json), and [synthetic baseline comparison](verification/MEASUREMENT_PILOT_REPORT.md)
 - [Prospective external validation protocol](docs/EMPIRICAL_VALIDATION_STUDY_PROTOCOL.md) — study design only; no real organization data or outcome labels have been collected
 - [Operational pilot Windows verification and semantic limits](verification/MEASUREMENT_PILOT_WINDOWS_ACCEPTANCE.md) — 37/37 tests, with external measurement validity still open
 - [Prospective organizational study readiness pack](docs/PROSPECTIVE_PILOT_STARTER_PACK.md), [metadata-only registration example](config/prospective_pilot_registration.example.json), and [preflight validator](scripts/check_pilot_readiness.py) — all participant and data-use approvals remain **unobtained**
@@ -34,14 +38,14 @@ bounded, decomposable model that keeps five operational constructs distinct:
 | CM | Continuous Monitoring | Modulates how effectively operations can act on telemetry |
 | CS | Consequence Severity | Represents consequence severity across governed domains |
 | TE | Threat Exposure | Represents adversary pressure and exposure conditions |
-| USOM | Unified Security Operations Metric | Represents operational execution and mitigation capability |
+| SOE | Security Operations Effectiveness | Represents operational execution and mitigation capability |
 | RRAS | Resilience and Risk Assurance Score | Scalar structural-resilience summary |
 
 The governing path is:
 
 ```text
 TE + CS + R_j -> D_eff -> H -> R_inst
-CM + USOM     -> M -------------^
+CM + SOE     -> M -------------^
 R_inst + M    -> persistent stock S -> CRPI = max(R_inst, S)
 ```
 
@@ -51,14 +55,14 @@ The implementation mirrors the paper’s equations:
   `R_j` is a domain-applicable resilience projection and scalar `RRAS` remains a
   reporting aggregate
 - hazard pressure: `H = TE * D_eff`
-- observability-modulated mitigation: `M = USOM * [m0 + (1 - m0) CM]`
+- observability-modulated mitigation: `M = SOE * [m0 + (1 - m0) CM]`
 - instantaneous residual posture: `R_inst = H * (1 - M)`
 - persistent exposure: bounded exact stock-flow update with `beta`, `kappa`, and `dt`
 - posture envelope: `CRPI = max(R_inst, S)`
 
 Coverage is reported separately from posture. In addition to the Tier-2 aggregate and
 minimum coverage diagnostics, the governing-path gate is
-`C_gov = min(C_TE, C_CM, min_j C_Dj, min_j C_Rj, C_USOM)`. It is an evidence-completeness
+`C_gov = min(C_TE, C_CM, min_j C_Dj, min_j C_Rj, C_SOE)`. It is an evidence-completeness
 qualification, not statistical confidence, and it never scales CRPI.
 
 CRPI is scope-aware rather than executive-only. The same equations can be evaluated for
@@ -176,7 +180,7 @@ The [revised research manuscript](paper/build/CRM_revised.pdf) includes the acce
 
 - `baseline` — stable posture and coverage;
 - `threat_surge` — increased external and internal threat exposure raises hazard;
-- `operational_recovery` — CM and USOM improve, reducing current posture while the
+- `operational_recovery` — CM and SOE improve, reducing current posture while the
   persistent stock dissipates more slowly;
 - `resilience_gap` — weakened resilience increases consequence-sensitive residual
   posture; and

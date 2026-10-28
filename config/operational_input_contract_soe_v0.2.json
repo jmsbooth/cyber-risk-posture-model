@@ -1,6 +1,6 @@
 {
   "schema_version": "crpi-operational-input-contract-v0.2",
-  "profile_id": "illustrative-v0.1",
+  "profile_id": "illustrative-v0.2-soe",
   "status": "candidate instrumentation mapping; raw metric calibrations are intentionally undefined",
   "normalized_inputs": [
     {

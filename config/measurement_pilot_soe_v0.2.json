@@ -1,7 +1,7 @@
 {
   "schema": "crpi-pilot-measurement-profile-v0.2",
   "status": "synthetic-methodology-demonstration-only; renamed SOE from legacy USOM; thresholds and rubrics are not calibrated",
-  "score_profile": "illustrative-v0.1",
+  "score_profile": "illustrative-v0.2-soe",
   "evidence_policy": {
     "require_source_reference": true,
     "require_evidence_identifier": true,
@@ -80,8 +80,8 @@
       "method": "inverse_bounded_hours",
       "polarity": "capacity",
       "metric": "p90 ingestion/validation lag hours",
-      "L": 0.0,
-      "U": 24.0,
+      "L": 0,
+      "U": 24,
       "max_age_days": 7,
       "owner_role": "observability",
       "min_sample_size": 10
@@ -114,8 +114,8 @@
       "method": "inverse_bounded_hours",
       "polarity": "capacity",
       "metric": "p90 hours to verified containment from exercised or actual cases",
-      "L": 0.0,
-      "U": 72.0,
+      "L": 0,
+      "U": 72,
       "max_age_days": 90,
       "owner_role": "incident_response",
       "min_sample_size": 10
