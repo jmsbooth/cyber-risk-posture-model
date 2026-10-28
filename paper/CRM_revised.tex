@@ -1847,6 +1847,14 @@ $\alpha$, composition weights, normalization bounds, and reporting cadence. Mont
 methods may propagate input uncertainty where defensible input distributions or ranges
 exist.
 
+The following tests probe sensitivity to input loss, calibration
+choices, and time aggregation. Their purpose is to reveal model
+behavior and failure conditions under specified synthetic data.
+A successful test means the output follows the implemented equation
+under that constructed condition. It does not mean an organization
+would experience that outcome or that a particular score is
+predictive of adverse events.
+
 \subsection{Executed Synthetic Stress Experiments}
 \label{sec:executed-stress}
 
@@ -1968,17 +1976,15 @@ empirically calibrated.
 \end{longtable}
 \endgroup
 
-\subsection{Empirical Backtesting}
-Where historical data is available, CRPI outputs should be compared with outcomes such
-as incident frequency and severity, recovery duration, realized business impact,
-near-miss events, control failures, and remediation performance. The goal is not exact
-prediction. Evaluation should test correlation, discrimination, calibration stability,
-and explanatory value under the stated posture interpretation.
-
-Where possible, the CRPI should also be benchmarked against simpler alternatives such as
-a governed additive posture index and against scenario/probability-oriented approaches
-when comparable data exists. The research question is whether the additional structure
-and persistence state provide explanatory or decision value beyond a simpler score.
+\subsection{Empirical Evaluation Boundary}
+The analytical propositions and synthetic stress tests establish
+behavior of the specified mathematical model under stated inputs.
+They do not establish that source observations, normalizers, or
+calibration parameters measure real organizational cyber-risk
+posture. The separate operational implementation protocol in
+Section~\ref{sec:implementation} describes how an organization can
+instantiate the primitives, conduct independent backtesting,
+compare alternatives, and assess decision utility.
 
 \subsection{Implementation via Statistical Tooling}
 Statistical environments such as \texttt{R} or Python may be used to simulate time
@@ -1996,6 +2002,185 @@ formally specified operational posture model for which selected mathematical inv
 and directional properties are analytically established under stated assumptions. It is
 not yet empirically validated and should not be described as a validated predictive
 cyber-risk metric.
+
+
+\section{Organizational Implementation and Empirical Backtesting}
+\label{sec:implementation}
+The CRPI is an operational measurement design, not an immediately
+calibrated score that can be copied into every environment. Its
+mathematical form can be implemented from the preceding specification,
+but a defensible organizational assessment requires independent
+decisions about scope, evidence, units, consequence interpretation,
+parameter identifiability, and available outcomes. The steps below
+describe a prospective methodology, not a completed organizational
+deployment or evidence of predictive performance.
+
+\subsection{Scope, Evidence and Measurement Design}
+Begin with a defined unit of analysis, such as a business service
+within a declared observation period. Record the owner, included
+applications, asset and identity populations, critical dependencies,
+data and mission consequences, and the intended decision that a
+posture assessment could support. Parent-level enterprise scope
+requires a separately justified evidence boundary; it must not be
+inferred by averaging child scores.
+
+The next decision is whether the input populations are credible.
+Reconcile asset/control inventories with independent discovery
+and identity, cloud, network, endpoint, and dependency sources;
+deduplicate records, record observation dates, and identify
+unmatched or disputed entities. Declare both coverage among
+known sources and unresolved scope completeness. A
+high declared coverage percentage is not proof that no
+unobserved population exists. Unknown scope can distort the
+input values themselves as well as the evidence qualification.
+
+For each of the 15 starter primitives in
+Table~\ref{tab:primitive-contract}, assign an evidence owner,
+a source-of-record, units, numerator and denominator or an
+ordinal anchor, event clock, cadence, freshness rule, applicable
+consequence domain, and missingness behavior. Distinguish
+not observed from observed zero, no eligible events, expired
+evidence, withheld evidence, and unverified sources. Have an
+independent reviewer test both the numerator and denominator
+of fraction measures. Never use an assertion of source
+verification as proof of independent authenticity.
+
+\subsection{Normalization and Composition Configuration}
+Each measure must be transformed to $[0,1]$ using a
+predeclared mapping with the right directionality.
+For simple bounded fractions, confirm what population is
+in the denominator. For event-time measures, declare
+start and stop events, censored observations, eligible
+sample sizes, and lower and upper normalization anchors.
+For consequence severity, document what each impact
+class actually means and whether numerical spacing
+between ordinal levels is defensible.
+
+Configure the five Tier~2 constructs using weight vectors
+that preserve their distinct meanings. Where arithmetic
+aggregation is chosen, compensating effects between
+components are allowed; where the regularized geometric
+operator is used, weak components receive multiplicative
+penalties without an absorbing zero. These are construct
+choices that should be reviewed against alternatives and
+recorded in a named profile. Do not fit a composition
+weight merely to produce a preferred headline CRPI result.
+
+\subsection{Governing Parameter Identification}
+The model separates composition choices from parameters
+that assert how capabilities interact. Consequence weights
+$v_j$ describe the relative role of impact domains.
+Projection weights $\mathbf{a}_j$ map observed resilience
+capabilities to those domains, while $\rho_j$ limits the
+consequences that resilience can change. The independent
+monitoring baseline $m_0$ describes response pathways
+available when continuous monitoring is absent.
+Regularization $\varepsilon_X$ controls zero-safe
+aggregation and the smoothing coefficient $\alpha$
+controls responsiveness to new evidence.
+
+The accumulation and retirement parameters $\beta$ and
+$\kappa$ in the stock equation are especially sensitive.
+Both have inverse-time units, and the state $S$ is latent:
+CRPI values computed with assumed rates cannot themselves
+identify those same rates. Estimation requires separately
+justified longitudinal evidence of unresolved work,
+exposure retirement, or another validated state proxy.
+If the available data cannot identify the two rates,
+retain them as explicit scenario assumptions and
+report their sensitivity instead of presenting a fitted
+value as observed fact.
+
+\begingroup
+\small
+\begin{longtable}{P{0.20\textwidth} P{0.32\textwidth} P{0.37\textwidth}}
+\caption{Recommended calibration controls and falsification checks}
+\label{tab:operational-calibration}\\
+\toprule
+Family & Evidence or decision basis & Main challenge to test \\
+\midrule
+\endfirsthead
+\toprule
+Family & Evidence or decision basis & Main challenge to test \\
+\midrule
+\endhead
+$L,U$, ordinal anchors & Independent population and consequence definitions & Unstable denominators, clipping, unequal ordinal intervals \\
+Primitive/construct weights & Defined construct boundaries, elicitation and sensitivity & Double counting, ranking reversal, construct overlap \\
+$\rho_j,\mathbf{a}_j$ & Consequence-specific recovery and assurance observations & Credit applied to irreversible or unrelated harms \\
+$m_0$ & Demonstrated manual and noncontinuous response pathways & Overestimated mitigation under weak monitoring \\
+$\varepsilon_X,\alpha$ & Weak-component and sampling-cadence sensitivity & Absorbing-zero errors, over-smoothing and delayed reaction \\
+$\beta,\kappa,S_0$ & Independent historical state/proxy, time-aligned events & Non-identifiability, missing history, time-aggregation bias \\
+Coverage qualification & Reconciled inventories and independent source trust & False 100\% from incomplete known-asset universe \\
+\bottomrule
+\end{longtable}
+\endgroup
+
+\subsection{Historical Replay, Baselines and Holdouts}
+Evaluate initial configurations against time-ordered observations
+without allowing future outcomes or later inventory corrections
+to leak into earlier scores. Preserve input/event ordering
+within the stock-flow transition; do not substitute a
+weekly mean for actual daily variation and call the
+trajectory equivalent. Record cold starts and uncertain
+history explicitly. When denominator definitions or
+profiles change, either retain the old series or rerun
+a labeled historical comparison under the new
+profile, keeping both source and version lineage.
+
+A credible comparison must include the instantaneous
+residual without persistence, a simple additive operational
+index, an aggregation ablation, and at least one
+independently defined evidence-only baseline. All models
+must be evaluated on the same eligible service/time rows
+with matching outcome windows. Comparing scalar
+magnitudes across indices with different semantics does
+not measure superiority. The primary outcome must be
+independently adjudicated, not copied from the controls,
+exercise results or tickets that generated CRPI primitives.
+
+Separate training, calibration and prospective holdout
+intervals, with grouped service/dependency boundaries and
+a temporal embargo appropriate to the outcome horizon.
+Use only training data to fit normalizers or any optional
+probability-link model; then freeze the profile before
+held-out outcomes are examined. Report clustered
+uncertainty intervals, missing-data stratification,
+drift, comparisons with simpler baselines, and
+null or negative findings. A binary-event probability
+claim would require a separately fitted and calibrated
+probabilistic model; the CRPI index itself is not one.
+
+\subsection{Decision Utility and Operational Governance}
+The initial deployment should operate in a shadow or
+research-only mode. Each assessment should expose
+the five construct scores, consequence domains,
+resilience projections, hazard, effective mitigation,
+instantaneous residual, prior and new persistent state,
+dominant envelope branch, profile/version identifier,
+observation period, evidence lineage, and coverage
+qualification. Do not automate consequential decisions
+from an unqualified scalar or a threshold copied from
+the synthetic examples.
+
+If a decision use case can be defined, predeclare
+the actual intervention being supported, such as
+allocating a fixed number of independent security
+reviews, and compare the outcome and cost of that
+ranking decision with simpler alternatives. Recalibration
+requires a documented trigger, sensitivity assessment,
+independent review, version freeze, rollback path,
+and clear separation of the old and new series.
+If independent evidence does not demonstrate added
+measurement reliability or practical decision value,
+the appropriate result is to limit or replace the
+provisional proxy or model claim.
+
+This process is a study protocol rather than an
+authorization to collect organizational records.
+Appropriate organizational consent, legal/data-use
+permissions, privacy handling, and independent
+ethics determination where applicable must precede
+non-synthetic research data collection.
 
 \section{Related Work and Positioning}
 \label{sec:related}
