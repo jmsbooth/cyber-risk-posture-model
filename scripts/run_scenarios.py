@@ -193,7 +193,7 @@ def run(input_path: Path, profile_path: Path, output_dir: Path) -> dict[str, Any
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", type=Path, default=Path("data/examples/scenarios_soe.csv"))
-    parser.add_argument("--profile", type=Path, default=Path("config/calibration_baseline.json"))
+    parser.add_argument("--profile", type=Path, default=Path("config/calibration_soe_v0.2.json"))
     parser.add_argument("--output-dir", type=Path, default=Path("artifacts"))
     args = parser.parse_args()
     report = run(args.input, args.profile, args.output_dir)

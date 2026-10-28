@@ -18,6 +18,7 @@ def load(path):
 class SOEMigrationTests(unittest.TestCase):
     def setUp(self):
         self.calibration = load("config/calibration_baseline.json")
+        self.canonical = load("config/calibration_soe_v0.2.json")
 
     def test_equation_and_output_use_canonical_soe(self):
         self.assertAlmostEqual(mitigation(soe=0.6, cm=0.725, m0=0.25), 0.47625)
@@ -47,7 +48,7 @@ class SOEMigrationTests(unittest.TestCase):
             load("config/measurement_pilot_v0.1.json"), self.calibration)
         current = evaluate(
             load("data/examples/operational_pilot_case_soe.json"),
-            load("config/measurement_pilot_soe_v0.2.json"), self.calibration)
+            load("config/measurement_pilot_soe_v0.2.json"), self.canonical)
         self.assertEqual(legacy["point"], current["point"])
         self.assertEqual(legacy["normalized_inputs"], current["normalized_inputs"])
         self.assertEqual(legacy["coverage"], current["coverage"])
@@ -58,7 +59,7 @@ class SOEMigrationTests(unittest.TestCase):
         doc = load("data/examples/operational_pilot_case_soe.json")
         doc["observations"]["USOM_detection"] = doc["observations"]["SOE_detection"]
         with self.assertRaisesRegex(ValueError, "conflicting legacy/canonical"):
-            evaluate(doc, load("config/measurement_pilot_soe_v0.2.json"), self.calibration)
+            evaluate(doc, load("config/measurement_pilot_soe_v0.2.json"), self.canonical)
         row={"t":0, "te":0.2,"rras":0.3,"cm":0.5,
              "domain_resilience":{"confidentiality":0.4,"integrity":0.4,"availability":0.4},
              "consequence_domains":{"confidentiality":0.5,"integrity":0.5,"availability":0.5},

@@ -21,7 +21,7 @@ class OperationalPilotTests(unittest.TestCase):
     def setUp(self):
         self.fixture=read('data/examples/operational_pilot_case_soe.json')
         self.metric=read('config/measurement_pilot_soe_v0.2.json')
-        self.core=read('config/calibration_baseline.json')
+        self.core=read('config/calibration_soe_v0.2.json')
 
     def evaluate(self, fixture=None, metric=None):
         return evaluate(fixture or self.fixture, metric or self.metric, self.core)
@@ -163,6 +163,7 @@ class OperationalPilotTests(unittest.TestCase):
     def test_archived_structural_comparisons_reproduce(self):
         expected=read('verification/measurement_pilot_structural_results.json')
         expected['provenance']['measurement_profile']='crpi-pilot-measurement-profile-v0.2'
+        expected['provenance']['scoring_profile']='illustrative-v0.2-soe'
         self.assertEqual(baseline.run(),expected)
 
 

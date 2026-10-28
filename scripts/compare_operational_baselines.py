@@ -57,7 +57,7 @@ def rank_disagreement(model:list[float],comparison:list[float],pairs:list[tuple[
 def run()->dict:
     base=_read(ROOT/'data/examples/operational_pilot_case_soe.json')
     measure=_read(ROOT/'config/measurement_pilot_soe_v0.2.json')
-    profile=_read(ROOT/'config/calibration_baseline.json')
+    profile=_read(ROOT/'config/calibration_soe_v0.2.json')
     baseline=evaluate(base,measure,profile)
     if baseline['missing_required']:
         raise AssertionError('pilot demo fixture must contain complete valid evidence')
@@ -105,7 +105,7 @@ def run()->dict:
         'provenance':{'seed':SEED,'simulated_scopes':N,'comparison_pairs':PAIRS,
                       'synthetic_inputs':'independent Beta(2,2) normalized primitives',
                       'prior_stock':'independent Beta(2,2) synthetic history',
-                      'scoring_profile':'illustrative-v0.1',
+                      'scoring_profile':'illustrative-v0.2-soe',
                       'measurement_profile':'crpi-pilot-measurement-profile-v0.2'},
         'pilot_raw_evidence_sensitivity':{
             'base_residual':baseline['point']['R_inst'],
@@ -143,6 +143,7 @@ def main()->None:
         # against the canonical v0.2 name-only migration.
         if expected.get('provenance', {}).get('measurement_profile') == 'crpi-pilot-measurement-profile-v0.1':
             expected['provenance']['measurement_profile'] = 'crpi-pilot-measurement-profile-v0.2'
+            expected['provenance']['scoring_profile'] = 'illustrative-v0.2-soe'
         if expected!=result:
             differing=[key for key in set(expected)|set(result)
                        if expected.get(key)!=result.get(key)]
