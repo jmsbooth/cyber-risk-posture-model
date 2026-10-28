@@ -73,6 +73,13 @@ jobs:
         with:
           root_file: CRM_revised.tex
           working_directory: paper
+      - name: Reject layout overflow and unresolved LaTeX diagnostics
+        run: |
+          test -f paper/CRM_revised.log
+          if grep -En 'Overfull|Undefined control sequence|Citation .* undefined|Reference .* undefined|Missing character:' paper/CRM_revised.log; then
+            echo 'Publication-quality LaTeX gate failed.'
+            exit 1
+          fi
       - name: Stage source-matched PDF
         run: |
           test -s paper/CRM_revised.pdf
