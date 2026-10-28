@@ -4,8 +4,11 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 source = (ROOT / "paper/CRM_revised.tex").read_text(encoding="utf-8")
 assert "USOM" not in source and "usom" not in source, "legacy acronym remains in manuscript"
 assert r"\date{\today}" not in source, "unstable publication date"
