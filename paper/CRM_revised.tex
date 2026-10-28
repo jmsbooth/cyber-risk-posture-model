@@ -338,6 +338,13 @@ CM is modeled as
   \qquad \sum_{j=1}^{m}w_j^{CM}=1,
 \end{equation}
 where each $\widetilde{CM}_j(t)\in[0,1]$.
+These normalized primitive values represent observation coverage,
+freshness, integrity, and independently verified control state.
+The non-negative, sum-to-one weights specify how they are combined
+into Continuous Monitoring (CM). A high weighted aggregate is not
+evidence that an omitted source or undiscovered asset was captured.
+Individual primitive values and source-qualification gates remain
+necessary.
 
 \subsubsection{Measurement Interfaces and Representative Inputs}
 Representative data sources include authoritative asset inventories, telemetry
@@ -377,7 +384,7 @@ itself treated as remediation.
 
 \subsection{Consequence Severity (CS)}
 \subsubsection{Purpose and Philosophy}
-Consequence Severity (CS) quantify the consequence potential of compromise by measuring
+Consequence Severity (CS) quantifies the consequence potential of compromise by measuring
 the sensitivity, criticality, and mission relevance of information and functions handled
 by a system, component, or organization. CS is intentionally defined in terms of
 consequence rather than threat or control mechanism.
@@ -402,6 +409,13 @@ to that domain. The reporting aggregate $CS(t)$ is then calculated using
 Equation~\ref{eq:cs-aggregate}. Hazard pressure uses the resilience-adjusted
 $D_{\mathrm{eff}}(t)$ from Equation~\ref{eq:effective-consequence} rather than applying
 a single global fragility multiplier to the aggregate CS score.
+
+The reporting Consequence Severity (CS) score combines impact domains
+without subtracting resilience. In contrast, $D_{\mathrm{eff}}$ adjusts
+each relevant domain only by its applicable resilience projection.
+An ordinal five-level impact rubric mapped to $0,0.25,0.5,0.75,1$
+assumes equally spaced numeric levels; this is an illustrative
+normalization to be evaluated against independent consequence anchors.
 
 \subsubsection{Measurement Interfaces and Representative Inputs}
 Representative sources include data inventories and catalogs, classification and
@@ -470,6 +484,12 @@ with temporal smoothing
        +(1-\alpha_{TE})TE(t-1).
   \label{eq:te-smooth}
 \end{equation}
+Here $TE_{\mathrm{inst}}$ is the current exposure score from normalized,
+scoped evidence. The smoothing coefficient $\alpha_{TE}$ determines
+what share of the new assessment is used, with the remainder carried
+from the prior score. This can suppress noisy fluctuations but also
+delay reaction to true exposure surges. The sampling cadence,
+initial value and coefficient must be governed and sensitivity tested.
 A zero in one valid TE sub-metric therefore creates a multiplicative penalty
 proportional to its governed construct weight; it does not mathematically assert that
 all threat exposure is zero.
@@ -624,7 +644,7 @@ Equation~\ref{eq:hazard}.
 
 \subsection{Security Operations Effectiveness (SOE)}
 \subsubsection{Purpose and Philosophy}
-The Security Operations Effectiveness (SOE) captures an organization’s demonstrated
+Security Operations Effectiveness (SOE) captures an organization’s demonstrated
 ability to detect, respond to, remediate, and safely deploy changes in the presence of
 adversarial activity. SOE represents the operational execution dimension of cyber
 risk.
@@ -690,6 +710,13 @@ SOE is modeled as
   \qquad \sum_{\ell=1}^{s}w_\ell^{SOE}=1,
 \end{equation}
 where each $\widetilde{U}_\ell(t)\in[0,1]$.
+Each SOE primitive should correspond to a demonstrated outcome,
+such as successful detection exercises, verified containment
+performance, safe changes, or closure of corrective actions.
+Composition weights express a documented construct judgment; they
+are not evidence of causality or universal efficacy. Shared event
+records between monitoring and response must be audited to avoid
+counting one control effect as independent evidence twice.
 
 \subsubsection{Measurement Interfaces and Representative Inputs}
 Representative sources include incident and case-management systems, vulnerability and
@@ -746,8 +773,11 @@ RRAS captures two interacting invariant constructs:
 \end{enumerate}
 
 \subsubsection{Metric Form}
-RRAS retains a scalar aggregate for structural-resilience analysis and reporting. It uses the
-regularized geometric operator from Equation~\ref{eq:regularized-geomean}:
+The Resilience and Risk Assurance Score (RRAS) supplies one
+summary of recoverability, continuity, and dependency assurance.
+That summary supports reporting but does not determine which
+specific consequences can be mitigated. The regularized geometric
+operator constructs the scalar report:
 \begin{equation}
   RRAS(t)=
   \mathcal{G}_{\varepsilon_{RRAS}}
@@ -763,6 +793,12 @@ each consequence domain using a governed domain-specific weight vector:
   \qquad a_{ji}\geq0,\qquad \sum_i a_{ji}=1.
   \label{eq:domain-resilience}
 \end{equation}
+The domain-specific projection $R_j$ uses the same primitive resilience
+observations with weights appropriate to each kind of consequence.
+Restoration tests might matter strongly for availability while
+supplier attestations cannot alone establish recovery capability.
+The separate factor $\rho_j$ controls the maximum mitigable fraction
+of that consequence, not the composition of the resilience evidence.
 The vectors $\mathbf{a}_j$ govern how the common resilience primitives are composed for
 each consequence domain; they are composition weights, not mitigability parameters.
 The resulting $R_j(t)$ is the domain-applicable resilience capability. By contrast,
@@ -1124,8 +1160,7 @@ proxies, not attack probabilities.
 
 The two bounded values can then be composed with equal weights and a
 regularizer that reduces numerical collapse from one valid zero while
-retaining a penalty for weak components. In this illustration,
-For the normalized values above,
+retaining a penalty for weak components. For the normalized values above,
 with $\mathbf{x}=(0.55,0.65)$, $\mathbf{w}=(0.5,0.5)$, and $\varepsilon=0.05$,
 
 \begin{equation}
