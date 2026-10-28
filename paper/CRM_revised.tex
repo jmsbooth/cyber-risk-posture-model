@@ -873,6 +873,17 @@ for higher-is-better quantities, and
 for lower-is-better quantities. Bounds must be versioned, reviewable, and associated
 with the calibration profile under which a score was produced.
 
+
+In these equations, $x$ is a raw observation with a declared unit,
+$L$ and $U$ are versioned lower and upper calibration anchors with
+$U>L$, and $\clip(z,0,1)$ restricts the mapped value to the unit
+interval. For example, a measured containment time is a
+lower-is-better quantity: its normalized capability decreases
+as the measured time approaches the upper bound. A fraction such as
+11 exposed systems out of 20 known internet-facing systems is already
+bounded, but its denominator and scope remain measurement assumptions.
+Normalization does not prove the measured population is complete.
+
 \paragraph{Construct aggregation.}
 Weighted sums are used where components are compensatory parts of a single construct.
 The regularized geometric operator in Equation~\ref{eq:regularized-geomean} is reserved
@@ -941,6 +952,49 @@ minimum-per-construct threshold, and a governing-path threshold, plus governed r
 and source-integrity criteria.
 Thresholds belong to the calibration profile and are not universal constants.
 
+
+\paragraph{Declared coverage versus scope completeness.}
+The coverage fractions above are conditional on an expected evidence
+universe supplied by the assessor. If 90 monitored assets are the only
+90 assets in an organization's inventory, declared coverage is 100\%.
+If an independent discovery process subsequently finds 30 additional
+unmonitored assets, the same 90 observed assets constitute only 75\%
+of the now-known population. Even that value remains conditional
+on the expanded discovery scope. Neither ratio proves that all
+shadow IT, unregistered identities, unmanaged workloads, or external
+dependencies have been found.
+
+Two kinds of assessment must therefore be kept separate: evidence
+presence within a declared universe, and independent assurance about
+the completeness of that universe. Candidate assurance sources include
+cloud-resource control planes, network observations, identity
+directories, endpoint management, asset ownership records, and
+independent service/dependency discovery. Differences between sources
+require reconciliation, timestamped scope boundaries, and disclosure
+of potential duplicate or unmatched entities. No combination of these
+sources guarantees identification of every unknown asset.
+
+The present reference implementation accepts caller-supplied coverage
+fractions and its provisional pilot computes completeness over
+declared fields. It does not authenticate all inventory denominators
+or independently discover hidden scope. Its calculated $C_X$ values
+and coverage gates therefore \emph{qualify evidence under declared
+scope}; they do not certify organization-wide completeness. A
+fully qualified enterprise interpretation should be withheld when
+the population boundary is materially disputed or not independently
+defensible. The underlying normalized CM coverage primitive can
+also be biased by an incomplete denominator, changing the modeled
+mitigation and CRPI themselves. Coverage is deliberately not
+multiplied into the governing risk equation; adding such a factor
+would require separate mathematical and empirical justification.
+
+A prospective study should report known-asset coverage, unresolved
+discovery discrepancies, source-reconciliation agreement, sensitivity
+to plausible unobserved scope, and whether the stated reporting
+boundary is supported by independent evidence. Where such quantities
+cannot be bounded defensibly, an unqualified whole-organization
+score is not supported.
+
 \paragraph{Coverage is not statistical confidence.}
 Coverage describes evidence completeness. It must not be represented as a statistical
 confidence interval. Where sub-metrics have defensible uncertainty ranges or
@@ -955,11 +1009,21 @@ discard temporal dependence and is not equivalent to uncertainty propagation thr
 CRPI state model.
 
 \subsection{Measurement Governance and Internal Weights}
-Internal composition weights and calibration parameters do not violate the CRPI stability claim because stability is defined at the level of governing equation form and construct semantics, not universal fixed coefficients for every environment. These weights are restricted
-to construct composition, must preserve semantic completeness, are versioned and
-auditable under calibration governance, and are empirically reviewable. They are not
-discretionary top-level business preference controls and should not be tuned to make
-output posture “look right.”
+The CRPI equations retain the same relationships between
+constructs even when organizations use different measurement
+sources and explicit calibration profiles. For example,
+different organizations may measure response effectiveness with
+different independent exercise and incident records. Both are
+potential SOE evidence if the scope, units, normalization,
+and measurement reliability are established.
+
+Composition weights and calibration coefficients are therefore
+not universal constants. They must be versioned, justified by
+the meaning of the construct or observed independent evidence,
+sensitivity tested, and reviewed before deployment. They are
+not discretionary controls used to make the headline CRPI
+value appear desirable. Equal scores under different calibration
+profiles need not imply equivalent operational conditions.
 
 
 
@@ -983,12 +1047,61 @@ resilience inputs. Domain resilience projections $R_j$ use the two resilience
 primitives and domain-specific weights; scalar RRAS is reported separately,
 not multiplied into the hazard calculation. A full temporal CRPI additionally
 requires prior state (or an explicitly declared cold-start assumption), elapsed
-time, and the two rate parameters in matching time units. The repository's
-\path{docs/CRPI_OPERATIONAL_INPUT_CONTRACT.md} records the input-to-output
-lineage and evidence examples; its machine-readable provisional dictionary is
-\path{config/operational_input_contract_v1.json}. Neither artifact
-asserts that raw-to-normalized evidence bounds or organizational calibration
-have been empirically established.
+time, and the two rate parameters in matching time units. Table~\ref{tab:primitive-contract} records the provisional
+15-primitive measurement profile used in the synthetic raw-evidence
+pilot. This mapping is specified here so that the paper remains
+independently interpretable. The associated public repository
+contains an executable illustration, but neither the candidate
+normalizers nor their source denominators constitute
+empirically calibrated organization-wide measurements.
+
+
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{longtable}{P{0.22\textwidth} P{0.35\textwidth} P{0.31\textwidth}}
+\caption{Provisional 15-input operational measurement contract; mappings and bounds require study validation}
+\label{tab:primitive-contract}\\
+\toprule
+Primitive & Candidate evidence and raw observation & Provisional normalization / primary limitation \\
+\midrule
+\endfirsthead
+\toprule
+Primitive & Candidate evidence and raw observation & Provisional normalization / primary limitation \\
+\midrule
+\endhead
+$TE_{\mathrm{external}}$ & Validated actionable external exposures among declared internet-facing systems & Adverse fraction; independent asset census and relevance required. \\
+$TE_{\mathrm{internal}}$ & Independently assessed unsafe privileged or reachable paths & Adverse fraction; assessed-only denominator is selection-sensitive. \\
+$CS_{\mathrm{conf}}$ & Independently reviewed disclosure/inference consequence class & Ordinal 0--4 divided by four; spacing and anchors provisional. \\
+$CS_{\mathrm{integrity}}$ & Mission/decision integrity consequence class & Ordinal 0--4 divided by four; scope and impact horizon governed. \\
+$CS_{\mathrm{availability}}$ & Continuity/interruption consequence class & Ordinal 0--4 divided by four; impact assumptions reviewed. \\
+$CM_{\mathrm{coverage}}$ & Required controls with verified monitoring / declared required controls & Capability fraction; unknown control universe can inflate result. \\
+$CM_{\mathrm{freshness}}$ & P90 evidence ingestion/validation delay (hours) & Inverse bounded 0--24 h illustrative map; censoring/sample size matter. \\
+$CM_{\mathrm{integrity}}$ & Required streams passing provenance/integrity checks & Capability fraction; attestations need independent verification. \\
+$CM_{\mathrm{verification}}$ & Critical monitored controls with independently verified true state & Capability fraction; avoid reusing SOE outcome evidence. \\
+$SOE_{\mathrm{detection}}$ & Controlled detection exercises successfully triaged / eligible attempts & Capability fraction; exercise difficulty and sampling govern validity. \\
+$SOE_{\mathrm{velocity}}$ & P90 hours from eligible trigger to verified containment & Inverse bounded 0--72 h illustrative map; censoring and small samples matter. \\
+$SOE_{\mathrm{change}}$ & Safe verified changes without rollback/security regression / eligible changes & Capability fraction; reconcile changes and consequences. \\
+$SOE_{\mathrm{learning}}$ & Due corrective actions independently closed / all due actions & Capability fraction; no due actions is missing, not 100\%. \\
+$RRAS_{\mathrm{internal}}$ & Critical recovery exercises meeting documented objectives / eligible exercises & Capability fraction; attested plan is not tested recovery. \\
+$RRAS_{\mathrm{dependency}}$ & Critical dependencies with independently reviewed assurance / declared dependencies & Capability fraction; dependency census and assurance evidence need audit. \\
+\bottomrule
+\end{longtable}
+\endgroup
+
+The source names shown in this table are scientific shorthand;
+canonical executable field identifiers are
+\texttt{TE\_external}, \texttt{TE\_internal},
+\texttt{CS\_confidentiality}, \texttt{CS\_integrity},
+\texttt{CS\_availability}, \texttt{CM\_coverage},
+\texttt{CM\_freshness}, \texttt{CM\_integrity},
+\texttt{CM\_verification}, \texttt{SOE\_detection},
+\texttt{SOE\_velocity}, \texttt{SOE\_change\_safety},
+\texttt{SOE\_learning}, \texttt{RRAS\_internal},
+and \texttt{RRAS\_dependency}. The illustrative time caps,
+ordinal mappings, fractions, and source-identity assertions
+must be qualified independently before organizational use.
 
 Evidence incompleteness must be distinguished from low observed security scores.
 The present executable policy rejects missing required normalized inputs.
@@ -2378,12 +2491,12 @@ requiring dense implementation tables to consume main-paper space.
 
   \bibitem{nist80055v1}
   National Institute of Standards and Technology (NIST),
-  \emph{Security and Privacy Performance Measurement: Volume 1, Identifying and Selecting Measures},
+  \emph{Measurement Guide for Information Security: Volume 1 --- Identifying and Selecting Measures},
   NIST Special Publication 800-55 Volume 1, 2024.
 
   \bibitem{nist80055v2}
   National Institute of Standards and Technology (NIST),
-  \emph{Security and Privacy Performance Measurement: Volume 2, Developing and Implementing an Information Security Measurement Program},
+  \emph{Measurement Guide for Information Security: Volume 2 --- Developing an Information Security Measurement Program},
   NIST Special Publication 800-55 Volume 2, 2024.
 
   \bibitem{nist-ai-rmf}
