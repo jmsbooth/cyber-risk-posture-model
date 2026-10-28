@@ -2183,17 +2183,19 @@ not measure superiority. The primary outcome must be
 independently adjudicated, not copied from the controls,
 exercise results or tickets that generated CRPI primitives.
 
-Separate training, calibration and prospective holdout
-intervals, with grouped service/dependency boundaries and
-a temporal embargo appropriate to the outcome horizon.
-Use only training data to fit normalizers or any optional
-probability-link model; then freeze the profile before
-held-out outcomes are examined. Report clustered
-uncertainty intervals, missing-data stratification,
-drift, comparisons with simpler baselines, and
-null or negative findings. A binary-event probability
-claim would require a separately fitted and calibrated
-probabilistic model; the CRPI index itself is not one.
+Keep training and calibration intervals separate from the
+prospective holdout. Split services by dependency group,
+and allow sufficient time between partitions to avoid
+overlapping outcome windows. Fit normalization bounds or
+any optional probability mapping using training observations
+alone. Freeze those choices before evaluating withheld
+outcomes. Report uncertainty that accounts for clustering,
+missing-data causes, drift, and paired comparisons with
+simpler baselines. Retain null and negative findings.
+
+To estimate binary event probabilities, a separate fitted
+and calibrated probability model would be required.
+The CRPI index does not itself estimate event probability.
 
 \subsection{Decision Utility and Operational Governance}
 The initial deployment should operate in a shadow or
