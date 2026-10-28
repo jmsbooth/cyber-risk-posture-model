@@ -35,8 +35,8 @@ DOMAINS = ('confidentiality', 'integrity', 'availability')
 FIELDS = (
     'TE_external', 'TE_internal', 'CS_confidentiality', 'CS_integrity',
     'CS_availability', 'CM_coverage', 'CM_freshness', 'CM_integrity',
-    'CM_verification', 'USOM_detection', 'USOM_velocity',
-    'USOM_change_safety', 'USOM_learning', 'RRAS_internal',
+    'CM_verification', 'SOE_detection', 'SOE_velocity',
+    'SOE_change_safety', 'SOE_learning', 'RRAS_internal',
     'RRAS_dependency',
 )
 THREAT = {'TE_external', 'TE_internal', 'CS_confidentiality',
@@ -66,10 +66,10 @@ def score(fields: dict[str, float], profile: dict) -> dict[str, float]:
     consequence = effective_consequence(domains, w['consequence'],
                          profile['resilience_applicability'], resilience)
     cm = mean(fields[f'CM_{k}'] for k in ('coverage','freshness','integrity','verification'))
-    usom = mean(fields[f'USOM_{k}'] for k in ('detection','velocity','change_safety','learning'))
-    m = mitigation(usom, cm, profile['m0'])
+    soe = mean(fields[f'SOE_{k}'] for k in ('detection','velocity','change_safety','learning'))
+    m = mitigation(soe, cm, profile['m0'])
     residual = instantaneous_residual(te * consequence, m)
-    return {'te':te, 'd_eff':consequence, 'cm':cm, 'usom':usom,
+    return {'te':te, 'd_eff':consequence, 'cm':cm, 'soe':soe,
             'mitigation':m, 'residual':residual,
             'rras_reporting':regularized_geometric(rp,w['rras']['reporting'],
                                                     profile['epsilon_rras']),
@@ -91,8 +91,8 @@ def mask_one(x: dict[str,float], rng: random.Random, kind: str) -> set[str]:
             masks.add('TE_external')
         if x['CS_availability']>.75 and rng.random()<.70:
             masks.add('CS_availability')
-        if x['USOM_detection']<.3 and rng.random()<.80:
-            masks.add('USOM_detection')
+        if x['SOE_detection']<.3 and rng.random()<.80:
+            masks.add('SOE_detection')
         return masks
     raise ValueError(kind)
 
@@ -296,10 +296,15 @@ def main():
         saved=args.check.read_text(encoding='utf-8')
         if saved!=rendered:
             archived=json.loads(saved)
+            # The v0.1 archive retains historical primitive identifiers. Normalize
+            # identifier spelling in memory; NEVER rewrite its verified numbers.
+            archived['raw_primitives'] = [
+                name.replace('USOM_', 'SOE_') for name in archived['raw_primitives']
+            ]
             differing=[key for key in sorted(set(archived) | set(result))
                        if archived.get(key) != result.get(key)]
-            detail=', '.join(differing) if differing else 'JSON formatting only'
-            raise SystemExit(f'Reproducibility FAIL: differing top-level fields: {detail}')
+            if differing:
+                raise SystemExit('Reproducibility FAIL: differing top-level fields: '+', '.join(differing))
         print('Reproducibility PASS:',args.check)
     print(json.dumps({'draws':N,'summary':result['core'],'missingness':result['missingness'],'weight_variation':result['weight_variation'],'temporal':result['fixed']['time_order_and_cadence']},indent=2))
 

@@ -21,13 +21,26 @@ from models.validation import summarize
 
 
 CM_COLUMNS = ("CM_coverage", "CM_freshness", "CM_integrity", "CM_verification")
-USOM_COLUMNS = ("USOM_detection", "USOM_velocity", "USOM_change_safety", "USOM_learning")
+SOE_COLUMNS = ("SOE_detection", "SOE_velocity", "SOE_change_safety", "SOE_learning")
 CONSEQUENCE_KEYS = ("confidentiality", "integrity", "availability")
 DOMAIN_COVERAGE_COLUMNS = tuple(
     f"coverage_{family}_{domain}"
     for family in ("D", "R")
     for domain in CONSEQUENCE_KEYS
 )
+
+
+def _canonical_row(row: dict[str, str]) -> dict[str, str]:
+    """Accept historical v0.1 CSV input names without emitting legacy output."""
+    current: dict[str, str] = {}
+    for key, value in row.items():
+        mapped = 'SOE_' + key[5:] if key.startswith('USOM_') else (
+            'coverage_SOE' if key == 'coverage_USOM' else key
+        )
+        if mapped in current:
+            raise ValueError(f'conflicting SOE/legacy USOM CSV columns: {mapped}')
+        current[mapped] = value
+    return current
 
 
 def _profile(path: Path) -> dict[str, Any]:
@@ -37,11 +50,11 @@ def _profile(path: Path) -> dict[str, Any]:
 
 def _coverage(row: dict[str, str]) -> tuple[float, float, float]:
     tier2_values = [
-        float(row[f"coverage_{key}"]) for key in ("CM", "CS", "TE", "USOM", "RRAS")
+        float(row[f"coverage_{key}"]) for key in ("CM", "CS", "TE", "SOE", "RRAS")
     ]
     domain_values = [float(row[column]) for column in DOMAIN_COVERAGE_COLUMNS]
     governing_path_values = [
-        float(row[f"coverage_{key}"]) for key in ("CM", "TE", "USOM")
+        float(row[f"coverage_{key}"]) for key in ("CM", "TE", "SOE")
     ] + domain_values
     return mean(tier2_values), min(tier2_values), min(governing_path_values)
 
@@ -70,7 +83,7 @@ def _prepared_row(row: dict[str, str], profile: dict[str, Any]) -> dict[str, Any
         key: float(row[f"CS_{key}"]) for key in CONSEQUENCE_KEYS
     }
     cm = sum(float(row[column]) for column in CM_COLUMNS) / len(CM_COLUMNS)
-    usom = sum(float(row[column]) for column in USOM_COLUMNS) / len(USOM_COLUMNS)
+    soe = sum(float(row[column]) for column in SOE_COLUMNS) / len(SOE_COLUMNS)
     coverage_mean, coverage_min, coverage_gov = _coverage(row)
     return {
         "t": float(row["t"]),
@@ -79,7 +92,7 @@ def _prepared_row(row: dict[str, str], profile: dict[str, Any]) -> dict[str, Any
         "rras": rras,
         "domain_resilience": resilience_by_domain,
         "cm": cm,
-        "usom": usom,
+        "soe": soe,
         "coverage_mean": coverage_mean,
         "coverage_min": coverage_min,
         "coverage_gov": coverage_gov,
@@ -91,6 +104,7 @@ def run(input_path: Path, profile_path: Path, output_dir: Path) -> dict[str, Any
     grouped: dict[str, list[dict[str, Any]]] = {}
     with input_path.open(newline="", encoding="utf-8") as handle:
         for raw in csv.DictReader(handle):
+            raw = _canonical_row(raw)
             grouped.setdefault(raw["scenario"], []).append(_prepared_row(raw, profile))
 
     consequence_weights = profile["weights"]["consequence"]
@@ -101,7 +115,7 @@ def run(input_path: Path, profile_path: Path, output_dir: Path) -> dict[str, Any
             {
                 key: value
                 for key, value in row.items()
-                if key in {"t", "te", "consequence_domains", "rras", "domain_resilience", "cm", "usom"}
+                if key in {"t", "te", "consequence_domains", "rras", "domain_resilience", "cm", "soe"}
             }
             for row in rows
         ]
@@ -147,7 +161,7 @@ def run(input_path: Path, profile_path: Path, output_dir: Path) -> dict[str, Any
 
     output_dir.mkdir(parents=True, exist_ok=True)
     output_columns = [
-        "scenario", "t", "te", "cs", "rras", "cm", "usom", "d_eff", "hazard",
+        "scenario", "t", "te", "cs", "rras", "cm", "soe", "d_eff", "hazard",
         "mitigation", "residual", "stock", "crpi", "r_confidentiality", "r_integrity",
         "r_availability", "coverage_mean", "coverage_min", "coverage_gov",
         "coverage_qualification",
@@ -178,8 +192,8 @@ def run(input_path: Path, profile_path: Path, output_dir: Path) -> dict[str, Any
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--input", type=Path, default=Path("data/examples/scenarios.csv"))
-    parser.add_argument("--profile", type=Path, default=Path("config/calibration_baseline.json"))
+    parser.add_argument("--input", type=Path, default=Path("data/examples/scenarios_soe.csv"))
+    parser.add_argument("--profile", type=Path, default=Path("config/calibration_soe_v0.2.json"))
     parser.add_argument("--output-dir", type=Path, default=Path("artifacts"))
     args = parser.parse_args()
     report = run(args.input, args.profile, args.output_dir)

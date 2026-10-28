@@ -1,6 +1,6 @@
 # CRPI operational measurement pilot: raw-evidence contract, v0.1
 
-**Status:** Executable *synthetic/pilot methodology*, **not an empirically calibrated score**. The governing CRPI equations, `config/calibration_baseline.json`, mathematical proofs and reference implementation are unchanged.
+**Status:** Executable *synthetic/pilot methodology*, **not an empirically calibrated score**. The governing CRPI equations, `config/calibration_soe_v0.2.json`, mathematical proofs and reference implementation are unchanged.
 
 ## Why this increment exists
 
@@ -24,7 +24,7 @@ The source inventory and denominator are part of the model's *measurement bounda
 
 ## Illustrative raw-to-normalized mapping
 
-The configuration at [`config/measurement_pilot_v0.1.json`](../config/measurement_pilot_v0.1.json) is the executable source of all 15 starter field definitions, owners, freshness windows and (for time metrics) illustrative upper bounds. The 15-field mapping uses the **same primitive names and directions** as [`operational_input_contract_v1.json`](../config/operational_input_contract_v1.json).
+The configuration at [`config/measurement_pilot_soe_v0.2.json`](../config/measurement_pilot_soe_v0.2.json) is the executable source of all 15 starter field definitions, owners, freshness windows and (for time metrics) illustrative upper bounds. The 15-field mapping uses the **same primitive names and directions** as [`operational_input_contract_v1.json`](../config/operational_input_contract_v1.json).
 
 | Field(s) | Raw evidence pilot method | Higher normalized score | Calibration limitation |
 | --- | --- | --- | --- |
@@ -33,8 +33,8 @@ The configuration at [`config/measurement_pilot_v0.1.json`](../config/measuremen
 | `CS_confidentiality`, `CS_integrity`, `CS_availability` | Ordinal 0–4 assessed consequence class; normalize to `level/4` | Greater inherent consequence | Five textual rubric anchors are **not** validated equal-interval utilities; inter-rater reliability and cross-domain comparability remain open. |
 | `CM_coverage`, `CM_integrity`, `CM_verification` | Fraction of expected coverage/integrity/control-verification targets that pass tests | Stronger visibility | Inventory / test validity / source-reliability assumptions; never interpret uninstrumented sources as passing. |
 | `CM_freshness` | P90 observed telemetry lag in hours, illustrative 0–24 cap | Fresher validated telemetry | A provisional cap and a minimum of 10 source observations are needed for this *demo*, not sufficient to prove a robust p90. |
-| `USOM_detection`, `USOM_change_safety`, `USOM_learning` | Successful independently triaged exercises, safe verified changes, or due corrective-action closures / respective eligible denominators | Better operating capability | Exercise selection bias; no work due or no exercises yields **missing**, not an automatic 100%. |
-| `USOM_velocity` | P90 verified time from trigger to containment, illustrative 0–72 hours | Faster containment | Must declare event start/stop semantics, censored cases and minimum 10 cases/exercises. No time observations means **missing**. |
+| `SOE_detection`, `SOE_change_safety`, `SOE_learning` | Successful independently triaged exercises, safe verified changes, or due corrective-action closures / respective eligible denominators | Better operating capability | Exercise selection bias; no work due or no exercises yields **missing**, not an automatic 100%. |
+| `SOE_velocity` | P90 verified time from trigger to containment, illustrative 0–72 hours | Faster containment | Must declare event start/stop semantics, censored cases and minimum 10 cases/exercises. No time observations means **missing**. |
 | `RRAS_internal`, `RRAS_dependency` | Recovery objectives met / tested objectives; critical dependencies independently reviewed / declared critical dependencies | Stronger resilience and assurance | Outcome must be independently tested; supplier attestation alone is not verified survivability. |
 
 For `fraction` inputs, `numerator` and `denominator` **must be integers with `0 <= n <= d` and `d > 0`**. For five-level ordinal inputs, only integer levels `0..4` are allowed. For `inverse_bounded_hours`, the normalized score is `1 - clip((hours-L)/(U-L),0,1)` with illustrative `L,U` and a minimum scenario sample size. The profile is not a claim that an hourly lag of 24 hours or 72 hours is a universally meaningful security boundary.
@@ -49,7 +49,7 @@ The application produces **11 evidence-coverage paths**: five Tier 2 coverage fr
 
 If **any** required primitive is unavailable, the result includes `missing_required`, `evidence` reasons and a mathematically feasible *residual* interval. It computes the endpoints by filling unknown risk-direction primitives with `0`/`1` and unknown capacity-direction primitives with `1`/`0`, and reevaluating the canonical functions; no assumed joint probability is attached. It returns `point: null` and no CRPI, irrespective of how narrow the interval may look. This residual interval relies on the published coordinate-monotonicity under fixed profile assumptions; it does **not** include calibration or outcome uncertainty.
 
-For all 15 usable primitives, it reports the canonical decomposed components (`TE`, `CS`, `CM`, `USOM`, `RRAS` reporting, `D_j`, `R_j`, `D_eff`, `H`, `M`, `R_inst`). A *temporal CRPI* additionally requires `prior_stock` with `dt_days`, or an explicitly declared `cold_start` that sets `S(t0) = R_inst(t0)` **without pretending to reconstruct history**. Without either, it reports an instantaneous decomposition, not a temporal score. Even a full-point output is labeled **synthetic_only** or **self_reported_provisional**, never empirically “verified.”
+For all 15 usable primitives, it reports the canonical decomposed components (`TE`, `CS`, `CM`, `SOE`, `RRAS` reporting, `D_j`, `R_j`, `D_eff`, `H`, `M`, `R_inst`). A *temporal CRPI* additionally requires `prior_stock` with `dt_days`, or an explicitly declared `cold_start` that sets `S(t0) = R_inst(t0)` **without pretending to reconstruct history**. Without either, it reports an instantaneous decomposition, not a temporal score. Even a full-point output is labeled **synthetic_only** or **self_reported_provisional**, never empirically “verified.”
 
 These are **provisional** governance rules; do not use them for funding priorities, regulatory decisions, supplier selection, inter-organizational league tables or automated high-stakes decisions before independent field validation.
 
@@ -57,7 +57,7 @@ These are **provisional** governance rules; do not use them for funding prioriti
 
 ```bash
 python scripts/run_operational_pilot.py \
-    --input data/examples/operational_pilot_case.json \
+    --input data/examples/operational_pilot_case_soe.json \
     --output artifacts/pilot_evaluation.json
 python scripts/compare_operational_baselines.py --check verification/measurement_pilot_structural_results.json
 python -m unittest discover -v

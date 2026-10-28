@@ -1,6 +1,6 @@
 """Run a CRPI raw-evidence pilot case without altering the governing equations.
 
-Example: python scripts/run_operational_pilot.py --input data/examples/operational_pilot_case.json
+Example: python scripts/run_operational_pilot.py --input data/examples/operational_pilot_case_soe.json
 All input fields are synthetic/self-attested; results are NOT empirical validation.
 """
 from __future__ import annotations
@@ -25,8 +25,8 @@ def run(input_path:Path, spec_path:Path, model_path:Path)->dict:
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--input',type=Path,default=ROOT/'data/examples/operational_pilot_case.json')
-    parser.add_argument('--measurement-profile',type=Path,default=ROOT/'config/measurement_pilot_v0.1.json')
-    parser.add_argument('--model-profile',type=Path,default=ROOT/'config/calibration_baseline.json')
+    parser.add_argument('--measurement-profile',type=Path,default=ROOT/'config/measurement_pilot_soe_v0.2.json')
+    parser.add_argument('--model-profile',type=Path,default=ROOT/'config/calibration_soe_v0.2.json')
     parser.add_argument('--output',type=Path)
     args=parser.parse_args()
     out=run(args.input,args.measurement_profile,args.model_profile)

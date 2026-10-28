@@ -72,7 +72,7 @@ class PhaseDConformanceTests(unittest.TestCase):
         cs = weighted_sum([domains[k] for k in weights], [weights[k] for k in weights])
         d_eff = effective_consequence(domains, weights, rho, r)
         hazard = hazard_pressure(te, d_eff)
-        m = mitigation(float(x["usom"]), float(x["cm"]), float(x["m0"]))
+        m = mitigation(float((x["soe"] if "soe" in x else x["usom"])), float(x["cm"]), float(x["m0"]))
         residual = instantaneous_residual(hazard, m)
         stock = update_persistent_stock(float(x["stock_prev"]), residual, m,
                                         float(x["beta"]), float(x["kappa"]), float(x["dt"]))
@@ -89,7 +89,7 @@ class PhaseDConformanceTests(unittest.TestCase):
         evaluated = evaluate_step(t=1.0, te=te, consequence_domains=domains,
                                   consequence_weights=weights, resilience_applicability=rho,
                                   domain_resilience=r, rras=float(x["rras_report_only"]),
-                                  cm=float(x["cm"]), usom=float(x["usom"]), m0=float(x["m0"]),
+                                  cm=float(x["cm"]), soe=float((x["soe"] if "soe" in x else x["usom"])), m0=float(x["m0"]),
                                   stock=float(x["stock_prev"]), beta=float(x["beta"]),
                                   kappa=float(x["kappa"]), dt=float(x["dt"]))
         for key in ("te", "cs", "d_eff", "hazard", "mitigation", "residual", "stock", "crpi"):
@@ -103,7 +103,7 @@ class PhaseDConformanceTests(unittest.TestCase):
                   consequence_weights=floats(x["consequence_weights"]),
                   resilience_applicability=floats(x["resilience_applicability"]),
                   domain_resilience=floats(x["domain_resilience"]),
-                  cm=.725, usom=.6, m0=.25, stock=.2, beta=.3, kappa=.8, dt=1.0)
+                  cm=.725, soe=.6, m0=.25, stock=.2, beta=.3, kappa=.8, dt=1.0)
         low = evaluate_step(rras=0.0, **kw)
         high = evaluate_step(rras=1.0, **kw)
         for name in ("cs", "d_eff", "hazard", "mitigation", "residual", "stock", "crpi"):
@@ -137,7 +137,7 @@ class PhaseDConformanceTests(unittest.TestCase):
         x = VECTORS["worked_example"]["inputs"]
         row = {"t": 0.0, "te": .598, "consequence_domains": floats(x["consequence_domains"]),
                "rras": .65, "domain_resilience": floats(x["domain_resilience"]),
-               "cm": .725, "usom": .6}
+               "cm": .725, "soe": .6}
         rows = [row, {**row, "t": 1.0, "te": .4}]
         params = dict(consequence_weights=floats(x["consequence_weights"]),
                       resilience_applicability=floats(x["resilience_applicability"]),

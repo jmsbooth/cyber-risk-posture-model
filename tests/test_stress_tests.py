@@ -22,8 +22,8 @@ class StressTestVerification(unittest.TestCase):
 
     def test_partial_interval_covers_truth(self):
         x=self.fields.copy()
-        x.update({'TE_external':.9,'RRAS_internal':.2,'USOM_detection':.1})
-        assumed, lo, hi=st.fillings(x,{'TE_external','RRAS_internal','USOM_detection'})
+        x.update({'TE_external':.9,'RRAS_internal':.2,'SOE_detection':.1})
+        assumed, lo, hi=st.fillings(x,{'TE_external','RRAS_internal','SOE_detection'})
         y=st.score(x,self.profile)['residual']
         self.assertLessEqual(st.score(lo,self.profile)['residual'],y)
         self.assertLessEqual(y,st.score(hi,self.profile)['residual'])
@@ -65,7 +65,12 @@ class StressTestVerification(unittest.TestCase):
         artifact=st.ROOT/'verification/stress_test_results.json'
         if not artifact.exists():
             self.skipTest('archived stress output has not been generated')
-        self.assertEqual(json.loads(artifact.read_text(encoding='utf-8')),st.run())
+        archive=json.loads(artifact.read_text(encoding='utf-8'))
+        # Preserve exact historical bytes; translate only retired input labels.
+        archive['raw_primitives'] = [
+            key.replace('USOM_', 'SOE_') for key in archive['raw_primitives']
+        ]
+        self.assertEqual(archive,st.run())
 
 
 if __name__=='__main__':

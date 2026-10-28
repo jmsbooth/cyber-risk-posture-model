@@ -64,7 +64,7 @@ theorem hazard_mono_consequence {te d₁ d₂ : ℝ}
   unfold hazard
   exact mul_le_mul_of_nonneg_left hd hte
 
-theorem mitigation_mono_usom {u₁ u₂ cm m0 : ℝ}
+theorem mitigation_mono_soe {u₁ u₂ cm m0 : ℝ}
     (hu : u₁ ≤ u₂) (hcm : Bounded cm) (hm0 : Bounded m0) :
     mitigation u₁ cm m0 ≤ mitigation u₂ cm m0 := by
   have hb : 0 ≤ m0 + (1 - m0) * cm := by
@@ -74,16 +74,16 @@ theorem mitigation_mono_usom {u₁ u₂ cm m0 : ℝ}
   unfold mitigation
   exact mul_le_mul_of_nonneg_right hu hb
 
-theorem mitigation_mono_cm {usom cm₁ cm₂ m0 : ℝ}
-    (hcm : cm₁ ≤ cm₂) (husom : 0 ≤ usom)
+theorem mitigation_mono_cm {soe cm₁ cm₂ m0 : ℝ}
+    (hcm : cm₁ ≤ cm₂) (hsoe : 0 ≤ soe)
     (hm0 : Bounded m0) :
-    mitigation usom cm₁ m0 ≤ mitigation usom cm₂ m0 := by
+    mitigation soe cm₁ m0 ≤ mitigation soe cm₂ m0 := by
   have hcoef : 0 ≤ 1 - m0 := by linarith [hm0.2]
   have hblend : m0 + (1 - m0) * cm₁ ≤
       m0 + (1 - m0) * cm₂ :=
     add_le_add_left (mul_le_mul_of_nonneg_left hcm hcoef) m0
   unfold mitigation
-  exact mul_le_mul_of_nonneg_left hblend husom
+  exact mul_le_mul_of_nonneg_left hblend hsoe
 
 theorem instantaneousResidual_mono_hazard {h₁ h₂ m : ℝ}
     (hh : h₁ ≤ h₂) (hm : Bounded m) :
@@ -100,23 +100,23 @@ theorem instantaneousResidual_antitone_mitigation {h m₁ m₂ : ℝ}
 
 /-- Fully composed instantaneous residual, not the scalar RRAS report. -/
 def currentResidual {ι : Type*} (s : Finset ι)
-    (v d rho r : ι → ℝ) (te usom cm m0 : ℝ) : ℝ :=
+    (v d rho r : ι → ℝ) (te soe cm m0 : ℝ) : ℝ :=
   instantaneousResidual
     (hazard te (effectiveConsequence s v d rho r))
-    (mitigation usom cm m0)
+    (mitigation soe cm m0)
 
 /-- Proposition 5: increasing TE cannot lower instantaneous residual. -/
 theorem currentResidual_mono_threat {ι : Type*} (s : Finset ι)
-    (v d rho r : ι → ℝ) (te₁ te₂ usom cm m0 : ℝ)
+    (v d rho r : ι → ℝ) (te₁ te₂ soe cm m0 : ℝ)
     (hte : te₁ ≤ te₂)
     (hv : ∀ j ∈ s, 0 ≤ v j)
     (hsum : (∑ j ∈ s, v j) = 1)
     (hd : ∀ j ∈ s, Bounded (d j))
     (hrho : ∀ j ∈ s, Bounded (rho j))
     (hr : ∀ j ∈ s, Bounded (r j))
-    (hu : Bounded usom) (hcm : Bounded cm) (hm0 : Bounded m0) :
-    currentResidual s v d rho r te₁ usom cm m0 ≤
-      currentResidual s v d rho r te₂ usom cm m0 := by
+    (hu : Bounded soe) (hcm : Bounded cm) (hm0 : Bounded m0) :
+    currentResidual s v d rho r te₁ soe cm m0 ≤
+      currentResidual s v d rho r te₂ soe cm m0 := by
   unfold currentResidual
   apply instantaneousResidual_mono_hazard _ (mitigation_bounded hu hcm hm0)
   exact hazard_mono_threat hte
@@ -124,15 +124,15 @@ theorem currentResidual_mono_threat {ι : Type*} (s : Finset ι)
 
 /-- Proposition 5: increasing any consequence domain cannot lower residual. -/
 theorem currentResidual_mono_domain {ι : Type*} (s : Finset ι)
-    (v d₁ d₂ rho r : ι → ℝ) (te usom cm m0 : ℝ)
+    (v d₁ d₂ rho r : ι → ℝ) (te soe cm m0 : ℝ)
     (hte : Bounded te)
     (hv : ∀ j ∈ s, 0 ≤ v j)
     (hrho : ∀ j ∈ s, Bounded (rho j))
     (hr : ∀ j ∈ s, Bounded (r j))
     (hd : ∀ j ∈ s, d₁ j ≤ d₂ j)
-    (hu : Bounded usom) (hcm : Bounded cm) (hm0 : Bounded m0) :
-    currentResidual s v d₁ rho r te usom cm m0 ≤
-      currentResidual s v d₂ rho r te usom cm m0 := by
+    (hu : Bounded soe) (hcm : Bounded cm) (hm0 : Bounded m0) :
+    currentResidual s v d₁ rho r te soe cm m0 ≤
+      currentResidual s v d₂ rho r te soe cm m0 := by
   unfold currentResidual
   apply instantaneousResidual_mono_hazard _ (mitigation_bounded hu hcm hm0)
   exact hazard_mono_consequence
@@ -140,15 +140,15 @@ theorem currentResidual_mono_domain {ι : Type*} (s : Finset ι)
 
 /-- Proposition 5: increasing domain-applicable resilience cannot raise residual. -/
 theorem currentResidual_antitone_resilience {ι : Type*} (s : Finset ι)
-    (v d rho r₁ r₂ : ι → ℝ) (te usom cm m0 : ℝ)
+    (v d rho r₁ r₂ : ι → ℝ) (te soe cm m0 : ℝ)
     (hte : Bounded te)
     (hv : ∀ j ∈ s, 0 ≤ v j)
     (hd : ∀ j ∈ s, Bounded (d j))
     (hrho : ∀ j ∈ s, Bounded (rho j))
     (hr : ∀ j ∈ s, r₁ j ≤ r₂ j)
-    (hu : Bounded usom) (hcm : Bounded cm) (hm0 : Bounded m0) :
-    currentResidual s v d rho r₂ te usom cm m0 ≤
-      currentResidual s v d rho r₁ te usom cm m0 := by
+    (hu : Bounded soe) (hcm : Bounded cm) (hm0 : Bounded m0) :
+    currentResidual s v d rho r₂ te soe cm m0 ≤
+      currentResidual s v d rho r₁ te soe cm m0 := by
   unfold currentResidual
   apply instantaneousResidual_mono_hazard _ (mitigation_bounded hu hcm hm0)
   exact hazard_mono_consequence
@@ -156,7 +156,7 @@ theorem currentResidual_antitone_resilience {ι : Type*} (s : Finset ι)
     hte.1
 
 /-- Proposition 5: operational execution cannot increase residual. -/
-theorem currentResidual_antitone_usom {ι : Type*} (s : Finset ι)
+theorem currentResidual_antitone_soe {ι : Type*} (s : Finset ι)
     (v d rho r : ι → ℝ) (te u₁ u₂ cm m0 : ℝ)
     (hu : u₁ ≤ u₂)
     (hte : Bounded te)
@@ -170,13 +170,13 @@ theorem currentResidual_antitone_usom {ι : Type*} (s : Finset ι)
       currentResidual s v d rho r te u₁ cm m0 := by
   unfold currentResidual
   apply instantaneousResidual_antitone_mitigation
-    (mitigation_mono_usom hu hcm hm0)
+    (mitigation_mono_soe hu hcm hm0)
   exact (hazard_bounded hte
     (effectiveConsequence_bounded s v d rho r hv hsum hd hrho hr)).1
 
 /-- Proposition 5: monitoring cannot increase residual with operations fixed. -/
 theorem currentResidual_antitone_cm {ι : Type*} (s : Finset ι)
-    (v d rho r : ι → ℝ) (te usom cm₁ cm₂ m0 : ℝ)
+    (v d rho r : ι → ℝ) (te soe cm₁ cm₂ m0 : ℝ)
     (hcm : cm₁ ≤ cm₂)
     (hte : Bounded te)
     (hv : ∀ j ∈ s, 0 ≤ v j)
@@ -184,9 +184,9 @@ theorem currentResidual_antitone_cm {ι : Type*} (s : Finset ι)
     (hd : ∀ j ∈ s, Bounded (d j))
     (hrho : ∀ j ∈ s, Bounded (rho j))
     (hr : ∀ j ∈ s, Bounded (r j))
-    (hu : Bounded usom) (hm0 : Bounded m0) :
-    currentResidual s v d rho r te usom cm₂ m0 ≤
-      currentResidual s v d rho r te usom cm₁ m0 := by
+    (hu : Bounded soe) (hm0 : Bounded m0) :
+    currentResidual s v d rho r te soe cm₂ m0 ≤
+      currentResidual s v d rho r te soe cm₁ m0 := by
   unfold currentResidual
   apply instantaneousResidual_antitone_mitigation
     (mitigation_mono_cm hcm hu.1 hm0)

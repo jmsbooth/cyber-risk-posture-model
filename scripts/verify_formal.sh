@@ -22,4 +22,14 @@ if grep -R -n -E '(^|[^[:alnum:]_])(sorry|admit|axiom|unsafe|native_decide)([^[:
 fi
 
 lake build
-lake env lean CRPI/Audit.lean
+AUDIT_DIR="$ROOT/artifacts/formal-axiom-audits"
+mkdir -p "$AUDIT_DIR"
+for audit in Audit AuditB AuditC; do
+    echo "Auditing CRPI/$audit.lean"
+    lake env lean "CRPI/$audit.lean" | tee "$AUDIT_DIR/$audit.log"
+    if grep -n -E 'sorryAx|unsupported axiom|^error:' "$AUDIT_DIR/$audit.log"; then
+        echo "BLOCKED: unexpected axiom or error in $audit audit." >&2
+        exit 1
+    fi
+done
+echo "A/B/C axiom audit logs captured at $AUDIT_DIR"

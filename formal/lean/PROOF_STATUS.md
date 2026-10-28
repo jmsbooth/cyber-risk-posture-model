@@ -23,7 +23,7 @@ are explicitly open for Phases B and C.
 | P2 — CS | `CRPI.consequenceSeverity_bounded` | Same as weighted sums | **Verified (Phase A; conditional)** |
 | P2 — domain consequence | `CRPI.effectiveConsequence_bounded` | Bounded D, R, rho; normalized v | **Verified (Phase A; conditional)** |
 | P2 — hazard | `CRPI.hazard_bounded` | Bounded TE and D_eff | **Verified (Phase A; conditional)** |
-| P2 — mitigation | `CRPI.mitigation_bounded` | Bounded USOM, CM, m0 | **Verified (Phase A; conditional)** |
+| P2 — mitigation | `CRPI.mitigation_bounded` | Bounded SOE, CM, m0 | **Verified (Phase A; conditional)** |
 | P2 — instantaneous residual | `CRPI.instantaneousResidual_bounded` | Bounded H and M | **Verified (Phase A; conditional)** |
 | P6 — envelope | `CRPI.envelope_bounded` | Bounded R_inst and stock | **Verified (Phase A; conditional)** |
 | P6 — monotonic envelope | `CRPI.envelope_mono_residual`, `CRPI.envelope_mono_stock` | Componentwise order | **Verified (Phase A; conditional)** |

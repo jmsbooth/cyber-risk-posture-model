@@ -1,0 +1,90 @@
+{
+  "profile_id": "illustrative-v0.2-soe",
+  "model_id": "crpi-operational-posture",
+  "model_version": "0.2",
+  "description": "SOE canonical naming profile; numerical coefficients identical to archived illustrative-v0.1. Synthetic-only, not empirical calibration.",
+  "time_unit": "day",
+  "dt": 1,
+  "domain_set": [
+    "confidentiality",
+    "integrity",
+    "availability"
+  ],
+  "domain_definitions": {
+    "confidentiality": "Sensitivity and harm from unauthorized disclosure or inference.",
+    "integrity": "Mission and decision harm from unauthorized change or corruption.",
+    "availability": "Continuity harm from loss or degradation of access to essential services."
+  },
+  "m0": 0.25,
+  "beta": 0.3,
+  "kappa": 0.8,
+  "epsilon_te": 0.05,
+  "epsilon_rras": 0.05,
+  "epsilon_r": 0.05,
+  "normalization": {
+    "output_bounds": [
+      0,
+      1
+    ],
+    "raw_bounds_policy": "Each sub-metric must declare governed lower and upper bounds.",
+    "direction_policy": "Use higher-is-better or lower-is-better normalization as declared by the metric definition."
+  },
+  "smoothing": {
+    "te_alpha": 1,
+    "cm_alpha": 1,
+    "policy": "The reference scenario runner uses current-interval values; alpha=1.0 makes that choice explicit.",
+    "soe_alpha": 1
+  },
+  "resilience_primitive_definitions": {
+    "RRAS_internal": "Internal resilience capability supporting recoverability, redundancy, and failover.",
+    "RRAS_dependency": "Dependency and assurance resilience supporting transparency, trust, and change integrity."
+  },
+  "weights": {
+    "te": [
+      0.5,
+      0.5
+    ],
+    "rras": {
+      "reporting": [
+        0.5,
+        0.5
+      ],
+      "by_domain": {
+        "confidentiality": [
+          0.1,
+          0.9
+        ],
+        "integrity": [
+          0.5,
+          0.5
+        ],
+        "availability": [
+          0.9,
+          0.1
+        ]
+      }
+    },
+    "consequence": {
+      "confidentiality": 0.3333333333333333,
+      "integrity": 0.3333333333333333,
+      "availability": 0.3333333333333333
+    }
+  },
+  "resilience_applicability": {
+    "confidentiality": 0,
+    "integrity": 0.4,
+    "availability": 0.9
+  },
+  "resilience_applicability_policy": "Each rho_j is the maximum mitigability of consequence domain j by the resulting domain resilience capability R_j; it is not a risk-appetite weight.",
+  "missing_data_policy": "Reject rows with missing required model inputs; do not impute in the reference runner.",
+  "temporal_initialization_policy": "When prior state is unavailable, initialize S(t0)=R_inst(t0) and mark temporal-history confidence as reduced until observation history accumulates or prior state is reconstructed.",
+  "evidence_thresholds": {
+    "coverage_unit": "fraction of expected evidence observed and verifiable",
+    "coverage_is_statistical_confidence": false
+  },
+  "coverage_gates": {
+    "aggregate_min": 0.7,
+    "construct_min": 0.5,
+    "governing_path_min": 0.5
+  }
+}

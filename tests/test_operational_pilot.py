@@ -19,9 +19,9 @@ def read(path):
 
 class OperationalPilotTests(unittest.TestCase):
     def setUp(self):
-        self.fixture=read('data/examples/operational_pilot_case.json')
-        self.metric=read('config/measurement_pilot_v0.1.json')
-        self.core=read('config/calibration_baseline.json')
+        self.fixture=read('data/examples/operational_pilot_case_soe.json')
+        self.metric=read('config/measurement_pilot_soe_v0.2.json')
+        self.core=read('config/calibration_soe_v0.2.json')
 
     def evaluate(self, fixture=None, metric=None):
         return evaluate(fixture or self.fixture, metric or self.metric, self.core)
@@ -56,10 +56,10 @@ class OperationalPilotTests(unittest.TestCase):
 
     def test_stale_verification_and_future_observations(self):
         data=copy.deepcopy(self.fixture)
-        data['observations']['USOM_detection']['observed_at']='2026-01-01T00:00:00Z'
+        data['observations']['SOE_detection']['observed_at']='2026-01-01T00:00:00Z'
         r=self.evaluate(data)
         self.assertIsNone(r['point'])
-        self.assertEqual(r['evidence']['USOM_detection']['reason'],'stale')
+        self.assertEqual(r['evidence']['SOE_detection']['reason'],'stale')
         data=copy.deepcopy(self.fixture)
         data['observations']['CM_integrity']['verified']=False
         r=self.evaluate(data)
@@ -72,11 +72,11 @@ class OperationalPilotTests(unittest.TestCase):
 
     def test_sparse_time_quantiles_cannot_be_reported_as_complete(self):
         data=copy.deepcopy(self.fixture)
-        data['observations']['USOM_velocity']['sample_size']=3
+        data['observations']['SOE_velocity']['sample_size']=3
         r=self.evaluate(data)
         self.assertIsNone(r['point'])
-        self.assertEqual(r['evidence']['USOM_velocity']['reason'],'insufficient_sample')
-        self.assertIn('USOM_velocity',r['missing_required'])
+        self.assertEqual(r['evidence']['SOE_velocity']['reason'],'insufficient_sample')
+        self.assertIn('SOE_velocity',r['missing_required'])
 
     def test_invalid_denominator_and_ordinal_cannot_be_scored(self):
         data=copy.deepcopy(self.fixture)
@@ -134,7 +134,7 @@ class OperationalPilotTests(unittest.TestCase):
         data['observations']['TE_external']['denominator']=10
         self.assertGreater(self.evaluate(data)['point']['R_inst'],reference)
         metric=copy.deepcopy(self.metric)
-        metric['fields']['USOM_velocity']['U']=24.0
+        metric['fields']['SOE_velocity']['U']=24.0
         self.assertGreater(self.evaluate(metric=metric)['point']['R_inst'],reference)
 
     def test_output_coverage_does_not_scale_risk(self):
@@ -161,7 +161,10 @@ class OperationalPilotTests(unittest.TestCase):
             self.assertTrue(math.isfinite(obj['mean']))
 
     def test_archived_structural_comparisons_reproduce(self):
-        self.assertEqual(baseline.run(),read('verification/measurement_pilot_structural_results.json'))
+        expected=read('verification/measurement_pilot_structural_results.json')
+        expected['provenance']['measurement_profile']='crpi-pilot-measurement-profile-v0.2'
+        expected['provenance']['scoring_profile']='illustrative-v0.2-soe'
+        self.assertEqual(baseline.run(),expected)
 
 
 if __name__=='__main__':
