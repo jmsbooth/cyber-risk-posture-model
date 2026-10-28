@@ -1216,9 +1216,14 @@ reduced according to their governed mitigability. $CS$ is therefore a useful rep
 but $D_{\mathrm{eff}}$ is the value that enters $H$.
 
 \subsection{Observability-Modulated Mitigation}
-Continuous Monitoring measures the organization's capability to know; SOE measures its
-capability to act. Visibility therefore modulates operational execution rather than
-independently subtracting risk:
+Continuous Monitoring (CM) describes the credibility and continuity of
+observability, while Security Operations Effectiveness (SOE) measures
+demonstrated capacity to detect, respond, remediate, and safely deploy
+security-relevant changes. Observing a vulnerability does not fix it.
+Likewise, an organization with effective response procedures may still
+act too slowly or incompletely when it cannot reliably observe events.
+The model treats visibility as a modifier of operational execution rather
+than as an independent reduction in consequence:
 \begin{equation}
   M(t)=SOE(t)\left[m_0+(1-m_0)CM(t)\right],
   \qquad m_0\in[0,1].
@@ -1229,6 +1234,15 @@ can exist without continuous telemetry, such as manual reporting, scheduled test
 or other non-continuous pathways. With all inputs in $[0,1]$, $M(t)$ remains in
 $[0,1]$.
 
+The monitoring-independent fraction $m_0$ allows some operational
+effectiveness without continuous telemetry, such as scheduled
+assessments, manual escalation, and out-of-band reports. When
+$SOE=0$, mitigation is zero regardless of monitoring. When $CM=1$,
+mitigation equals SOE; when $CM=0$, it is limited to $SOE\,m_0$.
+The multiplication encodes a complementary relationship between
+observability and action. Its precise form and coefficient are
+modeling assumptions that should be compared with simpler interaction
+forms in subsequent validation.
 Instantaneous residual posture is
 \begin{equation}
   R_{\mathrm{inst}}(t)=H(t)\left[1-M(t)\right].
@@ -1249,6 +1263,16 @@ hazard pressure, while CM and SOE determine how much of that hazard can be mitig
 in the current interval. CM does not independently subtract consequence, and SOE does
 not replace the threat or consequence measurements.
 
+
+Current residual posture $R_{\mathrm{inst}}$ cannot describe
+unresolved effects carried forward from earlier periods. The
+persistent unresolved exposure state $S(t)$ is therefore a normalized
+stock-like quantity bounded between zero and one. It is not a literal
+count of unresolved vulnerabilities, a measured incident backlog,
+or an attack probability. Residual exposure contributes inflow,
+while effective mitigation can retire part of the existing state.
+The model treats both flows as functions of observed state and
+governed rates, not as empirically established universal laws.
 \subsection{Persistent Unresolved Exposure}
 Persistent exposure is modeled as a bounded stock with unresolved instantaneous posture
 as inflow and effective mitigation as outflow:
@@ -1259,6 +1283,13 @@ as inflow and effective mitigation as outflow:
   \qquad \beta,\kappa\geq0.
   \label{eq:stock-ode}
 \end{equation}
+The inflow rate is $\beta R_{\mathrm{inst}}(1-S)$:
+the coefficient $\beta$ sets how strongly current residual exposure
+contributes, while $(1-S)$ slows accumulation as the stock approaches
+its upper bound. The outflow rate is $\kappa MS$: existing exposure
+is retired in proportion to the stock and effective mitigation,
+using the separate rate $\kappa$. Both rates have inverse-time units
+and should not be interpreted as calibrated probabilities.
 The $(1-S)$ term bounds accumulation as the stock approaches one. Under piecewise
 constant inputs over an interval $\Delta t$, define
 \begin{equation}
@@ -1273,6 +1304,13 @@ where
 \begin{equation}
   S^*(t)=\frac{\beta R_{\mathrm{inst}}(t)}{q(t)}.
 \end{equation}
+The exact solution assumes that residual exposure and mitigation
+are constant throughout each interval. The exponential term
+determines how quickly the starting stock approaches the
+interval-specific equilibrium. A sequence of changing daily
+inputs therefore cannot generally be replaced by their weekly
+average without losing event order. The interval $\Delta t$
+must be expressed in the same time unit as the rate parameters.
 If $q(t)=0$, then $S(t+\Delta t)=S(t)$. This formulation preserves $S\in[0,1]$,
 accumulates unresolved exposure when instantaneous residual posture is non-zero,
 dissipates accumulated exposure when mitigation is effective, and makes sampling
@@ -1305,6 +1343,13 @@ and falls when effective mitigation dominates. Because the update is exact for t
 piecewise-constant interval assumption, changing the reporting cadence requires changing
 $\Delta t$ in the same declared time unit rather than changing the governing equation.
 
+
+The final scalar reports the more adverse of the current residual
+and persistent-state channels. This is a deliberately conservative
+decision rule, not an additive risk total or a mechanistic
+model of incidents. Both channel values and the controlling branch
+must accompany the index so that the reason for a change remains
+interpretable.
 \subsection{Posture Output Envelope}
 The top-level CRPI value is the conservative envelope
 \begin{equation}
