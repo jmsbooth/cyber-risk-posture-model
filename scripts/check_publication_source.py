@@ -13,6 +13,8 @@ source = (ROOT / "paper/CRM_revised.tex").read_text(encoding="utf-8")
 assert "USOM" not in source and "usom" not in source, "legacy acronym remains in manuscript"
 assert r"\date{\today}" not in source, "unstable publication date"
 assert "SOE(t)" in source and "Security Operations Effectiveness" in source
+assert r'\widetilde{U}' not in source, 'obsolete USOM primitive symbol persists'
+assert r'\widetilde{SOE}' in source, 'canonical SOE primitive symbol missing'
 
 order = (
     r"\section{Conceptual Architecture of CRPI}",
