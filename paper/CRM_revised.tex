@@ -45,8 +45,11 @@
   organizational cyber risk as a function of time. The governing model is
   mathematically specified rather than based on discretionary top-level scoring: threat
   exposure is combined with resilience-adjusted consequence, operational execution is
-  modulated by observability, and unresolved residual exposure evolves through a
-  bounded stock-flow persistence model. Regularized geometric aggregation prevents a
+  modulated by observability, and past unresolved exposure is represented by a
+  bounded stock-flow state. In this representation, current residual exposure
+  contributes to a persistent score over time, effective mitigation reduces that
+  score, and the state remains between zero and one. It is a modeled measure of
+  unresolved exposure, not a directly observed vulnerability count. Regularized geometric aggregation prevents a
   single zero-valued sub-metric from unintentionally collapsing an otherwise non-zero
   construct. The model produces a bounded, scope-aware operational risk metric together with
   traceable diagnostics for hazard pressure, mitigation effectiveness, instantaneous
@@ -58,6 +61,7 @@
 \end{abstract}
 
 \section{Introduction}
+\label{sec:intro}
 At the executive and board level, cybersecurity is ultimately a risk management
 problem. Senior leaders repeatedly ask a small number of fundamental questions:
 \emph{How risky are we today? What is our current exposure? What is the likelihood of
@@ -102,7 +106,25 @@ The paper makes five specific contributions:
     change.
 \end{enumerate}
 
+\subsection*{Organization of the research}
+The paper first establishes the operational concepts and five measurable dimensions of
+posture, then explains how their evidence is qualified and how changing conditions can
+carry effects across reporting periods. With that vocabulary established, it introduces
+the governing equations, demonstrates their calculation with synthetic examples, and
+separates mathematical verification from prospective empirical validation.
+Numbered equations are the formal calculation definitions, and references such as
+Equation~\ref{eq:mitigation} refer to those displayed expressions. Figures and tables
+illustrate the declared profile rather than validated security thresholds.
+
+The paper is self-contained as a mathematical and methodological specification.
+Executable reference calculations and non-sensitive fixtures are available at
+\url{https://github.com/jmsbooth/cyber-risk-posture-model}, with detailed artifact
+provenance described in the reproducibility section. Access to the repository is not
+required to interpret the model, and the repository does not contain an organizational
+validation dataset.
+
 \section{Design Philosophy and Invariance Goals}
+\label{sec:design}
 The CRPI is designed to preserve a stable governing structure while the evidence used
 to instantiate that structure evolves. Its invariance claim applies to construct
 semantics and equation form, not to universal calibration coefficients.
@@ -139,6 +161,7 @@ claiming that cyber risk follows immutable physical laws. The objective is a sta
 mathematical interface whose assumptions and calibration choices remain explicit.
 
 \section{What the CRPI Is and Is Not}
+\label{sec:scope}
 The CRPI is intended to be a quantitative operational cyber-risk posture model, not a
 replacement for governance, assurance, scenario analysis, or financial cyber-risk
 quantification.
@@ -169,394 +192,76 @@ This distinction matters because the CRPI is designed to unify and interpret ope
 evidence, not replace governance, control validation, scenario reasoning, or expert
 judgment.
 
-\section{Notation and Definitions}
-Table~\ref{tab:notation} summarizes the principal variables used throughout the paper.
 
-\begin{longtable}{p{0.20\textwidth} p{0.70\textwidth}}
-  \caption{Core notation and variable definitions}
-  \label{tab:notation}\\
-  \toprule
-  Symbol & Meaning \\
-  \midrule
-  \endfirsthead
-  \toprule
-  Symbol & Meaning \\
-  \midrule
-  \endhead
-  $\mathbf{a}_j$ & Non-negative weight vector that projects shared resilience primitives onto consequence domain $j$, with weights summing to one. \\
-  $\alpha$ & EWMA smoothing parameter that controls the weight assigned to the current observation. \\
-  $\beta$ & Accumulation-rate parameter for unresolved exposure, measured in inverse time. \\
-  $\bar C_{\mathrm{CRPI}}(t)$ & Arithmetic mean of the Tier~2 evidence-coverage scores at time $t$. \\
-  $C_{D_j}(t)$ & Evidence-coverage score supporting the consequence-domain score $D_j(t)$. \\
-  $C_{\mathrm{gov}}(t)$ & Minimum evidence-coverage gate over the constructs and consequence-specific paths used by CRPI. \\
-  $C_{\min}(t)$ & Minimum evidence-coverage score across the Tier~2 constructs at time $t$. \\
-  $C_{R_j}(t)$ & Evidence-coverage score supporting the resilience projection $R_j(t)$. \\
-  $C_X(t)$ & Evidence-coverage score for construct $X$ at time $t$. \\
-  $CM(t)$ & Continuous Monitoring score measuring how completely and reliably security-relevant state is observed and verified, bounded in $[0,1]$. \\
-  $CRPI(t)$ & Conservative operational cyber-risk output envelope formed from instantaneous residual posture and persistent unresolved exposure. \\
-  $CS(t)$ & Consequence Severity aggregate representing the weighted severity of governed consequence domains, bounded in $[0,1]$. \\
-  $D_{\mathrm{eff}}(t)$ & Consequence remaining after domain-specific resilience adjustment and used in the hazard calculation. \\
-  $D_j(t)$ & Consequence score for governed consequence domain $j$ at time $t$, bounded in $[0,1]$. \\
-  $\Delta t$ & Elapsed time between updates to the persistent-exposure state. \\
-  $\varepsilon_X$ & Positive regularization parameter that makes geometric aggregation zero-safe for construct $X$. \\
-  $H(t)$ & Hazard pressure after threat exposure is combined with resilience-adjusted consequence. \\
-  $\kappa$ & Dissipation-rate parameter governing how quickly persistent exposure decays, measured in inverse time. \\
-  $L,U$ & Lower and upper raw-value bounds used to normalize a sub-metric. \\
-  $M(t)$ & Effective mitigation capacity after continuous monitoring modulates operational execution. \\
-  $m_0$ & Baseline fraction of operational effectiveness that does not depend on continuous monitoring. \\
-  $R_{\mathrm{inst}}(t)$ & Instantaneous residual posture remaining after current hazard pressure is reduced by effective mitigation. \\
-  $R_j(t)$ & Resilience capability projected onto consequence domain $j$, bounded in $[0,1]$. \\
-  $RRAS(t)$ & Resilience and Risk Assurance Score summarizing structural resilience and dependency assurance, bounded in $[0,1]$. \\
-  $\rho_j$ & Maximum fraction of consequence domain $j$ that its resilience projection can mitigate, bounded in $[0,1]$. \\
-  $S(t)$ & Bounded stock of persistent unresolved residual exposure at time $t$. \\
-  $TE(t)$ & Threat Exposure score representing adversary pressure and exposure conditions, bounded in $[0,1]$. \\
-  $USOM(t)$ & Unified Security Operations Metric representing operational execution and mitigation capability, bounded in $[0,1]$. \\
-  $v_j$ & Consequence-domain composition weight for domain $j$, with $v_j\geq0$ and $\sum_j v_j=1$. \\
-  $\widetilde{x}$ & Normalized raw or derived sub-metric bounded in $[0,1]$. \\
-  \bottomrule
-\end{longtable}
+\section{Conceptual Architecture of CRPI}
+\label{sec:conceptual}
+The Cyber Risk Posture Index (CRPI) distinguishes the conditions that create exposure,
+the consequences that would follow a compromise, and the capabilities that change how
+those conditions develop. Its principal contribution is a structured relationship
+between these distinct questions, not the claim that an observed score is a probability
+of attack or loss.
 
-\section{Governing Model}
-The governing model is intentionally compact. Its equation form is fixed; calibration
-parameters and measurement instantiations are governed configuration. The model does
-not claim that these equations are universal laws of cyber-risk behavior. They are
-structurally motivated relationships chosen to enforce explicit semantics, boundedness,
-decomposability, and testable temporal behavior.
+The model begins with five Tier~2 constructs. \emph{Threat Exposure (TE)} represents
+attackability and adversary-relevant conditions. \emph{Consequence Severity (CS)}
+describes the potential harm to confidentiality, integrity, and availability.
+\emph{Continuous Monitoring (CM)} describes how reliably the scoped environment is
+observed. \emph{Security Operations Effectiveness (SOE)} describes the demonstrated
+ability to detect, respond, contain, remediate, and make changes safely.
+\emph{Resilience and Risk Assurance (RRAS)} represents recovery, continuity, and
+assurance over dependencies. A single reporting resilience score can be useful for
+summaries, but the model also asks which resilience capabilities are relevant to each
+type of consequence.
 
-This section is the calculation specification. At each reporting time, normalized
-evidence first instantiates the Tier~2 constructs CM, CS, TE, USOM, and RRAS. The
-consequence domains and resilience projections are then kept separate long enough to
-calculate $D_{\mathrm{eff}}$ and $H$. CM and USOM determine effective mitigation $M$;
-$R_{\mathrm{inst}}$ and the prior stock determine the updated persistent state $S$;
-and the final posture output is the envelope $CRPI=\max(R_{\mathrm{inst}},S)$. This
-sequence is identical at every scope of analysis. In this paper, ``objective'' means
-deterministic, auditable, and reproducible under a declared evidence and calibration
-profile; it does not mean assumption-free or free of measurement judgment.
+Three distinctions govern how these constructs are used. First, observed attack
+exposure is not itself the same as consequence: an externally reachable system can
+have low or high mission impact. The model combines them into \emph{hazard pressure},
+defined here as a relative score for exposure weighted by consequence after applicable
+structural resilience. Second, visibility is not the same as action. Monitoring can
+inform and support operational mitigation, but observing a vulnerability does not fix it.
+Third, current residual exposure is not a complete account of unresolved history.
+A newly improved environment may still carry unresolved consequences from an earlier
+period of weaker controls, incomplete remediation, or elevated attack conditions.
 
-\subsection{Zero-Safe Regularized Geometric Aggregation}
-For constructs whose components should interact multiplicatively, CRPI uses a
-regularized weighted geometric operator rather than an ordinary geometric mean. For
-non-negative normalized weights $w_i\geq0$ satisfying $\sum_i w_i=1$,
-\begin{equation}
-  \mathcal{G}_{\varepsilon}(\mathbf{x},\mathbf{w})=
-  \frac{
-    \displaystyle\prod_{i=1}^{n}
-      \left[\varepsilon+(1-\varepsilon)x_i\right]^{w_i}
-    -\varepsilon
-  }{1-\varepsilon},
-  \qquad x_i\in[0,1],\quad \varepsilon\in(0,1).
-  \label{eq:regularized-geomean}
-\end{equation}
-The operator maps to $[0,1]$, returns zero when all positively weighted inputs are zero,
-returns one when all are one, and does not allow a single zero-valued component to
-collapse an otherwise non-zero construct. It is non-decreasing in every component;
-strict directional sensitivity is asserted only for components with $w_i>0$. Small
-$\varepsilon$ preserves the intended geometric penalty for weak components.
-$\varepsilon$ is therefore a versioned construct-calibration parameter rather than a
-universal constant.
+The temporal distinction is represented by two quantities. The \emph{instantaneous
+residual posture} is the amount of modeled hazard remaining after current mitigation.
+The \emph{persistent unresolved exposure state} is a bounded stock-like measure that
+retains part of prior unresolved exposure, increases when residual exposure is supplied,
+and decreases when mitigation retires that state. The stock is dimensionless and
+restricted to the interval $[0,1]$; its accumulation and retirement rates are explicit
+assumptions to be evaluated against suitable independent evidence. This is a modeling
+choice, not evidence that organizations exhibit a universal stock-flow law.
 
-\subsubsection{Calculation walkthrough}
-First normalize each component to $[0,1]$ and select governed weights. For example,
-with $\mathbf{x}=(0.55,0.65)$, $\mathbf{w}=(0.5,0.5)$, and $\varepsilon=0.05$,
+The final reported CRPI is the larger of the current residual score and the persistent
+state. Selecting the larger quantity is an explicit conservative reporting policy:
+it avoids calling posture low merely because one of the two channels has improved.
+Both channels and their contributing measurements must accompany the scalar. A change
+in the scalar can otherwise conceal whether the cause was an exposure surge, a
+consequence reassessment, improved operational execution, or retained history.
 
-\begin{equation}
-  \mathcal{G}_{0.05}(\mathbf{x},\mathbf{w})
-  =\frac{\sqrt{(0.05+0.95\cdot0.55)(0.05+0.95\cdot0.65)}-0.05}{0.95}
-  \approx0.598.
-\end{equation}
-
-This is the illustrative TE calculation used by the reference profile, rounded to
-$TE\approx0.60$. The same operator is used for scalar RRAS and for each $R_j$ when the
-construct semantics call for a multiplicative penalty. A zero-weight component is
-ignored by the operator; a zero-valued component with positive weight contributes a
-penalty without becoming an unintended absorbing zero.
-
-\subsection{Consequence and Hazard Pressure}
-The reporting aggregate for consequence is
-\begin{equation}
-  CS(t)=\sum_{j\in\mathcal{D}}v_jD_j(t),
-  \qquad v_j\geq0,\qquad \sum_{j\in\mathcal{D}}v_j=1.
-  \label{eq:cs-aggregate}
-\end{equation}
-The governing hazard calculation retains the consequence domains long enough to avoid
-assuming that resilience mitigates all forms of harm equally:
-\begin{equation}
-  D_{\mathrm{eff}}(t)=
-  \sum_{j\in\mathcal{D}}
-  v_jD_j(t)\left[1-\rho_jR_j(t)\right],
-  \qquad \rho_j\in[0,1].
-  \label{eq:effective-consequence}
-\end{equation}
-A baseline profile may use confidentiality/sensitivity, integrity/mission, and
-availability/continuity domains, while other environments may define a different
-finite governed domain set $\mathcal{D}$. The $\rho_j$ values encode the extent to
-which structural resilience can actually reduce the realized consequence in each
-domain, while $R_j(t)$ projects the heterogeneous resilience primitives onto the
-same consequence domain. For example, recoverability may strongly influence
-availability consequence while dependency assurance may be more relevant to
-confidentiality consequence; neither projection is assumed to be universally
-interchangeable.
-
-Hazard pressure is then
-\begin{equation}
-  H(t)=TE(t)\,D_{\mathrm{eff}}(t).
-  \label{eq:hazard}
-\end{equation}
-This preserves a bounded hazard score while preventing a globally high resilience score
-from automatically erasing consequence classes that resilience cannot materially
-reverse.
-
-\subsubsection{Calculation walkthrough}
-Calculate the reporting consequence score first, then calculate the resilience-adjusted
-consequence used by the hazard path. For an illustrative three-domain row with equal
-consequence weights,
-
-\begin{align}
-  CS &=\frac{0.90+0.80+0.70}{3}=0.800,\\
-  D_{\mathrm{eff}}&=\frac{1}{3}\sum_{j\in\{C,I,A\}}
-    D_j(1-\rho_jR_j)\approx0.582,\\
-  H&=TE\,D_{\mathrm{eff}}=0.598\cdot0.582\approx0.348.
-\end{align}
-
-Here $C$, $I$, and $A$ denote confidentiality, integrity, and availability consequence
-domains; the illustrative resilience projections are approximately
-$(R_C,R_I,R_A)=(0.655,0.675,0.695)$ and the mitigability factors are
-$(\rho_C,\rho_I,\rho_A)=(0,0.4,0.9)$. The zero confidentiality factor leaves that
-consequence unchanged by resilience, while the integrity and availability terms are
-reduced according to their governed mitigability. $CS$ is therefore a useful report,
-but $D_{\mathrm{eff}}$ is the value that enters $H$.
-
-\subsection{Observability-Modulated Mitigation}
-Continuous Monitoring measures the organization's capability to know; USOM measures its
-capability to act. Visibility therefore modulates operational execution rather than
-independently subtracting risk:
-\begin{equation}
-  M(t)=USOM(t)\left[m_0+(1-m_0)CM(t)\right],
-  \qquad m_0\in[0,1].
-  \label{eq:mitigation}
-\end{equation}
-The parameter $m_0$ represents the governed fraction of operational effectiveness that
-can exist without continuous telemetry, such as manual reporting, scheduled testing,
-or other non-continuous pathways. With all inputs in $[0,1]$, $M(t)$ remains in
-$[0,1]$.
-
-Instantaneous residual posture is
-\begin{equation}
-  R_{\mathrm{inst}}(t)=H(t)\left[1-M(t)\right].
-  \label{eq:rinst}
-\end{equation}
-
-\subsubsection{Calculation walkthrough}
-Using the preceding illustrative hazard value, suppose $CM=0.725$, $USOM=0.600$, and
-$m_0=0.25$. Then
-
-\begin{align}
-  M&=0.600\left[0.25+0.75(0.725)\right]\approx0.476,\\
-  R_{\mathrm{inst}}&=0.348(1-0.476)\approx0.182.
-\end{align}
-
-The calculation makes the metric assignments explicit: TE and consequence determine
-hazard pressure, while CM and USOM determine how much of that hazard can be mitigated
-in the current interval. CM does not independently subtract consequence, and USOM does
-not replace the threat or consequence measurements.
-
-\subsection{Persistent Unresolved Exposure}
-Persistent exposure is modeled as a bounded stock with unresolved instantaneous posture
-as inflow and effective mitigation as outflow:
-\begin{equation}
-  \frac{dS}{dt}
-  =\beta R_{\mathrm{inst}}(t)\left[1-S(t)\right]
-  -\kappa M(t)S(t),
-  \qquad \beta,\kappa\geq0.
-  \label{eq:stock-ode}
-\end{equation}
-The $(1-S)$ term bounds accumulation as the stock approaches one. Under piecewise
-constant inputs over an interval $\Delta t$, define
-\begin{equation}
-  q(t)=\beta R_{\mathrm{inst}}(t)+\kappa M(t).
-\end{equation}
-For $q(t)>0$, the exact interval update is
-\begin{equation}
-  S(t+\Delta t)=S^*(t)+\left[S(t)-S^*(t)\right]e^{-q(t)\Delta t},
-  \label{eq:stock-discrete}
-\end{equation}
-where
-\begin{equation}
-  S^*(t)=\frac{\beta R_{\mathrm{inst}}(t)}{q(t)}.
-\end{equation}
-If $q(t)=0$, then $S(t+\Delta t)=S(t)$. This formulation preserves $S\in[0,1]$,
-accumulates unresolved exposure when instantaneous residual posture is non-zero,
-dissipates accumulated exposure when mitigation is effective, and makes sampling
-cadence explicit through $\Delta t$. When historical state cannot be reconstructed,
-$S(t_0)=R_{\mathrm{inst}}(t_0)$ provides a bounded state-neutral initialization. It
-makes no assertion about unresolved exposure preceding $t_0$. Outputs should therefore
-carry reduced temporal-history confidence until sufficient observation history
-accumulates or prior state is reconstructed.
-
-Effective mitigation affects persistence through two distinct pathways. First, it
-reduces the rate at which current hazard becomes unresolved residual exposure through
-$R_{\mathrm{inst}}$. Second, it represents the organization's capacity to remediate
-previously accumulated unresolved exposure through the $\kappa M(t)S(t)$ outflow term.
-These effects are intentionally separated as prevention or containment of new residual
-exposure and retirement of existing exposure stock.
-
-\subsubsection{Calculation walkthrough}
-The stock update uses the current interval's $R_{\mathrm{inst}}$ and $M$ together with
-the prior stock. Continuing the illustrative calculation with $S(t)=0.200$,
-$\beta=0.30$, $\kappa=0.80$, and $\Delta t=1$,
-
-\begin{align}
-  q&=0.30(0.182)+0.80(0.476)\approx0.435,\\
-  S^*&=\frac{0.30(0.182)}{0.435}\approx0.125,\\
-  S(t+1)&=0.125+(0.200-0.125)e^{-0.435}\approx0.174.
-\end{align}
-
-The stock rises when unresolved posture supplies more inflow than mitigation removes,
-and falls when effective mitigation dominates. Because the update is exact for the
-piecewise-constant interval assumption, changing the reporting cadence requires changing
-$\Delta t$ in the same declared time unit rather than changing the governing equation.
-
-\subsection{Posture Output Envelope}
-The top-level CRPI value is the conservative envelope
-\begin{equation}
-  CRPI(t)=\max\left(R_{\mathrm{inst}}(t),S(t)\right).
-  \label{eq:crpi-envelope}
-\end{equation}
-The maximum is an envelope operator, not a mechanistic description of incident
-dynamics. It prevents recent operational improvement from masking material persistent
-exposure while keeping the result bounded
-and directly decomposable.
-
-\subsubsection{Calculation walkthrough}
-For the illustrative values above, $R_{\mathrm{inst}}\approx0.182$ and
-$S(t+1)\approx0.174$, so the envelope is $CRPI(t+1)=0.182$. If the persistent stock
-were $0.300$ instead, the same current condition would produce $CRPI=0.300$ and make
-the unresolved history the controlling explanation. The maximum is therefore not an
-executive-only display choice: it is the defined objective output of the state model,
-with executive reporting as one consumer of that output.
-
-\subsection{Scope Levels, Roll-Up, and Calibration Boundary}
-The governing equations do not change when the unit of analysis changes. A component,
-sub-system, system, network, organizational domain, or enterprise is treated as a
-scoped entity $u$ with its own evidence boundary, consequence domains, resilience
-mapping, and persistent state. The same sequence is evaluated for that entity:
-construct its bounded Tier~2 values, calculate its domain-specific $D_{\mathrm{eff}}$,
-then $H$, $M$, $R_{\mathrm{inst}}$, $S$, and $CRPI$. The scope changes the evidence and
-the meaning of the result, not the equation form.
-
-For a scoped entity $u$, let $\ell$ denote its analytical level: component,
-sub-system, system, network, domain, or enterprise. The final output is
-\begin{equation}
-  CRPI_{u,\ell}(t)=
-    \max\!\left(R_{\mathrm{inst},u,\ell}(t),S_{u,\ell}(t)\right).
-  \label{eq:scoped-crpi}
-\end{equation}
-The component equations for $TE$, $CS$, $USOM$, $RRAS$, $D_{\mathrm{eff}}$, $H$, $M$,
-and $S$ retain their Section~5 form; each input is simply indexed by $(u,\ell)$ and
-must be calculated from that scope's evidence boundary. This makes the distinction
-between a directly measured parent risk value and a separately governed aggregation
-of child values explicit.
-
-\begin{longtable}{p{0.15\textwidth} p{0.28\textwidth} p{0.43\textwidth}}
-  \caption{CRPI application across analytical levels}
-  \label{tab:scope-levels}\\
-  \toprule
-  Scope & Unit of analysis & Recommended evidence boundary and interpretation \\
-  \midrule
-  \endfirsthead
-  \toprule
-  Scope & Unit of analysis & Recommended evidence boundary and interpretation \\
-  \midrule
-  \endhead
-  Component & Asset, service, identity, control point, or data store & Direct telemetry, configuration state, local exposure, component consequence, and component recovery evidence. \\
-  Sub-system & Application, cluster, control plane, or service group & Component interactions, shared controls, local dependencies, subsystem mission impact, and response ownership. \\
-  System & Product, workload, plant, or business service & System attack surface, system-level consequence domains, end-to-end mitigation performance, and recoverability evidence. \\
-  Network & Segment, trust zone, connectivity plane, or interconnection & Reachability, trust boundaries, traffic and control evidence, lateral-exposure conditions, and cross-system dependency effects. \\
-  Domain & Mission, business, data, or operational domain & Domain portfolio consequence, shared services, domain dependencies, and the domain-specific resilience mappings relevant to that scope. \\
-  Enterprise & Organization or governed portfolio & Enterprise-wide evidence, shared infrastructure, cross-domain consequences, centralized and federated response, and enterprise resilience. \\
-  \bottomrule
-\end{longtable}
-
-The scope-level output is objective in the operational sense: the same declared inputs,
-normalization rules, weights, and time history reproduce the same result and allow the
-result to be decomposed back to evidence. It is not assumption-free. A parent score
-should be calculated from parent-scope evidence whenever possible; averaging child CRPI
-values can hide concentration, shared dependencies, or a high-consequence outlier. If
-only child scores are available, publish any roll-up as a separately named and governed
-aggregation rather than silently presenting it as the parent CRPI.
-
-The term ``domain'' in this scope hierarchy is distinct from a consequence domain
-$j\in\mathcal{D}$. A single enterprise domain may contain confidentiality, integrity,
-and availability consequence domains, while a single system may contribute to several
-organizational domains.
-
-\subsubsection{Calibration boundary}
-The governing equation form is stable, but the model is not parameter-free. The
-parameters $\varepsilon_X$, $v_j$, $\rho_j$, $\mathbf{a}_j$, $m_0$, $\beta$, $\kappa$, $\alpha$, and
-normalization bounds are explicit calibration or construct-composition parameters.
-They must be versioned, justified by construct semantics or observed data, sensitivity
-tested, and prohibited from ad hoc tuning solely to make the posture value appear
-desirable. Cross-level and cross-organization comparisons require the profile identifier
-and a documented scope definition; otherwise equal scores need not mean comparable
-things.
-
-\section{Interpreting CRPI Outputs}
-The top-level $CRPI(t)$ value is a bounded operational posture index in $[0,1]$, where
-values closer to zero indicate lower modeled residual cyber-risk posture and values
-closer to one indicate higher modeled residual posture under a defined calibration
-profile. It is not a direct probability of breach or monetary-loss estimate.
-
-The value should be read together with its decomposition:
-\begin{itemize}
-  \item $H(t)$ answers: \emph{How much hazard pressure exists before current operational
-    mitigation?} It rises as threat exposure or resilience-adjusted consequence rises.
-  \item $M(t)$ answers: \emph{How much effective mitigation can the organization apply?}
-    It reflects operational execution as modulated by the quality of continuous
-    observability.
-  \item $R_{\mathrm{inst}}(t)$ answers: \emph{What residual posture is implied by current
-    conditions now?}
-  \item $S(t)$ answers: \emph{How much unresolved residual exposure remains from current
-    and recent conditions?}
-  \item $CRPI(t)$ reports the conservative residual-risk envelope used by operational,
-    engineering, governance, and executive consumers.
-\end{itemize}
-
-Two organizations can have the same $CRPI(t)$ for materially different reasons. One may
-have high current threat pressure but low accumulated exposure; another may have
-moderate current hazard but substantial persistent stock. Management action therefore
-requires the decomposition, Tier~2 values, evidence coverage, and uncertainty
-qualification rather than the scalar alone.
-
-\begin{longtable}{p{0.20\textwidth} p{0.18\textwidth} p{0.52\textwidth}}
-  \caption{Score direction and operational interpretation}
-  \label{tab:score-direction}\\
-  \toprule
-  Quantity & Higher Means & Interpretation \\
-  \midrule
-  \endfirsthead
-  \toprule
-  Quantity & Higher Means & Interpretation \\
-  \midrule
-  \endhead
-  $CM(t)$ & Better & More complete, current, and trustworthy visibility. \\
-  $USOM(t)$ & Better & Stronger ability to detect, respond, remediate, and change safely. \\
-  $RRAS(t)$ & Better & Stronger scalar structural survivability and assurance summary. \\
-  $R_j(t)$ & Better & Stronger resilience projection for consequence domain $j$. \\
-  $CS(t)$ & More severe & Greater aggregate consequence if the system or data is compromised. \\
-  $TE(t)$ & More exposed & Greater adversary pressure, exploitability, or attackability. \\
-  $D_{\mathrm{eff}}(t)$ & More severe & Greater consequence remaining after consequence-specific resilience adjustment. \\
-  $H(t)$ & More hazardous & More inherent hazard before current operational mitigation. \\
-  $M(t)$ & Better & Greater effective mitigation capacity. \\
-  $R_{\mathrm{inst}}(t)$ & More residual risk & Worse current residual posture. \\
-  $S(t)$ & More persistent & More unresolved exposure carried forward. \\
-  $CRPI(t)$ & More residual risk & Higher modeled operational cyber-risk posture. \\
-  \bottomrule
-\end{longtable}
+\begin{table}[htbp]
+\centering
+\small
+\caption{Conceptual roles before the governing equations are introduced}
+\label{tab:conceptual-roles}
+\begin{tabular}{p{0.26\linewidth} p{0.60\linewidth}}
+\toprule
+Concept & Operational question \\
+\midrule
+Exposure and consequence & What conditions make adverse action possible, and what harm could follow? \\
+Monitoring and operations & Can the organization reliably identify the condition and act effectively? \\
+Resilience & Which consequences can architecture, recovery, and trusted dependencies actually reduce? \\
+Current residual & What modeled exposure remains under present conditions? \\
+Persistent state & What modeled unresolved exposure is carried across time intervals? \\
+Evidence qualification & What is actually known about the declared scope, and what remains uncertain or undiscovered? \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{Tier~2 Risk Dimensions}
+\label{sec:tier2}
 The CRPI decomposes cyber risk into five Tier~2 dimensions that correspond to stable,
 technology-agnostic constructs: Continuous Monitoring (CM), Consequence Severity (CS),
-Threat Exposure (TE), Unified Security Operations Metric (USOM), and Resilience and
+Threat Exposure (TE), Security Operations Effectiveness (SOE), and Resilience and
 Risk Assurance Score (RRAS). Each Tier~2 metric is bounded in $[0,1]$ and instantiated
 from measurable sub-metrics derived from telemetry, governance artifacts, engineering
 workflows, or architectural evidence.
@@ -660,7 +365,7 @@ review artifacts. The recommended discrete inputs are:
 \end{longtable}
 
 \subsubsection{Boundary Conditions}
-CM excludes incident response performance (USOM), exploitability signal and adversary
+CM excludes incident response performance (SOE), exploitability signal and adversary
 pressure (TE), structural resilience (RRAS), and impact severity (CS).
 
 \subsubsection{Interpretation}
@@ -724,7 +429,7 @@ models, and access/usage metadata. The recommended discrete inputs are:
 
 \subsubsection{Boundary Conditions}
 CS excludes exploitability signal (TE), monitoring quality (CM), response effectiveness
-(USOM), and resilience capability (RRAS). RRAS affects realized consequence through
+(SOE), and resilience capability (RRAS). RRAS affects realized consequence through
 the explicitly governed $R_j$ and $\rho_j$ interactions in
 Equation~\ref{eq:effective-consequence}.
 
@@ -910,34 +615,34 @@ AI produced the observed changes.
 
 \subsubsection{Boundary Conditions}
 TE excludes consequence severity (CS), monitoring quality (CM), response execution
-(USOM), and resilience (RRAS).
+(SOE), and resilience (RRAS).
 
 \subsubsection{Interpretation}
 A high TE score indicates greater modeled susceptibility to adversarial action under the
 available evidence. TE contributes directly to hazard pressure through
 Equation~\ref{eq:hazard}.
 
-\subsection{Unified Security Operations Metric (USOM)}
+\subsection{Security Operations Effectiveness (SOE)}
 \subsubsection{Purpose and Philosophy}
-The Unified Security Operations Metric (USOM) captures an organization’s demonstrated
+The Security Operations Effectiveness (SOE) captures an organization’s demonstrated
 ability to detect, respond to, remediate, and safely deploy changes in the presence of
-adversarial activity. USOM represents the operational execution dimension of cyber
+adversarial activity. SOE represents the operational execution dimension of cyber
 risk.
 
-USOM is intentionally defined as an outcome-oriented capability rather than a
+SOE is intentionally defined as an outcome-oriented capability rather than a
 measurement of specific tools, team structures, or processes. This ensures
 applicability across traditional IT operations, DevOps, SecOps, and future
 engineering paradigms.
 
 \subsubsection{Construct Definition}
-USOM captures the organization's ability to convert awareness into effective action.
+SOE captures the organization's ability to convert awareness into effective action.
 Where CM asks whether the organization can observe and verify security-relevant state,
-USOM asks whether the organization can act on that knowledge quickly, safely, and
+SOE asks whether the organization can act on that knowledge quickly, safely, and
 repeatably. It therefore represents the execution side of mitigation capacity: the
 operational pathway by which detected issues are triaged, contained, remediated,
 validated, and converted into durable improvement.
 
-USOM captures four stable operational invariants:
+SOE captures four stable operational invariants:
 \begin{enumerate}
   \item \textbf{Detection Effectiveness}: the ability to identify meaningful security
     events, suspicious behavior, exposed weaknesses, and control failures quickly enough
@@ -962,16 +667,16 @@ USOM captures four stable operational invariants:
     effectiveness.
 \end{enumerate}
 
-The construct is intentionally outcome-oriented. USOM does not require a particular SOC
+The construct is intentionally outcome-oriented. SOE does not require a particular SOC
 model, ticketing platform, CI/CD toolchain, or staffing structure. A centralized
 security operations center, a product-aligned SecOps model, and a highly automated
 cloud-native operation can all score well if they demonstrate the same underlying
 capability: fast recognition, disciplined response, safe change, and continuous
-improvement. Conversely, strong tooling alone does not imply high USOM if issues remain
+improvement. Conversely, strong tooling alone does not imply high SOE if issues remain
 untriaged, fixes stall, emergency changes frequently fail, or lessons do not alter
 future behavior.
 
-Within the CRPI, USOM is the execution capability that is modulated by CM through
+Within the CRPI, SOE is the execution capability that is modulated by CM through
 Equation~\ref{eq:mitigation}. This separation is deliberate. Visibility without
 execution does not remediate hazards, while execution with weak visibility can be
 misdirected or incomplete. The parameter $m_0$ allows an empirically governed baseline
@@ -979,10 +684,10 @@ for response pathways that do not depend on continuous telemetry instead of forc
 mitigation to zero whenever CM is zero.
 
 \subsubsection{Metric Form}
-USOM is modeled as
+SOE is modeled as
 \begin{equation}
-  USOM(t)=\sum_{\ell=1}^{s}w_\ell^{USOM}\widetilde{U}_\ell(t),
-  \qquad \sum_{\ell=1}^{s}w_\ell^{USOM}=1,
+  SOE(t)=\sum_{\ell=1}^{s}w_\ell^{SOE}\widetilde{U}_\ell(t),
+  \qquad \sum_{\ell=1}^{s}w_\ell^{SOE}=1,
 \end{equation}
 where each $\widetilde{U}_\ell(t)\in[0,1]$.
 
@@ -992,7 +697,7 @@ patch-management systems, CI/CD and deployment logs, engineering quality artifac
 supply-chain transparency artifacts. The recommended discrete inputs are:
 
 \begin{longtable}{P{0.18\textwidth} P{0.35\textwidth} P{0.18\textwidth} P{0.17\textwidth}}
-  \caption{Recommended discrete inputs for Unified Security Operations}\\
+  \caption{Recommended discrete inputs for Security Operations Effectiveness}\\
   \toprule
   Discrete input & Recommended evidence or input & Normalization & Cadence \\
   \midrule
@@ -1013,13 +718,13 @@ supply-chain transparency artifacts. The recommended discrete inputs are:
 \end{longtable}
 
 \subsubsection{Boundary Conditions}
-USOM excludes threat environment (TE), telemetry quality (CM), impact severity (CS),
+SOE excludes threat environment (TE), telemetry quality (CM), impact severity (CS),
 and structural resilience or dependency trust (RRAS).
 
 \subsubsection{Interpretation}
-A high USOM score indicates an organization capable of rapidly detecting, responding
+A high SOE score indicates an organization capable of rapidly detecting, responding
 to, and remediating security issues while sustaining safe and continuous change.
-USOM directly influences effective mitigation $M(t)$ and thereby affects both instantaneous residual posture and the dissipation of persistent exposure.
+SOE directly influences effective mitigation $M(t)$ and thereby affects both instantaneous residual posture and the dissipation of persistent exposure.
 
 \subsection{Resilience and Risk Assurance Score (RRAS)}
 \subsubsection{Purpose and Philosophy}
@@ -1027,7 +732,7 @@ RRAS measures an organization’s ability to withstand adverse events, limit cas
 failure, and recover essential functions while maintaining assurance over critical
 dependencies. RRAS represents the structural survivability dimension of cyber risk.
 
-RRAS is intentionally separated from day-to-day operational execution. While USOM
+RRAS is intentionally separated from day-to-day operational execution. While SOE
 measures how quickly teams detect and respond, RRAS measures whether the system can
 recover at all and whether its dependencies can be trusted during disruption.
 
@@ -1094,7 +799,7 @@ records. The recommended discrete inputs are:
 \end{longtable}
 
 \subsubsection{Boundary Conditions}
-RRAS excludes incident response speed (USOM), exploitability signal (TE), impact severity
+RRAS excludes incident response speed (SOE), exploitability signal (TE), impact severity
 (CS), and monitoring coverage (CM).
 
 \subsubsection{Interpretation}
@@ -1105,6 +810,7 @@ mitigability factors $\rho_j$ in Equation~\ref{eq:effective-consequence}; it doe
 automatically erase all forms of impact.
 
 \section{Measurement Specification}
+\label{sec:measurement}
 This section defines how Tier~2 constructs are operationalized from telemetry,
 artifacts, and governance evidence. Its purpose is not to restate Tier~2 philosophy,
 but to specify the measurement layer that makes the CRPI implementable, testable, and
@@ -1167,7 +873,7 @@ review cycles.
 
 \subsection{Coverage and Evidence Qualification}
 The CRPI should not be reported as a naked scalar without qualification of evidence
-quality. For each Tier~2 metric $X\in\{CM,CS,TE,USOM,RRAS\}$, define a coverage score
+quality. For each Tier~2 metric $X\in\{CM,CS,TE,SOE,RRAS\}$, define a coverage score
 $C_X(t)\in[0,1]$ as the governed fraction of expected evidence that is observed and
 verifiable at time $t$. For each consequence domain $j\in\mathcal{D}$, also define
 $C_{D_j}(t)$ for evidence supporting $D_j(t)$ and $C_{R_j}(t)$ for evidence supporting
@@ -1184,7 +890,7 @@ The governing path has an additional hard evidence-completeness diagnostic:
 \begin{equation}
   C_{\mathrm{gov}}(t)=\min\left(
     C_{TE}(t),C_{CM}(t),\min_{j\in\mathcal{D}}C_{D_j}(t),
-    \min_{j\in\mathcal{D}}C_{R_j}(t),C_{USOM}(t)
+    \min_{j\in\mathcal{D}}C_{R_j}(t),C_{SOE}(t)
   \right).
   \label{eq:governing-coverage}
 \end{equation}
@@ -1229,14 +935,14 @@ and $M$, since $R_{\mathrm{inst}}=TE\,D_{\mathrm{eff}}(1-M)$. These three
 numbers do not, however, provide operational traceability to measured
 exposures, consequence domains, resilience, or control execution. A decomposed
 evaluation requires $TE$, each $D_j$, each $R_j$ for which $\rho_j>0$,
-$CM$, and $USOM$, plus governed weights, $\rho_j$, and $m_0$. Under the
+$CM$, and $SOE$, plus governed weights, $\rho_j$, and $m_0$. Under the
 illustrative three-domain profile, $\rho_{\mathrm{confidentiality}}=0$,
 so eight normalized construct/domain scores suffice for the instantaneous
 residual. Nine would be required if all three $\rho_j$ were nonzero.
 These are already normalized and governed scores, not eight raw counters.
 
 The executable reference runner obtains these constructs from 15 normalized
-primitive fields: two TE, three consequence, four CM, four USOM, and two
+primitive fields: two TE, three consequence, four CM, four SOE, and two
 resilience inputs. Domain resilience projections $R_j$ use the two resilience
 primitives and domain-specific weights; scalar RRAS is reported separately,
 not multiplied into the hazard calculation. A full temporal CRPI additionally
@@ -1280,13 +986,14 @@ measurement roles.
   CM & Ability to know & telemetry coverage, freshness, integrity, drift detection & weighted sum & optional smoothing \\
   CS & Consequence of failure & sensitivity, criticality, derived sensitivity, availability impact & weighted sum & slow-moving, change-driven \\
   TE & Susceptibility to attack & attack surface, exploitability, identity exposure, intel relevance & regularized geometric + EWMA & moderately volatile \\
-  USOM & Ability to act & MTTD, MTTR, MTTP, change safety, throughput, quality checks & weighted sum & event-driven, optional smoothing \\
+  SOE & Ability to act & MTTD, MTTR, MTTP, change safety, throughput, quality checks & weighted sum & event-driven, optional smoothing \\
   RRAS & Ability to survive & recoverability, redundancy, diversity, provenance, trustworthiness & scalar regularized geometric plus domain projections & slow-moving, structural updates \\
   \bottomrule
 \end{longtable}
 \endgroup
 
 \section{Temporal Behavior and Calibration}
+\label{sec:temporal}
 Cyber risk is non-stationary. Changes in adversary behavior, technology, organizational
 structure, and defensive capability change posture continuously rather than only at
 assessment boundaries. Time is therefore a first-class component of the CRPI.
@@ -1344,7 +1051,7 @@ At a minimum:
   \midrule
   \endhead
   $\alpha_{TE}$ & 0.40--0.70 sensitivity range & Higher values react faster; lower values damp noisy threat feeds. \\
-  $\alpha$ for CM/USOM & 0.20--0.50 sensitivity range & Moderate smoothing may reduce reaction to short operational fluctuations. \\
+  $\alpha$ for CM/SOE & 0.20--0.50 sensitivity range & Moderate smoothing may reduce reaction to short operational fluctuations. \\
   $\varepsilon_X$ & 0.01--0.10 sensitivity range & Keep small; select per construct and verify that zero-safety does not over-soften severe weakness. \\
   $m_0$ & No universal default & Estimate the portion of operational effectiveness demonstrably independent of continuous telemetry; sensitivity test broadly. \\
   $\rho_j$, $\mathbf{a}_j$ & Domain-specific in $[0,1]$ & $\rho_j$ encodes demonstrated consequence mitigability; $\mathbf{a}_j$ governs the resilience-primitive projection for each domain, not risk appetite. \\
@@ -1356,7 +1063,347 @@ At a minimum:
 \end{longtable}
 \endgroup
 
+\section{Governing Model}
+\label{sec:governing}
+The governing model is now specified after the construct, measurement, and temporal definitions so that each variable has an operational interpretation. The governing model is intentionally compact. Its equation form is fixed; calibration
+parameters and measurement instantiations are governed configuration. The model does
+not claim that these equations are universal laws of cyber-risk behavior. They are
+structurally motivated relationships chosen to enforce explicit semantics, boundedness,
+decomposability, and testable temporal behavior.
+
+This section is the calculation specification. At each reporting time, normalized
+evidence first instantiates the Tier~2 constructs CM, CS, TE, SOE, and RRAS. The
+consequence domains and resilience projections are then kept separate long enough to
+calculate $D_{\mathrm{eff}}$ and $H$. CM and SOE determine effective mitigation $M$;
+$R_{\mathrm{inst}}$ and the prior stock determine the updated persistent state $S$;
+and the final posture output is the envelope $CRPI=\max(R_{\mathrm{inst}},S)$. This
+sequence is identical at every scope of analysis. In this paper, ``objective'' means
+deterministic, auditable, and reproducible under a declared evidence and calibration
+profile; it does not mean assumption-free or free of measurement judgment.
+
+\subsection{Zero-Safe Regularized Geometric Aggregation}
+For constructs whose components should interact multiplicatively, CRPI uses a
+regularized weighted geometric operator rather than an ordinary geometric mean. For
+non-negative normalized weights $w_i\geq0$ satisfying $\sum_i w_i=1$,
+\begin{equation}
+  \mathcal{G}_{\varepsilon}(\mathbf{x},\mathbf{w})=
+  \frac{
+    \displaystyle\prod_{i=1}^{n}
+      \left[\varepsilon+(1-\varepsilon)x_i\right]^{w_i}
+    -\varepsilon
+  }{1-\varepsilon},
+  \qquad x_i\in[0,1],\quad \varepsilon\in(0,1).
+  \label{eq:regularized-geomean}
+\end{equation}
+The operator maps to $[0,1]$, returns zero when all positively weighted inputs are zero,
+returns one when all are one, and does not allow a single zero-valued component to
+collapse an otherwise non-zero construct. It is non-decreasing in every component;
+strict directional sensitivity is asserted only for components with $w_i>0$. Small
+$\varepsilon$ preserves the intended geometric penalty for weak components.
+$\varepsilon$ is therefore a versioned construct-calibration parameter rather than a
+universal constant.
+
+\subsubsection{Calculation walkthrough}
+First normalize each component to $[0,1]$ and select governed weights. For example,
+with $\mathbf{x}=(0.55,0.65)$, $\mathbf{w}=(0.5,0.5)$, and $\varepsilon=0.05$,
+
+\begin{equation}
+  \mathcal{G}_{0.05}(\mathbf{x},\mathbf{w})
+  =\frac{\sqrt{(0.05+0.95\cdot0.55)(0.05+0.95\cdot0.65)}-0.05}{0.95}
+  \approx0.598.
+\end{equation}
+
+This is the illustrative TE calculation used by the reference profile, rounded to
+$TE\approx0.60$. The same operator is used for scalar RRAS and for each $R_j$ when the
+construct semantics call for a multiplicative penalty. A zero-weight component is
+ignored by the operator; a zero-valued component with positive weight contributes a
+penalty without becoming an unintended absorbing zero.
+
+\subsection{Consequence and Hazard Pressure}
+The reporting aggregate for consequence is
+\begin{equation}
+  CS(t)=\sum_{j\in\mathcal{D}}v_jD_j(t),
+  \qquad v_j\geq0,\qquad \sum_{j\in\mathcal{D}}v_j=1.
+  \label{eq:cs-aggregate}
+\end{equation}
+The governing hazard calculation retains the consequence domains long enough to avoid
+assuming that resilience mitigates all forms of harm equally:
+\begin{equation}
+  D_{\mathrm{eff}}(t)=
+  \sum_{j\in\mathcal{D}}
+  v_jD_j(t)\left[1-\rho_jR_j(t)\right],
+  \qquad \rho_j\in[0,1].
+  \label{eq:effective-consequence}
+\end{equation}
+A baseline profile may use confidentiality/sensitivity, integrity/mission, and
+availability/continuity domains, while other environments may define a different
+finite governed domain set $\mathcal{D}$. The $\rho_j$ values encode the extent to
+which structural resilience can actually reduce the realized consequence in each
+domain, while $R_j(t)$ projects the heterogeneous resilience primitives onto the
+same consequence domain. For example, recoverability may strongly influence
+availability consequence while dependency assurance may be more relevant to
+confidentiality consequence; neither projection is assumed to be universally
+interchangeable.
+
+Hazard pressure is then
+\begin{equation}
+  H(t)=TE(t)\,D_{\mathrm{eff}}(t).
+  \label{eq:hazard}
+\end{equation}
+This preserves a bounded hazard score while preventing a globally high resilience score
+from automatically erasing consequence classes that resilience cannot materially
+reverse.
+
+\subsubsection{Calculation walkthrough}
+Calculate the reporting consequence score first, then calculate the resilience-adjusted
+consequence used by the hazard path. For an illustrative three-domain row with equal
+consequence weights,
+
+\begin{align}
+  CS &=\frac{0.90+0.80+0.70}{3}=0.800,\\
+  D_{\mathrm{eff}}&=\frac{1}{3}\sum_{j\in\{C,I,A\}}
+    D_j(1-\rho_jR_j)\approx0.582,\\
+  H&=TE\,D_{\mathrm{eff}}=0.598\cdot0.582\approx0.348.
+\end{align}
+
+Here $C$, $I$, and $A$ denote confidentiality, integrity, and availability consequence
+domains; the illustrative resilience projections are approximately
+$(R_C,R_I,R_A)=(0.655,0.675,0.695)$ and the mitigability factors are
+$(\rho_C,\rho_I,\rho_A)=(0,0.4,0.9)$. The zero confidentiality factor leaves that
+consequence unchanged by resilience, while the integrity and availability terms are
+reduced according to their governed mitigability. $CS$ is therefore a useful report,
+but $D_{\mathrm{eff}}$ is the value that enters $H$.
+
+\subsection{Observability-Modulated Mitigation}
+Continuous Monitoring measures the organization's capability to know; SOE measures its
+capability to act. Visibility therefore modulates operational execution rather than
+independently subtracting risk:
+\begin{equation}
+  M(t)=SOE(t)\left[m_0+(1-m_0)CM(t)\right],
+  \qquad m_0\in[0,1].
+  \label{eq:mitigation}
+\end{equation}
+The parameter $m_0$ represents the governed fraction of operational effectiveness that
+can exist without continuous telemetry, such as manual reporting, scheduled testing,
+or other non-continuous pathways. With all inputs in $[0,1]$, $M(t)$ remains in
+$[0,1]$.
+
+Instantaneous residual posture is
+\begin{equation}
+  R_{\mathrm{inst}}(t)=H(t)\left[1-M(t)\right].
+  \label{eq:rinst}
+\end{equation}
+
+\subsubsection{Calculation walkthrough}
+Using the preceding illustrative hazard value, suppose $CM=0.725$, $SOE=0.600$, and
+$m_0=0.25$. Then
+
+\begin{align}
+  M&=0.600\left[0.25+0.75(0.725)\right]\approx0.476,\\
+  R_{\mathrm{inst}}&=0.348(1-0.476)\approx0.182.
+\end{align}
+
+The calculation makes the metric assignments explicit: TE and consequence determine
+hazard pressure, while CM and SOE determine how much of that hazard can be mitigated
+in the current interval. CM does not independently subtract consequence, and SOE does
+not replace the threat or consequence measurements.
+
+\subsection{Persistent Unresolved Exposure}
+Persistent exposure is modeled as a bounded stock with unresolved instantaneous posture
+as inflow and effective mitigation as outflow:
+\begin{equation}
+  \frac{dS}{dt}
+  =\beta R_{\mathrm{inst}}(t)\left[1-S(t)\right]
+  -\kappa M(t)S(t),
+  \qquad \beta,\kappa\geq0.
+  \label{eq:stock-ode}
+\end{equation}
+The $(1-S)$ term bounds accumulation as the stock approaches one. Under piecewise
+constant inputs over an interval $\Delta t$, define
+\begin{equation}
+  q(t)=\beta R_{\mathrm{inst}}(t)+\kappa M(t).
+\end{equation}
+For $q(t)>0$, the exact interval update is
+\begin{equation}
+  S(t+\Delta t)=S^*(t)+\left[S(t)-S^*(t)\right]e^{-q(t)\Delta t},
+  \label{eq:stock-discrete}
+\end{equation}
+where
+\begin{equation}
+  S^*(t)=\frac{\beta R_{\mathrm{inst}}(t)}{q(t)}.
+\end{equation}
+If $q(t)=0$, then $S(t+\Delta t)=S(t)$. This formulation preserves $S\in[0,1]$,
+accumulates unresolved exposure when instantaneous residual posture is non-zero,
+dissipates accumulated exposure when mitigation is effective, and makes sampling
+cadence explicit through $\Delta t$. When historical state cannot be reconstructed,
+$S(t_0)=R_{\mathrm{inst}}(t_0)$ provides a bounded state-neutral initialization. It
+makes no assertion about unresolved exposure preceding $t_0$. Outputs should therefore
+carry reduced temporal-history confidence until sufficient observation history
+accumulates or prior state is reconstructed.
+
+Effective mitigation affects persistence through two distinct pathways. First, it
+reduces the rate at which current hazard becomes unresolved residual exposure through
+$R_{\mathrm{inst}}$. Second, it represents the organization's capacity to remediate
+previously accumulated unresolved exposure through the $\kappa M(t)S(t)$ outflow term.
+These effects are intentionally separated as prevention or containment of new residual
+exposure and retirement of existing exposure stock.
+
+\subsubsection{Calculation walkthrough}
+The stock update uses the current interval's $R_{\mathrm{inst}}$ and $M$ together with
+the prior stock. Continuing the illustrative calculation with $S(t)=0.200$,
+$\beta=0.30$, $\kappa=0.80$, and $\Delta t=1$,
+
+\begin{align}
+  q&=0.30(0.182)+0.80(0.476)\approx0.435,\\
+  S^*&=\frac{0.30(0.182)}{0.435}\approx0.125,\\
+  S(t+1)&=0.125+(0.200-0.125)e^{-0.435}\approx0.174.
+\end{align}
+
+The stock rises when unresolved posture supplies more inflow than mitigation removes,
+and falls when effective mitigation dominates. Because the update is exact for the
+piecewise-constant interval assumption, changing the reporting cadence requires changing
+$\Delta t$ in the same declared time unit rather than changing the governing equation.
+
+\subsection{Posture Output Envelope}
+The top-level CRPI value is the conservative envelope
+\begin{equation}
+  CRPI(t)=\max\left(R_{\mathrm{inst}}(t),S(t)\right).
+  \label{eq:crpi-envelope}
+\end{equation}
+The maximum is an envelope operator, not a mechanistic description of incident
+dynamics. It prevents recent operational improvement from masking material persistent
+exposure while keeping the result bounded
+and directly decomposable.
+
+\subsubsection{Calculation walkthrough}
+For the illustrative values above, $R_{\mathrm{inst}}\approx0.182$ and
+$S(t+1)\approx0.174$, so the envelope is $CRPI(t+1)=0.182$. If the persistent stock
+were $0.300$ instead, the same current condition would produce $CRPI=0.300$ and make
+the unresolved history the controlling explanation. The maximum is therefore not an
+executive-only display choice: it is the defined objective output of the state model,
+with executive reporting as one consumer of that output.
+
+\subsection{Scope Levels, Roll-Up, and Calibration Boundary}
+The governing equations do not change when the unit of analysis changes. A component,
+sub-system, system, network, organizational domain, or enterprise is treated as a
+scoped entity $u$ with its own evidence boundary, consequence domains, resilience
+mapping, and persistent state. The same sequence is evaluated for that entity:
+construct its bounded Tier~2 values, calculate its domain-specific $D_{\mathrm{eff}}$,
+then $H$, $M$, $R_{\mathrm{inst}}$, $S$, and $CRPI$. The scope changes the evidence and
+the meaning of the result, not the equation form.
+
+For a scoped entity $u$, let $\ell$ denote its analytical level: component,
+sub-system, system, network, domain, or enterprise. The final output is
+\begin{equation}
+  CRPI_{u,\ell}(t)=
+    \max\!\left(R_{\mathrm{inst},u,\ell}(t),S_{u,\ell}(t)\right).
+  \label{eq:scoped-crpi}
+\end{equation}
+The component equations for $TE$, $CS$, $SOE$, $RRAS$, $D_{\mathrm{eff}}$, $H$, $M$,
+and $S$ retain their Section~\ref{sec:governing} form; each input is simply indexed by $(u,\ell)$ and
+must be calculated from that scope's evidence boundary. This makes the distinction
+between a directly measured parent risk value and a separately governed aggregation
+of child values explicit.
+
+\begin{longtable}{p{0.15\textwidth} p{0.28\textwidth} p{0.43\textwidth}}
+  \caption{CRPI application across analytical levels}
+  \label{tab:scope-levels}\\
+  \toprule
+  Scope & Unit of analysis & Recommended evidence boundary and interpretation \\
+  \midrule
+  \endfirsthead
+  \toprule
+  Scope & Unit of analysis & Recommended evidence boundary and interpretation \\
+  \midrule
+  \endhead
+  Component & Asset, service, identity, control point, or data store & Direct telemetry, configuration state, local exposure, component consequence, and component recovery evidence. \\
+  Sub-system & Application, cluster, control plane, or service group & Component interactions, shared controls, local dependencies, subsystem mission impact, and response ownership. \\
+  System & Product, workload, plant, or business service & System attack surface, system-level consequence domains, end-to-end mitigation performance, and recoverability evidence. \\
+  Network & Segment, trust zone, connectivity plane, or interconnection & Reachability, trust boundaries, traffic and control evidence, lateral-exposure conditions, and cross-system dependency effects. \\
+  Domain & Mission, business, data, or operational domain & Domain portfolio consequence, shared services, domain dependencies, and the domain-specific resilience mappings relevant to that scope. \\
+  Enterprise & Organization or governed portfolio & Enterprise-wide evidence, shared infrastructure, cross-domain consequences, centralized and federated response, and enterprise resilience. \\
+  \bottomrule
+\end{longtable}
+
+The scope-level output is objective in the operational sense: the same declared inputs,
+normalization rules, weights, and time history reproduce the same result and allow the
+result to be decomposed back to evidence. It is not assumption-free. A parent score
+should be calculated from parent-scope evidence whenever possible; averaging child CRPI
+values can hide concentration, shared dependencies, or a high-consequence outlier. If
+only child scores are available, publish any roll-up as a separately named and governed
+aggregation rather than silently presenting it as the parent CRPI.
+
+The term ``domain'' in this scope hierarchy is distinct from a consequence domain
+$j\in\mathcal{D}$. A single enterprise domain may contain confidentiality, integrity,
+and availability consequence domains, while a single system may contribute to several
+organizational domains.
+
+\subsubsection{Calibration boundary}
+The governing equation form is stable, but the model is not parameter-free. The
+parameters $\varepsilon_X$, $v_j$, $\rho_j$, $\mathbf{a}_j$, $m_0$, $\beta$, $\kappa$, $\alpha$, and
+normalization bounds are explicit calibration or construct-composition parameters.
+They must be versioned, justified by construct semantics or observed data, sensitivity
+tested, and prohibited from ad hoc tuning solely to make the posture value appear
+desirable. Cross-level and cross-organization comparisons require the profile identifier
+and a documented scope definition; otherwise equal scores need not mean comparable
+things.
+
+\section{Interpreting CRPI Outputs}
+\label{sec:interpreting}
+The top-level $CRPI(t)$ value is a bounded operational posture index in $[0,1]$, where
+values closer to zero indicate lower modeled residual cyber-risk posture and values
+closer to one indicate higher modeled residual posture under a defined calibration
+profile. It is not a direct probability of breach or monetary-loss estimate.
+
+The value should be read together with its decomposition:
+\begin{itemize}
+  \item $H(t)$ answers: \emph{How much hazard pressure exists before current operational
+    mitigation?} It rises as threat exposure or resilience-adjusted consequence rises.
+  \item $M(t)$ answers: \emph{How much effective mitigation can the organization apply?}
+    It reflects operational execution as modulated by the quality of continuous
+    observability.
+  \item $R_{\mathrm{inst}}(t)$ answers: \emph{What residual posture is implied by current
+    conditions now?}
+  \item $S(t)$ answers: \emph{How much unresolved residual exposure remains from current
+    and recent conditions?}
+  \item $CRPI(t)$ reports the conservative residual-risk envelope used by operational,
+    engineering, governance, and executive consumers.
+\end{itemize}
+
+Two organizations can have the same $CRPI(t)$ for materially different reasons. One may
+have high current threat pressure but low accumulated exposure; another may have
+moderate current hazard but substantial persistent stock. Management action therefore
+requires the decomposition, Tier~2 values, evidence coverage, and uncertainty
+qualification rather than the scalar alone.
+
+\begin{longtable}{p{0.20\textwidth} p{0.18\textwidth} p{0.52\textwidth}}
+  \caption{Score direction and operational interpretation}
+  \label{tab:score-direction}\\
+  \toprule
+  Quantity & Higher Means & Interpretation \\
+  \midrule
+  \endfirsthead
+  \toprule
+  Quantity & Higher Means & Interpretation \\
+  \midrule
+  \endhead
+  $CM(t)$ & Better & More complete, current, and trustworthy visibility. \\
+  $SOE(t)$ & Better & Stronger ability to detect, respond, remediate, and change safely. \\
+  $RRAS(t)$ & Better & Stronger scalar structural survivability and assurance summary. \\
+  $R_j(t)$ & Better & Stronger resilience projection for consequence domain $j$. \\
+  $CS(t)$ & More severe & Greater aggregate consequence if the system or data is compromised. \\
+  $TE(t)$ & More exposed & Greater adversary pressure, exploitability, or attackability. \\
+  $D_{\mathrm{eff}}(t)$ & More severe & Greater consequence remaining after consequence-specific resilience adjustment. \\
+  $H(t)$ & More hazardous & More inherent hazard before current operational mitigation. \\
+  $M(t)$ & Better & Greater effective mitigation capacity. \\
+  $R_{\mathrm{inst}}(t)$ & More residual risk & Worse current residual posture. \\
+  $S(t)$ & More persistent & More unresolved exposure carried forward. \\
+  $CRPI(t)$ & More residual risk & Higher modeled operational cyber-risk posture. \\
+  \bottomrule
+\end{longtable}
+
 \section{Worked Example}
+\label{sec:worked}
 This section exercises the intended behavior of the revised governing equations under a
 small synthetic sequence. It is an illustrative calculation, not empirical validation.
 
@@ -1376,7 +1423,7 @@ These are illustration parameters, not recommended universal defaults.
 
 At $t_0$ let
 \begin{equation}
-  TE=0.60,\quad CS=0.80,\quad RRAS=0.40,\quad CM=0.50,\quad USOM=0.40.
+  TE=0.60,\quad CS=0.80,\quad RRAS=0.40,\quad CM=0.50,\quad SOE=0.40.
 \end{equation}
 Then
 \begin{align}
@@ -1396,7 +1443,7 @@ unchanged. Instantaneous residual posture rises to $0.365$. The persistence stoc
 rises, but more gradually, to $0.295$, so the current condition controls the posture
 envelope.
 
-At $t_2$, monitoring and operational execution improve to $CM=0.75$ and $USOM=0.70$.
+At $t_2$, monitoring and operational execution improve to $CM=0.75$ and $SOE=0.70$.
 Effective mitigation rises to $M=0.569$, reducing instantaneous residual posture to
 $0.189$. Persistent stock remains higher at $0.221$, so the posture envelope does not
 immediately forget the recent period of elevated unresolved exposure.
@@ -1412,11 +1459,11 @@ posture continues to fall while the persistent channel dissipates more gradually
   \caption{Worked example over time using the revised governing model}
   \label{tab:worked-timeseries}\\
   \toprule
-  $t$ & $TE$ & $CS$ & $RRAS$ & $CM$ & $USOM$ & $D_{\mathrm{eff}}$ & $H$ & $M$ & $R_{\mathrm{inst}}$ & $S$ & $CRPI$ \\
+  $t$ & $TE$ & $CS$ & $RRAS$ & $CM$ & $SOE$ & $D_{\mathrm{eff}}$ & $H$ & $M$ & $R_{\mathrm{inst}}$ & $S$ & $CRPI$ \\
   \midrule
   \endfirsthead
   \toprule
-  $t$ & $TE$ & $CS$ & $RRAS$ & $CM$ & $USOM$ & $D_{\mathrm{eff}}$ & $H$ & $M$ & $R_{\mathrm{inst}}$ & $S$ & $CRPI$ \\
+  $t$ & $TE$ & $CS$ & $RRAS$ & $CM$ & $SOE$ & $D_{\mathrm{eff}}$ & $H$ & $M$ & $R_{\mathrm{inst}}$ & $S$ & $CRPI$ \\
   \midrule
   \endhead
   $t_0$ & 0.600 & 0.800 & 0.400 & 0.500 & 0.400 & 0.608 & 0.365 & 0.250 & 0.274 & 0.274 & 0.274 \\
@@ -1462,7 +1509,7 @@ shows instantaneous residual posture, persistent exposure, and the posture envel
       \addplot+[mark=square*] coordinates {(0,0.800) (1,0.800) (2,0.800) (3,0.780) (4,0.750)}; \addlegendentry{$CS$}
       \addplot+[mark=triangle*] coordinates {(0,0.400) (1,0.400) (2,0.450) (3,0.550) (4,0.650)}; \addlegendentry{$RRAS$}
       \addplot+[mark=diamond*] coordinates {(0,0.500) (1,0.500) (2,0.750) (3,0.820) (4,0.880)}; \addlegendentry{$CM$}
-      \addplot+[mark=otimes*] coordinates {(0,0.400) (1,0.400) (2,0.700) (3,0.780) (4,0.840)}; \addlegendentry{$USOM$}
+      \addplot+[mark=otimes*] coordinates {(0,0.400) (1,0.400) (2,0.700) (3,0.780) (4,0.840)}; \addlegendentry{$SOE$}
     \end{axis}
   \end{tikzpicture}
   \caption{Tier~2 input trajectories in the revised worked example.}
@@ -1511,6 +1558,7 @@ shows instantaneous residual posture, persistent exposure, and the posture envel
 
 \FloatBarrier
 \section{Verification, Validation, and Research Discipline}
+\label{sec:verification}
 CRPI is a formally specified operational posture model for which selected mathematical
 invariants and directional properties are analytically established under stated
 assumptions. It is not yet empirically validated. The present paper records those
@@ -1547,7 +1595,7 @@ properties:
 Synthetic simulations should include at least:
 \begin{itemize}
   \item \textbf{Threat surge}: rapid increase in TE with stable mitigation;
-  \item \textbf{Operational improvement}: increase in CM and/or USOM with explicit
+  \item \textbf{Operational improvement}: increase in CM and/or SOE with explicit
     separation of observability and execution effects;
   \item \textbf{Consequence-specific resilience}: increase domain-applicable
     projections $R_j$ while varying $\rho_j$ to verify that confidentiality-like
@@ -1679,8 +1727,8 @@ empirically calibrated.
   Consequence rise: $CS=0.95$ & 0.722 & 0.433 & 0.250 & 0.325 \\
   Domain resilience degradation: $R_j=0.20$ (special-case $RRAS=0.20$) & 0.704 & 0.422 & 0.250 & 0.317 \\
   Monitoring improvement: $CM=0.75$ & 0.608 & 0.365 & 0.325 & 0.246 \\
-  Operations improvement: $USOM=0.70$ & 0.608 & 0.365 & 0.438 & 0.205 \\
-  Balanced mitigation: $CM=0.75,USOM=0.70$ & 0.608 & 0.365 & 0.569 & 0.157 \\
+  Operations improvement: $SOE=0.70$ & 0.608 & 0.365 & 0.438 & 0.205 \\
+  Balanced mitigation: $CM=0.75,SOE=0.70$ & 0.608 & 0.365 & 0.569 & 0.157 \\
   Domain resilience improvement: $R_j=0.65$ (special-case $RRAS=0.65$) & 0.488 & 0.293 & 0.250 & 0.220 \\
   \bottomrule
 \end{longtable}
@@ -1716,6 +1764,7 @@ not yet empirically validated and should not be described as a validated predict
 cyber-risk metric.
 
 \section{Related Work and Positioning}
+\label{sec:related}
 Prior cyber-risk scholarship spans governance, financial quantification, vulnerability
 prioritization, probabilistic dynamic risk assessment, architecture-aware analysis,
 resilience, and security measurement.
@@ -1769,6 +1818,7 @@ combination of operational telemetry compatibility, mathematical decomposability
 governed adaptation, and stateful posture representation in a single bounded index.
 
 \section{Assumptions and Limitations}
+\label{sec:limitations}
 The CRPI is mathematically specified but not assumption-free.
 
 First, normalization quality depends on calibration quality. Poorly chosen bounds can
@@ -1826,6 +1876,7 @@ recalibration, and end-to-end decomposition. These mechanisms make model risk
 observable and governable; they do not eliminate it.
 
 \section{Governance, Adaptation, and Longevity}
+\label{sec:governance}
 For a posture model to remain useful over long time horizons, adaptation must be
 explicit, controlled, and auditable. CRPI therefore separates stable equation form from
 versioned measurement and calibration profiles.
@@ -1859,7 +1910,8 @@ or other rapid environmental changes shorten the useful life of historical calib
 assumptions \cite{nist-ai-rmf,verizon-dbir}.
 
 \section{Reproducibility and Artifact Availability}
-The accompanying repository now additionally supplies a provisional 15-field operational input contract and reproducible synthetic missingness, calibration-profile and temporal-order stress experiments.
+\label{sec:artifacts}
+The accompanying public artifact repository supplies a provisional 15-input operational measurement specification and reproducible synthetic missingness, calibration-profile, and temporal-order experiments.
 The accompanying repository contains the manuscript source, an executable dependency-light
 reference implementation of the governing equations, a versioned illustrative calibration
 profile, synthetic non-sensitive scenario data, unit and invariant tests, reference
@@ -1869,6 +1921,7 @@ qualification, and use-case behavior inspectable. It does not contain empirical
 organizational data and does not claim empirical validation.
 
 \section{Conclusion}
+\label{sec:conclusion}
 This work presents the Cyber Risk Posture Index as a telemetry-compatible,
 framework-agnostic, decomposable operational posture index for representing cyber risk
 over time. Its contribution is not a universal law of cyber risk or a replacement for
@@ -1896,7 +1949,55 @@ mathematically specified and testable relationships. Empirical backtesting, base
 comparison, and parameter identification remain required before any stronger empirical
 claim is warranted.
 
+
 \appendix
+\section{Notation and Definitions}
+Table~\ref{tab:notation} summarizes the principal variables used throughout the paper.
+
+\begin{longtable}{p{0.20\textwidth} p{0.70\textwidth}}
+  \caption{Core notation and variable definitions}
+  \label{tab:notation}\\
+  \toprule
+  Symbol & Meaning \\
+  \midrule
+  \endfirsthead
+  \toprule
+  Symbol & Meaning \\
+  \midrule
+  \endhead
+  $\mathbf{a}_j$ & Non-negative weight vector that projects shared resilience primitives onto consequence domain $j$, with weights summing to one. \\
+  $\alpha$ & EWMA smoothing parameter that controls the weight assigned to the current observation. \\
+  $\beta$ & Accumulation-rate parameter for unresolved exposure, measured in inverse time. \\
+  $\bar C_{\mathrm{CRPI}}(t)$ & Arithmetic mean of the Tier~2 evidence-coverage scores at time $t$. \\
+  $C_{D_j}(t)$ & Evidence-coverage score supporting the consequence-domain score $D_j(t)$. \\
+  $C_{\mathrm{gov}}(t)$ & Minimum evidence-coverage gate over the constructs and consequence-specific paths used by CRPI. \\
+  $C_{\min}(t)$ & Minimum evidence-coverage score across the Tier~2 constructs at time $t$. \\
+  $C_{R_j}(t)$ & Evidence-coverage score supporting the resilience projection $R_j(t)$. \\
+  $C_X(t)$ & Evidence-coverage score for construct $X$ at time $t$. \\
+  $CM(t)$ & Continuous Monitoring score measuring how completely and reliably security-relevant state is observed and verified, bounded in $[0,1]$. \\
+  $CRPI(t)$ & Conservative operational cyber-risk output envelope formed from instantaneous residual posture and persistent unresolved exposure. \\
+  $CS(t)$ & Consequence Severity aggregate representing the weighted severity of governed consequence domains, bounded in $[0,1]$. \\
+  $D_{\mathrm{eff}}(t)$ & Consequence remaining after domain-specific resilience adjustment and used in the hazard calculation. \\
+  $D_j(t)$ & Consequence score for governed consequence domain $j$ at time $t$, bounded in $[0,1]$. \\
+  $\Delta t$ & Elapsed time between updates to the persistent-exposure state. \\
+  $\varepsilon_X$ & Positive regularization parameter that makes geometric aggregation zero-safe for construct $X$. \\
+  $H(t)$ & Hazard pressure after threat exposure is combined with resilience-adjusted consequence. \\
+  $\kappa$ & Dissipation-rate parameter governing how quickly persistent exposure decays, measured in inverse time. \\
+  $L,U$ & Lower and upper raw-value bounds used to normalize a sub-metric. \\
+  $M(t)$ & Effective mitigation capacity after continuous monitoring modulates operational execution. \\
+  $m_0$ & Baseline fraction of operational effectiveness that does not depend on continuous monitoring. \\
+  $R_{\mathrm{inst}}(t)$ & Instantaneous residual posture remaining after current hazard pressure is reduced by effective mitigation. \\
+  $R_j(t)$ & Resilience capability projected onto consequence domain $j$, bounded in $[0,1]$. \\
+  $RRAS(t)$ & Resilience and Risk Assurance Score summarizing structural resilience and dependency assurance, bounded in $[0,1]$. \\
+  $\rho_j$ & Maximum fraction of consequence domain $j$ that its resilience projection can mitigate, bounded in $[0,1]$. \\
+  $S(t)$ & Bounded stock of persistent unresolved residual exposure at time $t$. \\
+  $TE(t)$ & Threat Exposure score representing adversary pressure and exposure conditions, bounded in $[0,1]$. \\
+  $SOE(t)$ & Security Operations Effectiveness representing operational execution and mitigation capability, bounded in $[0,1]$. \\
+  $v_j$ & Consequence-domain composition weight for domain $j$, with $v_j\geq0$ and $\sum_j v_j=1$. \\
+  $\widetilde{x}$ & Normalized raw or derived sub-metric bounded in $[0,1]$. \\
+  \bottomrule
+\end{longtable}
+
 \section{Appendix: Analytical Properties}
 \label{app:analytical-properties}
 
@@ -1932,7 +2033,7 @@ Each factor $1-\rho_jR_j$ lies in $[0,1]$, so each term
 $v_jD_j(1-\rho_jR_j)$ lies in $[0,v_j]$. Summing gives
 $D_{\mathrm{eff}}\in[0,1]$. The product $H=TE\,D_{\mathrm{eff}}$ is therefore
 bounded. The quantity $m_0+(1-m_0)CM$ is a convex combination of $m_0$ and one,
-so $M=USOM[m_0+(1-m_0)CM]\in[0,1]$. Finally,
+so $M=SOE[m_0+(1-m_0)CM]\in[0,1]$. Finally,
 $R_{\mathrm{inst}}=H(1-M)\in[0,1]$. $\square$
 
 \paragraph{Proposition 3 (Persistence invariance and equilibrium).}
@@ -1966,16 +2067,16 @@ which is the single combined-interval update. $\square$
 
 \paragraph{Proposition 5 (Directional sensitivity).}
 Holding other valid terms fixed, $R_{\mathrm{inst}}$ is non-decreasing in $TE$ and
-each $D_j$, and non-increasing in each domain projection $R_j$, $USOM$, and $CM$.
+each $D_j$, and non-increasing in each domain projection $R_j$, $SOE$, and $CM$.
 
 \paragraph{Proof.}
 The partial derivatives of effective consequence with respect to $D_j$ and $R_j$ are
 $v_j(1-\rho_jR_j)\geq0$ and $-v_jD_j\rho_j\leq0$, respectively. Since
 $H=TE\,D_{\mathrm{eff}}$, its direction follows. Also,
 \begin{equation}
-  \frac{\partial M}{\partial USOM}=m_0+(1-m_0)CM\geq0,
+  \frac{\partial M}{\partial SOE}=m_0+(1-m_0)CM\geq0,
   \qquad
-  \frac{\partial M}{\partial CM}=USOM(1-m_0)\geq0.
+  \frac{\partial M}{\partial CM}=SOE(1-m_0)\geq0.
 \end{equation}
 Because $R_{\mathrm{inst}}=H(1-M)$, increasing either mitigation input cannot
 increase instantaneous residual posture. Strict inequalities require non-degenerate
@@ -2024,7 +2125,7 @@ The baseline supplementary table set should contain the following construct and 
   \item \textbf{TE}: attack-surface exposure and exploitability signal;
   privilege/identity exposure; threat-intelligence relevance; and control-bypass
   potential.
-  \item \textbf{USOM}: MTTD, MTTR, MTTP, change failure rate, deployment regularity,
+  \item \textbf{SOE}: MTTD, MTTR, MTTP, change failure rate, deployment regularity,
   preventive quality coverage, and supply-chain execution assurance.
   \item \textbf{RRAS}: recoverability, redundancy/failover, diversity, dependency
   transparency, dependency trust, and assured change integrity.
