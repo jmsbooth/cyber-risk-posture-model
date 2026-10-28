@@ -65,7 +65,12 @@ class StressTestVerification(unittest.TestCase):
         artifact=st.ROOT/'verification/stress_test_results.json'
         if not artifact.exists():
             self.skipTest('archived stress output has not been generated')
-        self.assertEqual(json.loads(artifact.read_text(encoding='utf-8')),st.run())
+        archive=json.loads(artifact.read_text(encoding='utf-8'))
+        # Preserve exact historical bytes; translate only retired input labels.
+        archive['raw_primitives'] = [
+            key.replace('USOM_', 'SOE_') for key in archive['raw_primitives']
+        ]
+        self.assertEqual(archive,st.run())
 
 
 if __name__=='__main__':
