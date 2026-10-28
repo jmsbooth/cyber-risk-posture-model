@@ -11,12 +11,12 @@ validation checks.
 
 ## Publication revision in progress
 
-The active manuscript source includes a major explanatory restructuring and the SOE rename. The PDF in `paper/build/CRM_revised.pdf` remains the previously accepted 41-page edition until a fresh exact-source TeX build, all-page render QA and publication approval. Historical v0.1 profiles and verification receipts are intentionally immutable. The new canonical example inputs and configuration are suffixed `_soe` / `v0.2`; see [SOE migration notes](docs/SOE_MIGRATION_V02.md).
+The manuscript is now a **49-page pre-submission review draft v0.2** with reader-first sections and the canonical SOE construct. The PDF in `paper/build/CRM_revised.pdf` was rebuilt from the v0.2 source and passed 49/49 automated render/geometry checks and visual contact-sheet review. It is **not an author-approved journal/preprint submission**. The earlier 41-page edition and prior verification receipts remain recoverable from tagged historical commits rather than being relabeled as v0.2 results. The new canonical measurement profile and examples are suffixed `_soe` / `v0.2`; see [SOE migration notes](docs/SOE_MIGRATION_V02.md) and [v0.2 review QA](verification/PUBLICATION_V02_REVIEW_QA.md).
 
 ## Start here
 
 - [Read the manuscript source](paper/CRM_revised.tex)
-- [Download the previously accepted manuscript (PDF, 41 pages)](paper/build/CRM_revised.pdf) — updated operational-input and synthetic-stress research edition; Tectonic 0.17.0 build, 41/41 rendered-page QA, and SHA-256 verified. [Revised PDF quality record](verification/PUBLICATION_PDF_QA_PR7.md).
+- [Download the revised CRPI manuscript (PDF, 49-page v0.2 review draft)](paper/build/CRM_revised.pdf) — SOE migration, manuscript reorganization, expanded equation explanation, measurement validity boundary, calibration protocol, and revised figures. [v0.2 build and QA receipt](verification/PUBLICATION_V02_REVIEW_QA.md); [historical 41-page PDF receipt](verification/PUBLICATION_PDF_QA_PR7.md).
 - [Run the reference model](models/crm_reference.py)
 - [Inspect the calibration profile](config/calibration_soe_v0.2.json)
 - [Review the synthetic scenarios](data/examples/scenarios_soe.csv)

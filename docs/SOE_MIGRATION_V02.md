@@ -8,11 +8,11 @@ The five Tier 2 constructs are CM, CS, TE, **Security Operations Effectiveness (
 - `models/crm_reference.py` uses `soe` as its canonical Python function parameter and serialized result key; a read-only `CRPIResult.usom` alias is retained for historical in-memory users.
 - `models/operational_pilot.py` returns `SOE` and canonical input/evidence/coverage keys. Historical v0.1 primitive keys are accepted **only at the data input boundary**, with explicit collision rejection; no mixed/ambiguous key silently wins.
 - `config/calibration_soe_v0.2.json`, `config/measurement_pilot_soe_v0.2.json`, `config/operational_input_contract_soe_v0.2.json`, `data/examples/scenarios_soe.csv`, and `data/examples/operational_pilot_case_soe.json` are the canonical examples.
-- `formal/lean/CRPI/Mitigation.lean` and `formal/lean/CRPI/Direction.lean` now use SOE parameter and theorem names; these exact renamed sources require a new machine-check receipt.
+- `formal/lean/CRPI/Mitigation.lean` and `formal/lean/CRPI/Direction.lean` now use SOE parameter and theorem names; these renamed sources compiled successfully at revision `e24aa34f` in GitHub Actions run `40722583278`; explicit theorem-axiom audit capture is the next formal-release evidence gate.
 
 ## Reproducibility and legacy boundary
 
-The original 2026 v0.1 calibration, raw pilot and scenario files, reference vectors, synthetic stress-result JSON, archived audit logs, and published 41-page PDF remain in place. They are **historical evidence tied to earlier source revisions**, not mislabeled canonical v0.2 releases. The legacy field and weight identifiers inside those frozen files are intentional.
+The original 2026 v0.1 calibration, raw pilot and scenario files, reference vectors, synthetic stress-result JSON, and archived audit logs remain in place. The former 41-page PDF remains available in the immutable history at `main` commit `0ed3d9e`; the working branch's PDF has been superseded by the 49-page v0.2 review candidate. They are **historical evidence tied to earlier source revisions**, not mislabeled canonical v0.2 releases. The legacy field and weight identifiers inside those frozen files are intentional.
 
 The current stress and pilot comparison scripts normalize only the historical identifier difference when checking numerical parity. A matching historical synthetic result proves **rename equivalence**, not a new measurement or a newly validated model. A model consumer relying on the old `evaluate_step(usom=...)` signature must migrate to `evaluate_step(soe=...)`; the old result attribute remains temporarily available for read-only compatibility.
 

@@ -60,6 +60,13 @@ jobs:
           test: "false"
           lint: "false"
           use-mathlib-cache: "true"
+      - name: Audit all 56 conditional Lean declarations
+        run: bash scripts/verify_formal.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: crpi-v02-lean-axiom-audits
+          path: artifacts/formal-axiom-audits/
+
 
   build-paper:
     needs: python-and-evidence
