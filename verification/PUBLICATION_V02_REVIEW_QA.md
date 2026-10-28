@@ -24,7 +24,7 @@ CI artifacts: [v0.2 Actions run](https://github.com/jmsbooth/cyber-risk-posture-
 
 ## Formal proof-audit separation
 
-The original 56-theorem evidence logs are tied to the pinned **pre-SOE** source revisions, and must not be relabeled. The v0.2 renamed Lean source passed a fresh full build. Explicit A/B/C `#print axioms` audit capture has been added to the ongoing CI workflow; that new audit result must be verified at its own exact source revision before release acceptance.
+The original 56-theorem evidence logs are tied to the pinned **pre-SOE** source revisions, and must not be relabeled. The renamed Lean sources passed fresh pinned builds and **all 56 theorem-level A/B/C `#print axioms` audits**, including after the final SOE notation correction. Source `480a8e3b13a428cd80beab69cb86d9e667e30875` passed in [GitHub Actions run 40723917611](https://github.com/jmsbooth/cyber-risk-posture-model/actions/runs/40723917611). The three uploaded audit logs contain **11 Phase A, 24 Phase B, and 21 Phase C** declaration results. An independent inspection of the archived log files confirmed that each listed only `propext`, `Classical.choice`, and `Quot.sound`; no additional axioms occurred. The standard proof assumptions and the original claim boundaries remain unchanged.
 
 ## Still open before release
 
@@ -36,3 +36,9 @@ The original 56-theorem evidence logs are tied to the pinned **pre-SOE** source 
 - On a final author-approved commit, regenerate the PDF and verify the **new exact SHA**. The hash above is an immutable receipt for this particular successful artifact, not for any later rebuild.
 
 This QA does not certify outcome-validity, probability calibration, inferential power, or peer-review acceptance.
+
+## Latest SOE symbol-level correction
+
+A final notation audit identified two residual `\\widetilde{U}` primitive-variable occurrences in the SOE aggregation equation. Both were replaced by `\\widetilde{SOE}` and added as a fail-closed source check at source commit `480a8e3b13a428cd80beab69cb86d9e667e30875`. Full Python, Lean build/axiom audit, LaTeX, and PDF structural checks all **passed** in [run 40723917611](https://github.com/jmsbooth/cyber-risk-posture-model/actions/runs/40723917611).
+
+The rebuilt exact-source **49-page** PDF was archived with SHA-256 `58c2da9ece68b4be5ae7a104cf2191cd34bb5aaa12e1023113e95f10f9881233` (434,280 bytes), promoted in PDF-only commit `4a9e5433630512295a26977f18a484263f240e94`, and visually inspected on representative pages including the SOE equation. The previous digest in this receipt remains historical for its corresponding pre-correction manuscript source. **The new PDF supersedes that earlier candidate.**

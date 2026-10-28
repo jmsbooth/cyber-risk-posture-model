@@ -8,7 +8,7 @@ The five Tier 2 constructs are CM, CS, TE, **Security Operations Effectiveness (
 - `models/crm_reference.py` uses `soe` as its canonical Python function parameter and serialized result key; a read-only `CRPIResult.usom` alias is retained for historical in-memory users.
 - `models/operational_pilot.py` returns `SOE` and canonical input/evidence/coverage keys. Historical v0.1 primitive keys are accepted **only at the data input boundary**, with explicit collision rejection; no mixed/ambiguous key silently wins.
 - `config/calibration_soe_v0.2.json`, `config/measurement_pilot_soe_v0.2.json`, `config/operational_input_contract_soe_v0.2.json`, `data/examples/scenarios_soe.csv`, and `data/examples/operational_pilot_case_soe.json` are the canonical examples.
-- `formal/lean/CRPI/Mitigation.lean` and `formal/lean/CRPI/Direction.lean` now use SOE parameter and theorem names; these renamed sources compiled successfully at revision `e24aa34f` in GitHub Actions run `40722583278`; explicit theorem-axiom audit capture is the next formal-release evidence gate.
+- `formal/lean/CRPI/Mitigation.lean` and `formal/lean/CRPI/Direction.lean` now use SOE parameter and theorem names; these renamed sources have now passed fresh pinned Lean compilation and all 56 theorem-axiom audits (11 A, 24 B, 21 C) on source `480a8e3b` in GitHub Actions run `40723917611`; the audit logs contain only standard permitted axioms. The 15-field Python pilot adapter and numerical output parity tests also passed at that revision.
 
 ## Reproducibility and legacy boundary
 
