@@ -147,13 +147,13 @@ def hazard_pressure(te: float, d_eff: float) -> float:
     return _bounded(te, "te") * _bounded(d_eff, "d_eff")
 
 
-def mitigation(usom: float, cm: float, m0: float) -> float:
-    """Compute M(t) = USOM(t) * [m0 + (1-m0) * CM(t)]."""
+def mitigation(soe: float, cm: float, m0: float) -> float:
+    """Compute M(t) = SOE(t) * [m0 + (1-m0) * CM(t)]."""
 
-    checked_usom = _bounded(usom, "usom")
+    checked_soe = _bounded(soe, "soe")
     checked_cm = _bounded(cm, "cm")
     checked_m0 = _bounded(m0, "m0")
-    return _clamp_roundoff(checked_usom * (checked_m0 + (1.0 - checked_m0) * checked_cm))
+    return _clamp_roundoff(checked_soe * (checked_m0 + (1.0 - checked_m0) * checked_cm))
 
 
 def instantaneous_residual(hazard: float, effective_mitigation: float) -> float:
@@ -207,13 +207,18 @@ class CRPIResult:
     rras: float
     resilience_by_domain: Mapping[str, float]
     cm: float
-    usom: float
+    soe: float
     d_eff: float
     hazard: float
     mitigation: float
     residual: float
     stock: float
     crpi: float
+
+    @property
+    def usom(self) -> float:
+        """Read-only historical alias for the v0.1 result field; use ``soe``."""
+        return self.soe
 
     def as_dict(self) -> dict[str, object]:
         """Return a CSV/JSON-friendly representation."""
@@ -231,7 +236,7 @@ def evaluate_step(
     domain_resilience: Mapping[str, float],
     rras: float,
     cm: float,
-    usom: float,
+    soe: float,
     m0: float,
     stock: float,
     beta: float,
@@ -243,7 +248,7 @@ def evaluate_step(
     checked_te = _bounded(te, "te")
     checked_rras = _bounded(rras, "rras")
     checked_cm = _bounded(cm, "cm")
-    checked_usom = _bounded(usom, "usom")
+    checked_soe = _bounded(soe, "soe")
     d_eff = effective_consequence(
         consequence_domains,
         consequence_weights,
@@ -255,7 +260,7 @@ def evaluate_step(
         tuple(consequence_weights[key] for key in consequence_weights),
     )
     hazard = hazard_pressure(checked_te, d_eff)
-    effective_mitigation = mitigation(checked_usom, checked_cm, m0)
+    effective_mitigation = mitigation(checked_soe, checked_cm, m0)
     residual = instantaneous_residual(hazard, effective_mitigation)
     checked_stock = _bounded(stock, "stock")
     persistent = update_persistent_stock(
@@ -268,7 +273,7 @@ def evaluate_step(
         rras=checked_rras,
         resilience_by_domain=dict(domain_resilience),
         cm=checked_cm,
-        usom=checked_usom,
+        soe=checked_soe,
         d_eff=d_eff,
         hazard=hazard,
         mitigation=effective_mitigation,
@@ -292,13 +297,18 @@ def simulate(
     """Evaluate ordered inputs, carrying persistent exposure between rows.
 
     Each row must contain ``t``, ``te``, ``consequence_domains``, ``rras``, ``cm``,
-    and ``usom`` plus ``domain_resilience``. The first row uses the supplied initial stock, or the bounded
+    and ``soe`` plus ``domain_resilience``. The first row uses the supplied initial stock, or the bounded
     state-neutral paper default ``S(t0) = R_inst(t0)``. Subsequent rows use the current interval's
     residual and mitigation in the exact update, matching the worked example's
     reporting convention.
     """
 
     materialized = list(rows)
+    # Historical in-memory rows may still have the v0.1 key; never let
+    # conflicting aliases choose a value silently.
+    for row in materialized:
+        if "soe" in row and "usom" in row:
+            raise ValueError("provide either soe or historical usom, not both")
     if not materialized:
         return []
 
@@ -314,7 +324,7 @@ def simulate(
             domain_resilience=row["domain_resilience"],  # type: ignore[arg-type]
             rras=float(row["rras"]),
             cm=float(row["cm"]),
-            usom=float(row["usom"]),
+            soe=float(row["soe"] if "soe" in row else row["usom"]),
             m0=m0,
             stock=previous_stock if previous_stock is not None else 0.0,
             beta=beta,
