@@ -1081,6 +1081,14 @@ sequence is identical at every scope of analysis. In this paper, ``objective'' m
 deterministic, auditable, and reproducible under a declared evidence and calibration
 profile; it does not mean assumption-free or free of measurement judgment.
 
+
+The calculation order is: normalize scoped evidence, construct the five
+Tier~2 dimensions, retain domain-specific consequences and resilience,
+calculate hazard pressure and effective mitigation, calculate instantaneous
+residual posture, update persistent unresolved exposure, and report the
+larger of the two residual channels. The equations below make the
+relationships inspectable, but neither their functional forms nor their
+illustrative parameters establish empirical measurement validity.
 \subsection{Zero-Safe Regularized Geometric Aggregation}
 For constructs whose components should interact multiplicatively, CRPI uses a
 regularized weighted geometric operator rather than an ordinary geometric mean. For
@@ -1104,7 +1112,20 @@ $\varepsilon$ is therefore a versioned construct-calibration parameter rather th
 universal constant.
 
 \subsubsection{Calculation walkthrough}
-First normalize each component to $[0,1]$ and select governed weights. For example,
+An operational calculation begins with source records rather than
+preselected scores. For a synthetic illustration, 11 actionable exposed
+systems out of 20 in-scope internet-facing systems yield a normalized
+external exposure input of $11/20=0.55$. An independent path assessment
+finding 13 unsafe privileged paths out of 20 assessed paths yields a
+normalized internal input of $13/20=0.65$. The choice of denominator and
+eligible exposure definition can substantially alter both ratios,
+particularly when discovery is incomplete. These ratios are illustrative
+proxies, not attack probabilities.
+
+The two bounded values can then be composed with equal weights and a
+regularizer that reduces numerical collapse from one valid zero while
+retaining a penalty for weak components. In this illustration,
+For the normalized values above,
 with $\mathbf{x}=(0.55,0.65)$, $\mathbf{w}=(0.5,0.5)$, and $\varepsilon=0.05$,
 
 \begin{equation}
@@ -1119,6 +1140,12 @@ construct semantics call for a multiplicative penalty. A zero-weight component i
 ignored by the operator; a zero-valued component with positive weight contributes a
 penalty without becoming an unintended absorbing zero.
 
+
+A consequence score quantifies the severity of harm if compromise occurs,
+independently of whether compromise is likely. Hazard pressure is the
+model's bounded combination of threat exposure and remaining consequence
+before current operational mitigation is applied. Neither quantity is a
+calibrated breach probability.
 \subsection{Consequence and Hazard Pressure}
 The reporting aggregate for consequence is
 \begin{equation}
@@ -1135,6 +1162,15 @@ assuming that resilience mitigates all forms of harm equally:
   \qquad \rho_j\in[0,1].
   \label{eq:effective-consequence}
 \end{equation}
+
+The resilience-adjusted consequence $D_{\mathrm{eff}}$ is assembled from
+three kinds of input. The domain-specific severity $D_j$ describes
+potential harm; the non-negative weight $v_j$ determines that domain's
+contribution; and $1-\rho_jR_j$ retains the portion of harm not mitigated
+by applicable structural resilience. Here $R_j$ measures relevant
+resilience capability while $\rho_j$ is a separate assumption about the
+maximum mitigable fraction of that consequence. These choices are
+governed, inspectable hypotheses, not universal empirical constants.
 A baseline profile may use confidentiality/sensitivity, integrity/mission, and
 availability/continuity domains, while other environments may define a different
 finite governed domain set $\mathcal{D}$. The $\rho_j$ values encode the extent to
@@ -1150,9 +1186,14 @@ Hazard pressure is then
   H(t)=TE(t)\,D_{\mathrm{eff}}(t).
   \label{eq:hazard}
 \end{equation}
-This preserves a bounded hazard score while preventing a globally high resilience score
-from automatically erasing consequence classes that resilience cannot materially
-reverse.
+Multiplying the bounded exposure and adjusted consequence produces a
+bounded hazard score and preserves the expected direction of each input.
+The domain adjustment avoids treating structural resilience as capable
+of erasing every consequence. For example, restoring service availability
+after disruption does not undo an already completed disclosure of
+confidential records. A resilience projection must therefore be
+relevant to the specific form of harm before it reduces consequence.
+This mathematical choice remains subject to empirical assessment.
 
 \subsubsection{Calculation walkthrough}
 Calculate the reporting consequence score first, then calculate the resilience-adjusted
