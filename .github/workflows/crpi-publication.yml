@@ -1,0 +1,105 @@
+name: CRPI v0.2 source, numerical, formal and PDF checks
+on:
+  push:
+    branches:
+      - publication/crpi-narrative-soe-v02
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "paper/**"
+      - "models/**"
+      - "config/**"
+      - "scripts/**"
+      - "tests/**"
+      - "formal/**"
+      - ".github/workflows/crpi-publication.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  python-and-evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Full standard-library suite
+        run: python -m unittest discover -v
+      - name: Manuscript labels and canonical SOE surface
+        run: python scripts/check_publication_source.py
+      - name: Historical numerical conformance
+        run: python scripts/regenerate_phase_d.py --check
+      - name: Archived stress-result equivalence
+        run: python scripts/run_stress_tests.py --check verification/stress_test_results.json
+      - name: Archived pilot baseline equivalence
+        run: python scripts/compare_operational_baselines.py --check verification/measurement_pilot_structural_results.json
+      - name: Confirm participant intake remains blocked
+        run: |
+          set +e
+          python scripts/check_pilot_readiness.py config/prospective_pilot_registration.example.json --require-ready
+          status=$?
+          set -e
+          if [ "$status" -ne 2 ]; then
+            echo "Expected protective refusal exit 2, got $status"
+            exit 1
+          fi
+          echo "Pilot readiness refused intake as designed."
+
+  lean-formal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pinned Lean and Mathlib rebuild
+        uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: formal/lean
+          build: "true"
+          test: "false"
+          lint: "false"
+          use-mathlib-cache: "true"
+
+  build-paper:
+    needs: python-and-evidence
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile revised manuscript
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: CRM_revised.tex
+          working_directory: paper
+      - name: Stage source-matched PDF
+        run: |
+          test -s paper/CRM_revised.pdf
+          mkdir -p paper/build
+          cp paper/CRM_revised.pdf paper/build/CRM_revised.pdf
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install PDF structural checker
+        run: python -m pip install --disable-pip-version-check pymupdf==1.26.7
+      - name: All-page PDF rendering and geometry preflight
+        run: python scripts/check_publication_pdf.py paper/build/CRM_revised.pdf
+      - uses: actions/upload-artifact@v4
+        with:
+          name: crpi-v02-pdf-and-qa
+          path: |
+            paper/build/CRM_revised.pdf
+            publication_pdf_qa_v02.json
+      - name: Commit exact new PDF to review branch
+        if: github.event_name == 'push' && github.ref == 'refs/heads/publication/crpi-narrative-soe-v02'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f paper/build/CRM_revised.pdf
+          if git diff --cached --quiet; then
+            echo "PDF unchanged"
+          else
+            git commit -m "docs(pdf): render source-matched CRPI v0.2 review candidate"
+            git push origin HEAD:publication/crpi-narrative-soe-v02
+          fi
