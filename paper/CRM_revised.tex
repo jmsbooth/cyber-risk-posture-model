@@ -27,7 +27,7 @@
 
 \title{A Dynamic, Decomposable Operational Cyber Risk Posture Index}
 \author{James Booth}
-\date{\today}
+\date{28 October 2026 \\ Pre-submission Review Draft v0.2}
 
 \begin{document}
 \maketitle
@@ -1711,13 +1711,13 @@ Time & $TE$ & $CS$ & $RRAS$ & $CM$ & $SOE$ \\
 \endhead
 $t_0$ & 0.600 & 0.800 & 0.400 & 0.500 & 0.400 \\
 $t_1$ & 0.800 & 0.800 & 0.400 & 0.500 & 0.400 \\
-$\Delta t_1$ & $+0.200$ & $0.000$ & $0.000$ & $0.000$ & $0.000$ \\
+$\Delta_1$ & $+0.200$ & $0.000$ & $0.000$ & $0.000$ & $0.000$ \\
 $t_2$ & 0.750 & 0.800 & 0.450 & 0.750 & 0.700 \\
-$\Delta t_2$ & $-0.050$ & $0.000$ & $+0.050$ & $+0.250$ & $+0.300$ \\
+$\Delta_2$ & $-0.050$ & $0.000$ & $+0.050$ & $+0.250$ & $+0.300$ \\
 $t_3$ & 0.650 & 0.780 & 0.550 & 0.820 & 0.780 \\
-$\Delta t_3$ & $-0.100$ & $-0.020$ & $+0.100$ & $+0.070$ & $+0.080$ \\
+$\Delta_3$ & $-0.100$ & $-0.020$ & $+0.100$ & $+0.070$ & $+0.080$ \\
 $t_4$ & 0.550 & 0.750 & 0.650 & 0.880 & 0.840 \\
-$\Delta t_4$ & $-0.100$ & $-0.030$ & $+0.100$ & $+0.060$ & $+0.060$ \\
+$\Delta_4$ & $-0.100$ & $-0.030$ & $+0.100$ & $+0.060$ & $+0.060$ \\
 \bottomrule
 \end{longtable}
 \endgroup
@@ -1746,7 +1746,7 @@ $t_4$ & 0.458 & 0.252 & 0.764 & 0.059 & 0.093 & 0.093 & $-0.057$ \\
 \end{longtable}
 \endgroup
 
-Changes are arithmetic differences between displayed rounded values,
+Here $\Delta_k$ denotes the change from $t_{k-1}$ to $t_k$ in the input table, not the elapsed duration $\Delta t$ used by the stock-flow equation. Changes are arithmetic differences between displayed rounded values,
 not percentages. A positive increase in TE indicates more modeled
 exposure, while a positive change in CM or SOE indicates stronger
 modeled defensive capability. This is why the input deltas are not
