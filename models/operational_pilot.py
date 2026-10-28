@@ -19,11 +19,22 @@ from models.crm_reference import (
 TE = ('TE_external', 'TE_internal')
 CS = ('CS_confidentiality', 'CS_integrity', 'CS_availability')
 CM = ('CM_coverage', 'CM_freshness', 'CM_integrity', 'CM_verification')
-USOM = ('USOM_detection', 'USOM_velocity', 'USOM_change_safety', 'USOM_learning')
+SOE = ('SOE_detection', 'SOE_velocity', 'SOE_change_safety', 'SOE_learning')
 RRAS = ('RRAS_internal', 'RRAS_dependency')
-ALL = TE + CS + CM + USOM + RRAS
-GROUPS = {'TE': TE, 'CS': CS, 'CM': CM, 'USOM': USOM, 'RRAS': RRAS}
+ALL = TE + CS + CM + SOE + RRAS
+GROUPS = {'TE': TE, 'CS': CS, 'CM': CM, 'SOE': SOE, 'RRAS': RRAS}
 DOMAINS = ('confidentiality', 'integrity', 'availability')
+
+
+def _canonical_fields(values: Mapping[str, Any]) -> dict[str, Any]:
+    """Migrate v0.1 USOM primitive keys only at the input boundary."""
+    result: dict[str, Any] = {}
+    for key, value in values.items():
+        current = 'SOE_' + key[5:] if key.startswith('USOM_') else key
+        if current in result:
+            raise ValueError(f'conflicting legacy/canonical names for {current}')
+        result[current] = value
+    return result
 
 
 def _time(value: str, field: str) -> datetime:
@@ -94,12 +105,12 @@ def _score(values: Mapping[str, float], model: Mapping[str, Any],
     cs_report = sum(weights['consequence'][d] * consequence[d] for d in DOMAINS)
     rras = regularized_geometric([values[k] for k in RRAS], weights['rras']['reporting'],
                                  model['epsilon_rras'])
-    cm, usom = mean(values[k] for k in CM), mean(values[k] for k in USOM)
+    cm, soe = mean(values[k] for k in CM), mean(values[k] for k in SOE)
     h = hazard_pressure(te, d_eff)
-    m = mitigation(usom, cm, model['m0'])
+    m = mitigation(soe, cm, model['m0'])
     residual = instantaneous_residual(h, m)
     result = {
-        'TE': te, 'CS': cs_report, 'CM': cm, 'USOM': usom, 'RRAS_reporting': rras,
+        'TE': te, 'CS': cs_report, 'CM': cm, 'SOE': soe, 'RRAS_reporting': rras,
         'D_by_domain': consequence, 'R_by_domain': projections,
         'D_eff': d_eff, 'H': h, 'M': m, 'R_inst': residual,
         'S_next': None, 'CRPI': None, 'envelope_branch': None,
@@ -141,11 +152,14 @@ def evaluate(document: Mapping[str, Any], measurement_profile: Mapping[str, Any]
     as_of = _time(document.get('as_of'), 'as_of')
     if model_profile.get('profile_id') != measurement_profile.get('score_profile'):
         raise ValueError('CRPI calibration profile mismatch')
-    defs = measurement_profile.get('fields', {})
+    defs = _canonical_fields(measurement_profile.get('fields', {}))
     if set(defs) != set(ALL):
         raise ValueError('measurement profile must define exactly 15 known input fields')
     supplied = document.get('observations', {})
-    if not isinstance(supplied, dict) or set(supplied) - set(ALL):
+    if not isinstance(supplied, dict):
+        raise ValueError('observations must be an object')
+    supplied = _canonical_fields(supplied)
+    if set(supplied) - set(ALL):
         raise ValueError('observations must be an object with only recognized primitive fields')
     values: dict[str, float] = {}
     evidence: dict[str, dict[str, Any]] = {}
@@ -196,7 +210,7 @@ def evaluate(document: Mapping[str, Any], measurement_profile: Mapping[str, Any]
     cov.update({'R_' + d: r_cov for d in DOMAINS})
     aggregate = mean(cov[k] for k in GROUPS)
     minimum = min(cov[k] for k in GROUPS)
-    governing = min(cov[k] for k in ('TE', 'CM', 'USOM') +
+    governing = min(cov[k] for k in ('TE', 'CM', 'SOE') +
                     tuple('D_' + d for d in DOMAINS) +
                     tuple('R_' + d for d in DOMAINS))
     gates = model_profile['coverage_gates']
@@ -225,7 +239,7 @@ def evaluate(document: Mapping[str, Any], measurement_profile: Mapping[str, Any]
     if unknown:
         min_case, max_case = dict(values), dict(values)
         for key in unknown:
-            polarity = measurement_profile['fields'][key]['polarity']
+            polarity = defs[key]['polarity']
             if polarity not in ('risk', 'capacity'):
                 raise ValueError(f'{key}: invalid risk/capacity polarity')
             is_adverse = polarity == 'risk'

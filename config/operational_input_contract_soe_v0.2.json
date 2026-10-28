@@ -1,0 +1,368 @@
+{
+  "schema_version": "crpi-operational-input-contract-v0.2",
+  "profile_id": "illustrative-v0.1",
+  "status": "candidate instrumentation mapping; raw metric calibrations are intentionally undefined",
+  "normalized_inputs": [
+    {
+      "field": "TE_external",
+      "group": "threat_exposure",
+      "meaning": "External attack surface and known exploitability",
+      "normalized_range": [
+        0,
+        1
+      ],
+      "normalized_higher_means": "more adverse posture",
+      "candidate_evidence": "attack-surface inventory; validated exposure evidence",
+      "raw_unit": null,
+      "normalization_bounds_L_U": null,
+      "raw_direction": null,
+      "owner": null,
+      "denominator": null,
+      "sampling_cadence": null,
+      "source_integrity_policy": null,
+      "missing_data_behavior": "reject_for_fully_qualified_point_score"
+    },
+    {
+      "field": "TE_internal",
+      "group": "threat_exposure",
+      "meaning": "Internal identity and privilege attack paths",
+      "normalized_range": [
+        0,
+        1
+      ],
+      "normalized_higher_means": "more adverse posture",
+      "candidate_evidence": "IdP/PAM entitlements; attack-path assessment",
+      "raw_unit": null,
+      "normalization_bounds_L_U": null,
+      "raw_direction": null,
+      "owner": null,
+      "denominator": null,
+      "sampling_cadence": null,
+      "source_integrity_policy": null,
+      "missing_data_behavior": "reject_for_fully_qualified_point_score"
+    },
+    {
+      "field": "CS_confidentiality",
+      "group": "consequence",
+      "meaning": "Sensitivity/harm of unauthorized disclosure",
+      "normalized_range": [
+        0,
+        1
+      ],
+      "normalized_higher_means": "more adverse posture",
+      "candidate_evidence": "data classification; mission-impact assessment",
+      "raw_unit": null,
+      "normalization_bounds_L_U": null,
+      "raw_direction": null,
+      "owner": null,
+      "denominator": null,
+      "sampling_cadence": null,
+      "source_integrity_policy": null,
+      "missing_data_behavior": "reject_for_fully_qualified_point_score"
+    },
+    {
+      "field": "CS_integrity",
+      "group": "consequence",
+      "meaning": "Decision/mission integrity harm",
+      "normalized_range": [
+        0,
+        1
+      ],
+      "normalized_higher_means": "more adverse posture",
+      "candidate_evidence": "business-impact analysis; transaction criticality",
+      "raw_unit": null,
+      "normalization_bounds_L_U": null,
+      "raw_direction": null,
+      "owner": null,
+      "denominator": null,
+      "sampling_cadence": null,
+      "source_integrity_policy": null,
+      "missing_data_behavior": "reject_for_fully_qualified_point_score"
+    },
+    {
+      "field": "CS_availability",
+      "group": "consequence",
+      "meaning": "Service disruption/continuity harm",
+      "normalized_range": [
+        0,
+        1
+      ],
+      "normalized_higher_means": "more adverse posture",
+      "candidate_evidence": "BIA; recovery objectives; service dependency map",
+      "raw_unit": null,
+      "normalization_bounds_L_U": null,
+      "raw_direction": null,
+      "owner": null,
+      "denominator": null,
+      "sampling_cadence": null,
+      "source_integrity_policy": null,
+      "missing_data_behavior": "reject_for_fully_qualified_point_score"
+    },
+    {
+      "field": "CM_coverage",
+      "group": "monitoring",
+      "meaning": "Verifiable source and control observability coverage",
+      "normalized_range": [
+        0,
+        1
+      ],
+      "normalized_higher_means": "stronger control/resilience",
+      "candidate_evidence": "log/control-source inventory",
+      "raw_unit": null,
+      "normalization_bounds_L_U": null,
+      "raw_direction": null,
+      "owner": null,
+      "denominator": null,
+      "sampling_cadence": null,
+      "source_integrity_policy": null,
+      "missing_data_behavior": "reject_for_fully_qualified_point_score"
+    },
+    {
+      "field": "CM_freshness",
+      "group": "monitoring",
+      "meaning": "Recency of relevant observed evidence",
+      "normalized_range": [
+        0,
+        1
+      ],
+      "normalized_higher_means": "stronger control/resilience",
+      "candidate_evidence": "telemetry freshness and collection delay",
+      "raw_unit": null,
+      "normalization_bounds_L_U": null,
+      "raw_direction": null,
+      "owner": null,
+      "denominator": null,
+      "sampling_cadence": null,
+      "source_integrity_policy": null,
+      "missing_data_behavior": "reject_for_fully_qualified_point_score"
+    },
+    {
+      "field": "CM_integrity",
+      "group": "monitoring",
+      "meaning": "Tamper-resistant evidence integrity",
+      "normalized_range": [
+        0,
+        1
+      ],
+      "normalized_higher_means": "stronger control/resilience",
+      "candidate_evidence": "audit log integrity and provenance",
+      "raw_unit": null,
+      "normalization_bounds_L_U": null,
+      "raw_direction": null,
+      "owner": null,
+      "denominator": null,
+      "sampling_cadence": null,
+      "source_integrity_policy": null,
+      "missing_data_behavior": "reject_for_fully_qualified_point_score"
+    },
+    {
+      "field": "CM_verification",
+      "group": "monitoring",
+      "meaning": "Verified state of monitored controls",
+      "normalized_range": [
+        0,
+        1
+      ],
+      "normalized_higher_means": "stronger control/resilience",
+      "candidate_evidence": "control-state attestations; detection engineering tests",
+      "raw_unit": null,
+      "normalization_bounds_L_U": null,
+      "raw_direction": null,
+      "owner": null,
+      "denominator": null,
+      "sampling_cadence": null,
+      "source_integrity_policy": null,
+      "missing_data_behavior": "reject_for_fully_qualified_point_score"
+    },
+    {
+      "field": "SOE_detection",
+      "group": "operations",
+      "meaning": "Demonstrated detection and triage effectiveness",
+      "normalized_range": [
+        0,
+        1
+      ],
+      "normalized_higher_means": "stronger control/resilience",
+      "candidate_evidence": "alert validation; MTTD distributions",
+      "raw_unit": null,
+      "normalization_bounds_L_U": null,
+      "raw_direction": null,
+      "owner": null,
+      "denominator": null,
+      "sampling_cadence": null,
+      "source_integrity_policy": null,
+      "missing_data_behavior": "reject_for_fully_qualified_point_score"
+    },
+    {
+      "field": "SOE_velocity",
+      "group": "operations",
+      "meaning": "Remediation and containment execution speed",
+      "normalized_range": [
+        0,
+        1
+      ],
+      "normalized_higher_means": "stronger control/resilience",
+      "candidate_evidence": "MTTR/MTTP; response execution records",
+      "raw_unit": null,
+      "normalization_bounds_L_U": null,
+      "raw_direction": null,
+      "owner": null,
+      "denominator": null,
+      "sampling_cadence": null,
+      "source_integrity_policy": null,
+      "missing_data_behavior": "reject_for_fully_qualified_point_score"
+    },
+    {
+      "field": "SOE_change_safety",
+      "group": "operations",
+      "meaning": "Verified deployment/change execution safety",
+      "normalized_range": [
+        0,
+        1
+      ],
+      "normalized_higher_means": "stronger control/resilience",
+      "candidate_evidence": "change failure and rollback quality",
+      "raw_unit": null,
+      "normalization_bounds_L_U": null,
+      "raw_direction": null,
+      "owner": null,
+      "denominator": null,
+      "sampling_cadence": null,
+      "source_integrity_policy": null,
+      "missing_data_behavior": "reject_for_fully_qualified_point_score"
+    },
+    {
+      "field": "SOE_learning",
+      "group": "operations",
+      "meaning": "Completion of operational feedback and corrective actions",
+      "normalized_range": [
+        0,
+        1
+      ],
+      "normalized_higher_means": "stronger control/resilience",
+      "candidate_evidence": "repeat incident rates; PIR action closure",
+      "raw_unit": null,
+      "normalization_bounds_L_U": null,
+      "raw_direction": null,
+      "owner": null,
+      "denominator": null,
+      "sampling_cadence": null,
+      "source_integrity_policy": null,
+      "missing_data_behavior": "reject_for_fully_qualified_point_score"
+    },
+    {
+      "field": "RRAS_internal",
+      "group": "resilience",
+      "meaning": "Internal recovery and redundancy assurance",
+      "normalized_range": [
+        0,
+        1
+      ],
+      "normalized_higher_means": "stronger control/resilience",
+      "candidate_evidence": "restore exercise; failover evidence",
+      "raw_unit": null,
+      "normalization_bounds_L_U": null,
+      "raw_direction": null,
+      "owner": null,
+      "denominator": null,
+      "sampling_cadence": null,
+      "source_integrity_policy": null,
+      "missing_data_behavior": "reject_for_fully_qualified_point_score"
+    },
+    {
+      "field": "RRAS_dependency",
+      "group": "resilience",
+      "meaning": "Supplier and external dependency assurance",
+      "normalized_range": [
+        0,
+        1
+      ],
+      "normalized_higher_means": "stronger control/resilience",
+      "candidate_evidence": "supplier attestations; tested dependencies",
+      "raw_unit": null,
+      "normalization_bounds_L_U": null,
+      "raw_direction": null,
+      "owner": null,
+      "denominator": null,
+      "sampling_cadence": null,
+      "source_integrity_policy": null,
+      "missing_data_behavior": "reject_for_fully_qualified_point_score"
+    }
+  ],
+  "count": 15,
+  "dynamic_composite_minimum": {
+    "general": [
+      "TE",
+      "D_confidentiality",
+      "D_integrity",
+      "D_availability",
+      "R_confidentiality",
+      "R_integrity",
+      "R_availability",
+      "CM",
+      "SOE"
+    ],
+    "illustrative_profile_with_rho_confidentiality_zero": [
+      "TE",
+      "D_confidentiality",
+      "D_integrity",
+      "D_availability",
+      "R_integrity",
+      "R_availability",
+      "CM",
+      "SOE"
+    ]
+  },
+  "output_dependency_order": [
+    "source_evidence",
+    "normalized_primitives",
+    "TE",
+    "CS_domains",
+    "R_domains",
+    "CM",
+    "SOE",
+    "D_eff",
+    "H",
+    "M",
+    "R_inst",
+    "S_next",
+    "CRPI",
+    "evidence_qualification"
+  ],
+  "coverage_provided_by_caller": [
+    "coverage_CM",
+    "coverage_CS",
+    "coverage_TE",
+    "coverage_SOE",
+    "coverage_RRAS",
+    "coverage_D_confidentiality",
+    "coverage_D_integrity",
+    "coverage_D_availability",
+    "coverage_R_confidentiality",
+    "coverage_R_integrity",
+    "coverage_R_availability"
+  ],
+  "temporal_required": [
+    "profile_version",
+    "prior_stock_or_marked_cold_start",
+    "beta",
+    "kappa",
+    "dt",
+    "time_unit"
+  ],
+  "required_metadata": [
+    "scope_id",
+    "timestamp",
+    "raw_measure_source",
+    "normalization_rule_version",
+    "evidence_freshness",
+    "missingness",
+    "profile_id"
+  ],
+  "warnings": [
+    "No raw measurement normalization L/U values are calibrated in illustrative-v0.1",
+    "A missing primitive must not be filled and called a fully observed posture score",
+    "Coverages are currently externally supplied, not independently generated from raw provenance",
+    "The scalar RRAS is reporting-only; governing D_eff uses R_j projections"
+  ]
+}

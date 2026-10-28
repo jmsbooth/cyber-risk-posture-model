@@ -55,14 +55,14 @@ def rank_disagreement(model:list[float],comparison:list[float],pairs:list[tuple[
 
 
 def run()->dict:
-    base=_read(ROOT/'data/examples/operational_pilot_case.json')
-    measure=_read(ROOT/'config/measurement_pilot_v0.1.json')
+    base=_read(ROOT/'data/examples/operational_pilot_case_soe.json')
+    measure=_read(ROOT/'config/measurement_pilot_soe_v0.2.json')
     profile=_read(ROOT/'config/calibration_baseline.json')
     baseline=evaluate(base,measure,profile)
     if baseline['missing_required']:
         raise AssertionError('pilot demo fixture must contain complete valid evidence')
     shorter=copy.deepcopy(measure)
-    shorter['fields']['USOM_velocity']['U']=24.0
+    shorter['fields']['SOE_velocity']['U']=24.0
     shortened=evaluate(base,shorter,profile)
     changed=copy.deepcopy(base)
     changed['observations']['TE_external']['denominator']=10
@@ -71,7 +71,7 @@ def run()->dict:
     del missing['observations']['TE_external']
     missing_result=evaluate(missing,measure,profile)
     stale=copy.deepcopy(base)
-    stale['observations']['USOM_detection']['observed_at']='2026-01-01T00:00:00Z'
+    stale['observations']['SOE_detection']['observed_at']='2026-01-01T00:00:00Z'
     stale_result=evaluate(stale,measure,profile)
 
     rng=random.Random(SEED)
@@ -106,7 +106,7 @@ def run()->dict:
                       'synthetic_inputs':'independent Beta(2,2) normalized primitives',
                       'prior_stock':'independent Beta(2,2) synthetic history',
                       'scoring_profile':'illustrative-v0.1',
-                      'measurement_profile':'crpi-pilot-measurement-profile-v0.1'},
+                      'measurement_profile':'crpi-pilot-measurement-profile-v0.2'},
         'pilot_raw_evidence_sensitivity':{
             'base_residual':baseline['point']['R_inst'],
             'base_crpi':baseline['point']['CRPI'],
@@ -118,7 +118,7 @@ def run()->dict:
             'missing_external_point_is_null':missing_result['point'] is None,
             'missing_external_residual_interval':missing_result['residual_possible_interval'],
             'stale_detection_point_is_null':stale_result['point'] is None,
-            'stale_detection_reason':stale_result['evidence']['USOM_detection']['reason'],
+            'stale_detection_reason':stale_result['evidence']['SOE_detection']['reason'],
             'missing_external_governing_coverage':missing_result['coverage']['governing_path_min'],
         },
         'structural_baselines':comparisons,
@@ -139,6 +139,10 @@ def main()->None:
     result=run()
     if args.check:
         expected=_read(args.check)
+        # Preserve the v0.1 reference archive and compare its numeric evidence
+        # against the canonical v0.2 name-only migration.
+        if expected.get('provenance', {}).get('measurement_profile') == 'crpi-pilot-measurement-profile-v0.1':
+            expected['provenance']['measurement_profile'] = 'crpi-pilot-measurement-profile-v0.2'
         if expected!=result:
             differing=[key for key in set(expected)|set(result)
                        if expected.get(key)!=result.get(key)]

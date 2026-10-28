@@ -64,7 +64,7 @@ def compute_worked(inputs: dict[str, object]) -> dict[str, Decimal]:
     d_eff = sum((dec(w[key]) * dec(dom[key]) * (1 - dec(rho[key]) * dec(resil[key]))
                  for key in dom), Decimal(0))
     hazard = te * d_eff
-    mit = dec(inputs["usom"]) * (dec(inputs["m0"]) +
+    mit = dec(inputs["soe"] if "soe" in inputs else inputs["usom"]) * (dec(inputs["m0"]) +
                                         (1 - dec(inputs["m0"])) * dec(inputs["cm"]))
     residual = hazard * (1 - mit)
     stock, q, equilibrium = step(inputs["stock_prev"], residual, mit,

@@ -1,0 +1,163 @@
+{
+  "schema": "crpi-pilot-measurement-profile-v0.2",
+  "status": "synthetic-methodology-demonstration-only; renamed SOE from legacy USOM; thresholds and rubrics are not calibrated",
+  "score_profile": "illustrative-v0.1",
+  "evidence_policy": {
+    "require_source_reference": true,
+    "require_evidence_identifier": true,
+    "require_named_owner": true,
+    "require_asserted_verification": true,
+    "reject_future_observations": true,
+    "missing_values": "never_point_impute",
+    "coverage_is_statistical_confidence": false,
+    "coverage_qualification": "self-attested pilot completeness, not independent assurance"
+  },
+  "fields": {
+    "TE_external": {
+      "method": "fraction",
+      "polarity": "risk",
+      "numerator": "externally reachable systems with validated actionable exposure",
+      "denominator": "total in-scope internet-facing systems",
+      "max_age_days": 7,
+      "owner_role": "exposure_management"
+    },
+    "TE_internal": {
+      "method": "fraction",
+      "polarity": "risk",
+      "numerator": "privileged/reachable paths confirmed unsafe",
+      "denominator": "total independently assessed privileged/reachable paths",
+      "max_age_days": 30,
+      "owner_role": "identity_architecture"
+    },
+    "CS_confidentiality": {
+      "method": "ordinal_five",
+      "polarity": "risk",
+      "anchors": [
+        "no material confidentiality impact",
+        "low localized disclosure impact",
+        "moderate business/regulatory impact",
+        "severe personal/contractual impact",
+        "critical irreversible or enterprise impact"
+      ],
+      "max_age_days": 180,
+      "owner_role": "data_governance"
+    },
+    "CS_integrity": {
+      "method": "ordinal_five",
+      "polarity": "risk",
+      "anchors": [
+        "no material integrity impact",
+        "low localized correction",
+        "moderate business process harm",
+        "major business or mission interruption",
+        "critical safety/mission harm"
+      ],
+      "max_age_days": 180,
+      "owner_role": "business_impact_owner"
+    },
+    "CS_availability": {
+      "method": "ordinal_five",
+      "polarity": "risk",
+      "anchors": [
+        "no material service outage impact",
+        "minor short-lived inconvenience",
+        "moderate service interruption",
+        "severe continuity impact",
+        "critical prolonged mission outage"
+      ],
+      "max_age_days": 180,
+      "owner_role": "service_owner"
+    },
+    "CM_coverage": {
+      "method": "fraction",
+      "polarity": "capacity",
+      "numerator": "in-scope controls with validated monitoring",
+      "denominator": "total required controls in scope",
+      "max_age_days": 7,
+      "owner_role": "observability"
+    },
+    "CM_freshness": {
+      "method": "inverse_bounded_hours",
+      "polarity": "capacity",
+      "metric": "p90 ingestion/validation lag hours",
+      "L": 0.0,
+      "U": 24.0,
+      "max_age_days": 7,
+      "owner_role": "observability",
+      "min_sample_size": 10
+    },
+    "CM_integrity": {
+      "method": "fraction",
+      "polarity": "capacity",
+      "numerator": "required evidence streams passing provenance/integrity tests",
+      "denominator": "required evidence streams",
+      "max_age_days": 7,
+      "owner_role": "detection_engineering"
+    },
+    "CM_verification": {
+      "method": "fraction",
+      "polarity": "capacity",
+      "numerator": "critical monitored controls whose true state was verified",
+      "denominator": "critical monitored controls requiring independent verification",
+      "max_age_days": 30,
+      "owner_role": "control_assurance"
+    },
+    "SOE_detection": {
+      "method": "fraction",
+      "polarity": "capacity",
+      "numerator": "controlled detection exercises successfully detected and triaged",
+      "denominator": "controlled detection exercises attempted",
+      "max_age_days": 90,
+      "owner_role": "soc"
+    },
+    "SOE_velocity": {
+      "method": "inverse_bounded_hours",
+      "polarity": "capacity",
+      "metric": "p90 hours to verified containment from exercised or actual cases",
+      "L": 0.0,
+      "U": 72.0,
+      "max_age_days": 90,
+      "owner_role": "incident_response",
+      "min_sample_size": 10
+    },
+    "SOE_change_safety": {
+      "method": "fraction",
+      "polarity": "capacity",
+      "numerator": "changes verified without incident, rollback or security regression",
+      "denominator": "total in-scope changes",
+      "max_age_days": 30,
+      "owner_role": "engineering"
+    },
+    "SOE_learning": {
+      "method": "fraction",
+      "polarity": "capacity",
+      "numerator": "due corrective actions independently closed and validated",
+      "denominator": "all due corrective actions",
+      "max_age_days": 90,
+      "owner_role": "operations"
+    },
+    "RRAS_internal": {
+      "method": "fraction",
+      "polarity": "capacity",
+      "numerator": "critical recovery exercises meeting documented objectives",
+      "denominator": "critical recovery exercises run",
+      "max_age_days": 180,
+      "owner_role": "continuity"
+    },
+    "RRAS_dependency": {
+      "method": "fraction",
+      "polarity": "capacity",
+      "numerator": "critical dependencies with independently reviewed assurance evidence",
+      "denominator": "all declared critical dependencies",
+      "max_age_days": 180,
+      "owner_role": "third_party_risk"
+    }
+  },
+  "experimental_anchors_not_claimed_as_population_measurements": [
+    "Time caps and ordinal anchors are provisional and must be reviewed by the pilot organization.",
+    "No observed incidents or outcome labels are supplied.",
+    "Fractions require authoritative, versioned denominators to avoid gaming and shifting scope.",
+    "An asserted verified record is not externally verified by the algorithm.",
+    "No higher/lower CRPI classification threshold is supported by this profile."
+  ]
+}
