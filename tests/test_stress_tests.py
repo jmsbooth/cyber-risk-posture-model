@@ -22,8 +22,8 @@ class StressTestVerification(unittest.TestCase):
 
     def test_partial_interval_covers_truth(self):
         x=self.fields.copy()
-        x.update({'TE_external':.9,'RRAS_internal':.2,'USOM_detection':.1})
-        assumed, lo, hi=st.fillings(x,{'TE_external','RRAS_internal','USOM_detection'})
+        x.update({'TE_external':.9,'RRAS_internal':.2,'SOE_detection':.1})
+        assumed, lo, hi=st.fillings(x,{'TE_external','RRAS_internal','SOE_detection'})
         y=st.score(x,self.profile)['residual']
         self.assertLessEqual(st.score(lo,self.profile)['residual'],y)
         self.assertLessEqual(y,st.score(hi,self.profile)['residual'])
